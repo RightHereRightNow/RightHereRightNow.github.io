@@ -24,6 +24,13 @@
 <body onload="init()">
 
 	<div id="menu">
+
+		<ul>
+			<li><a href="#" onclick=context.setMode(context.modes.SELECTION)>SelectionMode</a></li>
+			<li><a href="#" onclick=context.setMode(context.modes.TRAFFICLAYER)>TrafficLayer</a></li>
+			<li><a href="#" onclick=context.setMode(context.modes.CRIMELAYER)>CrimeLayer</a></li>
+		</ul>
+
 		<svg id="menusvg"></svg>	
 	</div>
 

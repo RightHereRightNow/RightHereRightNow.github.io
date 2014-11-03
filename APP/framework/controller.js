@@ -6,7 +6,14 @@ function controller() {
 
 	thisController.refreshrate = 1000; // Rate at which new data is queried
 
-	thisController.mode = 0; // 0 for selection mode
+	// Possible modes of our application
+	thisController.modes = {
+		SELECTION:		0,
+		TRAFFICLAYER:	1,
+		CRIMELAYER:		2
+	};
+
+	thisController.activeMode = 0;
 
 	// thisController.map = new map();
 	// thisController.layer = new layer();
@@ -41,11 +48,12 @@ controller.prototype.getData = function() {
 
 
 // Sets current mode
-controller.prototype.setMode = function() {
-	// TODO: return mode
+controller.prototype.setMode = function(newmode) {
+	console.log("\tSet mode: " + newmode);
+	thisController.activeMode = newmode;
 }
 
 // Returns current mode
 controller.prototype.getMode = function() {
-	// TODO: return mode
+	return thisController.activeMode;
 }
