@@ -12,7 +12,7 @@ footer,header,menu,nav {
 	-moz-box-sizing:	border-box;		/* Firefox, other Gecko */
 	box-sizing:			border-box;		/* Opera/IE 8+ */
 	border:				solid blue 1px;
-    font-size:			100%;
+    font-size:			4vmin;
     font:				inherit;
     margin:				0;
     padding:			0;
@@ -29,12 +29,10 @@ html, body {
 
 div {
 	font-family:		inherit;
-	font-size:			2rem;
 }
 
 svg {
 	font-family:		inherit;
-	font-size:			.5rem;
 	-webkit-box-sizing:	border-box;		/* Safari/Chrome, other WebKit */
 	-moz-box-sizing:	border-box;		/* Firefox, other Gecko */
 	box-sizing:			border-box;		/* Opera/IE 8+ */
