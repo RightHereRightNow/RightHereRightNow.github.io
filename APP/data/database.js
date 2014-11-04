@@ -24,7 +24,7 @@ database.prototype.genericQuery = function(select, where, order, group, limit, o
 		//var filters = "$select="+select+"&$where="+where+"&$order="+order+"&$group="+group+"&$limit="+limit+"&$offset="+offset;
 		
 		var filters = "$select="+select+"&$where="+where;
-		console.log("normal filter");
+		console.log("normal filter " + iden);
 		console.log(filters);
 		// //filters = encodeURI(filters);
 		// console.log("modified filter");
@@ -47,15 +47,20 @@ database.prototype.currentDate = function(filter){
 
 	var oneWeek = 604800000;
 	var oneMonth = 2592000000; // 30 days
+	var twoWeeks = oneWeek * 2;
 
 	var timestampFromWeek = timestamp - oneWeek;
 	var timestampFromMonth = timestamp - oneMonth;
+	var timestampFrom2Weeks = timestamp - twoWeeks;
 
 	switch(filter){
 		case 'now': today = new Date();
 					break;
 		case 'oneWeekAgo': today = new Date();
 							today.setTime(timestampFromWeek);
+							break;
+		case 'twoWeeksAgo': today = new Date();
+							today.setTime(timestampFrom2Weeks);
 							break;
 		case 'oneMonthAgo': today = new Date(timestampFromMonth);
 							break;
@@ -130,7 +135,7 @@ database.prototype.abandonedVehicle = function(weekOrMonth,fromLat, fromLong, to
 I am only taking the one that has not been completed.
 return latitude and longitude
 */
-database.prototype.lightOut = function(weekOrMonth, fromLat,fromLong, toLat, toLong, callback, iden){
+database.prototype.lightOutAll = function(weekOrMonth, fromLat,fromLong, toLat, toLong, callback, iden){
 	var date;
 
 	switch(weekOrMonth){
@@ -141,7 +146,46 @@ database.prototype.lightOut = function(weekOrMonth, fromLat,fromLong, toLat, toL
 		default: console.log("errore db");
 					break;
 	}
-	//AND completion_date <= '"+today+"'
 	this.genericQuery("latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status !='Completed'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
+}
+
+/*
+PROBLEM : LOCATION IS PLAIN TEXT, THE FUNCTION WITHIN_BOX DOES NOT WORK!
+*/
+database.prototype.lightOut1 = function(weekOrMonth, fromLat,fromLong, toLat, toLong, callback, iden){
+	var date;
+
+	switch(weekOrMonth){
+		case 'week': date = this.currentDate('oneWeekAgo');
+						break;
+		case 'month': date = this.currentDate('oneMonthAgo');
+						break;
+		default: console.log("errore db");
+					break;
+	}
+	this.genericQuery("latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status !='Completed'","","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
+}
+
+/*
+for whole chicago, pass latitues and longitudes = 0
+*/
+
+database.prototype.crimes = function(weekOrMonth, fromLat,fromLong, toLat, toLong, callback, iden){
+	var date;
+
+	if(fromLong == 0 && fromLat == 0 && toLong == 0 && toLat == 0 ){
+		//TO DO QUERY WHOLE CHICAGO...
+	}
+
+	switch(weekOrMonth){
+		case 'week2': date = this.currentDate('twoWeeksAgo');
+						break;
+		case 'month': date = this.currentDate('oneMonthAgo');
+						break;
+		default: console.log("errore db");
+					break;
+	}
+
+	this.genericQuery("date,primary_type, description, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
 }
 
