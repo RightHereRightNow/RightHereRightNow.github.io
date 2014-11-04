@@ -109,3 +109,39 @@ database.prototype.potHoles = function(weekOrMonth,fromLat, fromLong, toLat, toL
 
 }
 
+/*
+same as before, returns the day it has been stoled, the make model & the vechicle color, latitude and longitude
+*/
+database.prototype.abandonedVehicle = function(weekOrMonth,fromLat, fromLong, toLat, toLong, callback,iden){
+	var date;
+
+	switch(weekOrMonth){
+		case 'week': date = this.currentDate('oneWeekAgo');
+						break;
+		case 'month': date = this.currentDate('oneMonthAgo');
+						break;
+		default: console.log("errore db");
+					break;
+	}
+	this.genericQuery("creation_date,vehicle_make_model,vehicle_color, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/3c9v-pnva.json", callback,iden );
+}
+
+/*
+I am only taking the one that has not been completed.
+return latitude and longitude
+*/
+database.prototype.lightOut = function(weekOrMonth, fromLat,fromLong, toLat, toLong, callback, iden){
+	var date;
+
+	switch(weekOrMonth){
+		case 'week': date = this.currentDate('oneWeekAgo');
+						break;
+		case 'month': date = this.currentDate('oneMonthAgo');
+						break;
+		default: console.log("errore db");
+					break;
+	}
+	//AND completion_date <= '"+today+"'
+	this.genericQuery("latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status !='Completed'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
+}
+
