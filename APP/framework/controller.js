@@ -4,7 +4,7 @@ function controller() {
 
 	thisController = this;
 
-	thisController.refreshrate = 10000; // Rate at which new data is queried
+	thisController.refreshrate = 5000; // Rate at which new data is queried
 
 	// Possible modes of our application
 	thisController.modes = {

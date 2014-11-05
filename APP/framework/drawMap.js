@@ -49,14 +49,16 @@ function drawMap() {
 		popup
 			.setLatLng(e.latlng)
 			.setContent("You have clicked the map at " + e.latlng.toString())
-			.openOn(map);
+			.openOn(divmap);
 	}
 
 
-	var map = L.map('map', {
+
+	map = L.map('divmap', {
 		center: LatLon.Focus,  // Pretty sure these two calls are
 		zoom: 16,        // the same as .setView(latlon 13)
-		layers: [streetLayer, placesOfInterest]
+		layers: [streetLayer, placesOfInterest],
+		zoomControl:false
 	});
 
 
