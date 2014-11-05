@@ -40,7 +40,7 @@ svg {
 	height:				100%;
 }
 
-#menu {
+#ui {
 	position:			absolute;
 	top:				0%;
 	height:				100%;
@@ -57,3 +57,33 @@ svg {
 	background-color:	black;
 }
 	
+#menu {
+	position:			absolute;
+	top:				0%;
+	left:				0%;
+	width:				100%;
+	height: 70%;
+	background-color: orange;
+}
+
+#mapcontrol {
+	position:			absolute;
+	bottom:				0%;
+	height:				25%;
+	left:				0%;
+	width:				100%;
+	background-color: green;
+}
+
+
+// BUTTONS
+// #3db7e4;
+
+.level1button {
+	fill:				green;
+}
+
+.level1button:hover {
+	fill:				red;
+}
+
