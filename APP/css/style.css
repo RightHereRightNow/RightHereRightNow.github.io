@@ -76,14 +76,3 @@ svg {
 }
 
 
-// BUTTONS
-// #3db7e4;
-
-.level1button {
-	fill:				green;
-}
-
-.level1button:hover {
-	fill:				red;
-}
-

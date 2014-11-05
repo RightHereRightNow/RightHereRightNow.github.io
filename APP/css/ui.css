@@ -1,0 +1,11 @@
+// BUTTONS
+
+.level1button {
+	fill:				green;
+}
+
+.level1button:hover {
+	fill:				#3db7e4;
+}
+
+

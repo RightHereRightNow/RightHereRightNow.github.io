@@ -6,6 +6,7 @@ function drawUI() {
 	// MENU
 	
 	var svgmenu = d3.select("#ui").append("svg:svg")
+		.attr("fill","magenta")
 		.attr("id","menu")
 		.attr("viewBox", "0 0 " + 1000 + " " + 1000)
 		.attr("preserveAspectRatio", "xMinYMin meet")
@@ -14,22 +15,16 @@ function drawUI() {
 		// .attr("transform","translate(" + 50 + "," + 50 + ")")
 
 
-	/*
-	svgmap.append("svg:svg")
-		.attr("fill","yellow")
-		*/
 
 	svgmenu.append("rect")
+		.attr("fill","#444")
 		.attr("class","level1button")
 		.attr("x",50).attr("y",50)
 		.attr("width",900).attr("height",200)
-		.on("click", function() { console.log('Clicked'); });
+		.on("click", function() { 
+			context.setMode(context.modes.SELECTION)
+		});
 
-/*		.attr("x",10)
-		.attr("y",20)
-		.attr("width",100)
-		.attr("height",200)
-		*/
 
 
 
