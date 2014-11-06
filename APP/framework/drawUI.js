@@ -2,9 +2,6 @@ var viewBoxWidth = 1000;
 var viewBoxMenuHeight = 1000;
 var viewBoxMapControlHeight = 240;
 
-var button1height = 120;
-var button1width = 900;
-
 var zoomButtonSize = 200;
 var zoomButtonMargin = 20;
 
@@ -14,13 +11,18 @@ var font1size = 60;
 var linewidth = 10;
 var linepadding = 40;
 
+var button1height = 120;
+var button1width = 900;
 var button1dx = 50;
 var button1dy = 20;
 
+var button2height = button1height;
+var button2width = button1width - button1dx;
+var button2dx = 2*button1dx;
+var button2dy = button1dy;
 
 
 function createLevel1Button(svg,yOffset,str,iconname,fOnClick) {
-	
 
 	var g = svg.append("svg:g")
 		.attr("fill","#444")
@@ -51,7 +53,39 @@ function createLevel1Button(svg,yOffset,str,iconname,fOnClick) {
 		.attr("width", .8*button1height)
 		.attr("height", .8*button1height)
 
+}
 
+
+function createLevel2Button(svg,yOffset,str,iconname,fOnClick) {
+
+	var g = svg.append("svg:g")
+		.attr("fill","#333")
+		.attr("class","level2button")
+		.attr("transform","translate(0," + yOffset + ")")
+		.on("click", function() { 
+			fOnClick();	
+		});
+
+	g.append("rect")
+		.attr("x",button2dx).attr("y",button2dy)
+		.attr("width",button2width).attr("height",button2height);
+
+	g.append("svg:text")
+		.attr("fill","#ccc")
+		// .attr("class","buttontext")
+		.attr("transform","translate(" + (button2dx+textpadding) + "," + (font1size+button2dy+(button2height-font1size)/2) + ")")
+		.text(str)
+		.attr("text-anchor","bottom")
+		.attr("font-size", font1size)
+		.attr("font-variant", "small-caps")
+		.attr("cursor","default");
+
+	g.append("svg:image")
+		.attr("xlink:href", "img/" + iconname + ".svg")
+		.attr("x",button2dx+.1*button2height)
+		.attr("y",button2dy+.1*button2height)
+		.attr("width", .8*button2height)
+		.attr("height", .8*button2height)
 
 }
 
@@ -80,11 +114,13 @@ function drawUI() {
 	function setPlacesOfInterestLayer() { context.setMode(context.modes.PLACESOFINTEREST); }
 
 	createLevel1Button(svgmenu,0,"Project Homepage","house28",function() {})
-	createLevel1Button(svgmenu,(button1height+3*button1dy),"Selection","distance1",setSelection)
-	createLevel1Button(svgmenu,(2*button1height+4*button1dy),"Traffic Layer","front1",setTrafficLayer)
-	createLevel1Button(svgmenu,(3*button1height+5*button1dy),"Crime Layer","crime1",setCrimeLayer)
-	createLevel1Button(svgmenu,(4*button1height+6*button1dy),"Places of Interest","information38",setPlacesOfInterestLayer)
-	
+	createLevel1Button(svgmenu,(button1height+3*button1dy),"Selection Mode","distance1",setSelection)
+	createLevel1Button(svgmenu,(2*button1height+4*button1dy),"Layers","stack9",setTrafficLayer)
+
+	createLevel2Button(svgmenu,(3*button1height+6*button1dy),"Traffic Layer","front1",setTrafficLayer)
+	createLevel2Button(svgmenu,(4*button1height+7*button1dy),"Crime Layer","crime1",setCrimeLayer)
+	createLevel2Button(svgmenu,(5*button1height+8*button1dy),"Places of Interest","information38",setPlacesOfInterestLayer)
+
 
 
 

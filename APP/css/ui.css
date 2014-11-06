@@ -11,11 +11,11 @@
 }
 
 .level2button {
-
 }
 
 .level2button:hover {
-
+	stroke:				#3db7e4;
+	stroke-width:		5px;
 }
 
 
