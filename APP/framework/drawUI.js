@@ -93,7 +93,7 @@ function drawUI() {
 
 	// ZoomIn Button
 	var gZoomIn = svgmapcontrol.append("svg:g")
-		.attr("transform","translate(" + (viewBoxWidth-zoomButtonSize-zoomButtonMargin) + "," + (zoomButtonMargin) + ")")
+		.attr("transform","translate(" + (.75*viewBoxWidth+zoomButtonMargin) + "," + (zoomButtonMargin) + ")")
 		.style("fill","transparent")
 		// .attr("class","level1button")
 		.on("click", function() { 
@@ -128,7 +128,7 @@ function drawUI() {
 
 	// ZoomOut Button
 	var gZoomOut = svgmapcontrol.append("svg:g")
-		.attr("transform","translate(" + (viewBoxWidth-2*zoomButtonSize-2*zoomButtonMargin) + "," + (zoomButtonMargin) + ")")
+		.attr("transform","translate(" + (.75*viewBoxWidth-zoomButtonSize-zoomButtonMargin) + "," + (zoomButtonMargin) + ")")
 		.attr("fill","transparent")
 		// .attr("class","level1button")
 		.on("click", function() { 
@@ -189,25 +189,25 @@ function drawUI() {
 	  .append('pattern')
 		.attr('id', 'imgsatellite')
 		.attr('patternUnits', 'userSpaceOnUse')
-		.attr('width', 2.1*zoomButtonSize)
-		.attr('height', 2.1*zoomButtonSize)
+		.attr('width', viewBoxWidth/2)
+		.attr('height', viewBoxWidth/2)
 		.append("svg:image")
 			.attr("xlink:href", "img/chicagosatellite.png")
-			.attr("width", 2.1*zoomButtonSize)
-			.attr("height", 2.1*zoomButtonSize)
-			.attr("transform","translate(0," + (-.5*zoomButtonSize) + ")")
+			.attr("width", viewBoxWidth/2)
+			.attr("height", viewBoxWidth/2)
+			.attr("transform","translate(0," + (-.25*viewBoxWidth) + ")")
 	
 	gSatelliteView.append('defs')
 	  .append('pattern')
 		.attr('id', 'imgmap')
 		.attr('patternUnits', 'userSpaceOnUse')
-		.attr('width', 2.1*zoomButtonSize)
-		.attr('height', 2.1*zoomButtonSize)
+		.attr('width', viewBoxWidth/2)
+		.attr('height', viewBoxWidth/2)
 		.append("svg:image")
 			.attr("xlink:href", "img/chicagomap.png")
-			.attr("width", 2.1*zoomButtonSize)
-			.attr("height", 2.1*zoomButtonSize)
-			.attr("transform","translate(0," + (-.5*zoomButtonSize) + ")")
+			.attr("width", viewBoxWidth/2)
+			.attr("height", viewBoxWidth/2)
+			.attr("transform","translate(0," + (-.25*viewBoxWidth) + ")")
 
 
 	function appendSatelliteRect() {
@@ -216,7 +216,7 @@ function drawUI() {
 		
 		gSatelliteView.append("rect")
 			.attr("x",0).attr("y",0)
-			.attr("width",2*zoomButtonSize).attr("height",zoomButtonSize)
+			.attr("width", viewBoxWidth/2 - 2*zoomButtonMargin).attr("height",zoomButtonSize)
 			.attr("fill", function() {
 				if(toggler) {
 					return 'url(#imgsatellite)';

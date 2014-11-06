@@ -24,7 +24,7 @@ html, body {
 	margin-right:		auto;
 	position:			relative;
 	height:				100%;
-	background-color:	#888;
+	background-color:	#222;
 }
 
 div {
@@ -51,6 +51,7 @@ svg {
 #divmenu {
 	position:			absolute;
 	top:				0vw;
+	bottom:				4vw;
 	left:				0%;
 	width:				100%;
 	background-color:	#222;
