@@ -2,28 +2,28 @@ var viewBoxWidth = 1000;
 var viewBoxMenuHeight = 1000;
 var viewBoxMapControlHeight = 240;
 
-var button1height = 200;
+var button1height = 120;
 var button1width = 900;
 
 var zoomButtonSize = 200;
 var zoomButtonMargin = 20;
 
-var textpadding = 50;
-var font1size = 100;
+var textpadding = 180;
+var font1size = 60;
 
 var linewidth = 10;
 var linepadding = 40;
 
 var button1dx = 50;
-var button1dy = 50;
+var button1dy = 20;
 
 
 
-function createLevel1Button(svg,yOffset,str,fOnClick) {
+function createLevel1Button(svg,yOffset,str,iconname,fOnClick) {
 	
 
 	var g = svg.append("svg:g")
-		.attr("fill","green")
+		.attr("fill","#444")
 		.attr("class","level1button")
 		.attr("transform","translate(0," + yOffset + ")")
 		.on("click", function() { 
@@ -32,16 +32,26 @@ function createLevel1Button(svg,yOffset,str,fOnClick) {
 
 	g.append("rect")
 		.attr("x",button1dx).attr("y",button1dy)
-		.attr("width",button1width).attr("height",button1height)
+		.attr("width",button1width).attr("height",button1height);
 
 	g.append("svg:text")
-		.attr("fill","blue")
+		.attr("fill","#ccc")
 		// .attr("class","buttontext")
 		.attr("transform","translate(" + (button1dx+textpadding) + "," + (font1size+button1dy+(button1height-font1size)/2) + ")")
 		.text(str)
 		.attr("text-anchor","bottom")
 		.attr("font-size", font1size)
-		.attr("cursor","default")
+		.attr("font-variant", "small-caps")
+		.attr("cursor","default");
+
+	g.append("svg:image")
+		.attr("xlink:href", "img/" + iconname + ".svg")
+		.attr("x",button1dx+.1*button1height)
+		.attr("y",button1dy+.1*button1height)
+		.attr("width", .8*button1height)
+		.attr("height", .8*button1height)
+
+
 
 }
 
@@ -69,10 +79,11 @@ function drawUI() {
 	function setCrimeLayer() { context.setMode(context.modes.CRIMELAYER); }
 	function setPlacesOfInterestLayer() { context.setMode(context.modes.PLACESOFINTEREST); }
 
-	createLevel1Button(svgmenu,0,"Selection",setSelection)
-	createLevel1Button(svgmenu,(button1height),"Traffic Layer",setTrafficLayer)
-	createLevel1Button(svgmenu,(2*button1height),"Crime Layer",setCrimeLayer)
-	createLevel1Button(svgmenu,(3*button1height),"Places of Interest",setPlacesOfInterestLayer)
+	createLevel1Button(svgmenu,0,"Project Homepage","house28",function() {})
+	createLevel1Button(svgmenu,(button1height+3*button1dy),"Selection","distance1",setSelection)
+	createLevel1Button(svgmenu,(2*button1height+4*button1dy),"Traffic Layer","front1",setTrafficLayer)
+	createLevel1Button(svgmenu,(3*button1height+5*button1dy),"Crime Layer","crime1",setCrimeLayer)
+	createLevel1Button(svgmenu,(4*button1height+6*button1dy),"Places of Interest","information38",setPlacesOfInterestLayer)
 	
 
 
@@ -179,7 +190,7 @@ function drawUI() {
 			console.log("Clicked!");
 		})
 		.on("mouseover", function() {
-			d3.select(this).style("stroke","magenta")
+			d3.select(this).style("stroke","#3db7e4")
 		})
 		.on("mouseout", function() {
 			d3.select(this).style("stroke","none")
