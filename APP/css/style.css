@@ -11,7 +11,7 @@ footer,header,menu,nav {
 	-webkit-box-sizing:	border-box;		/* Safari/Chrome, other WebKit */
 	-moz-box-sizing:	border-box;		/* Firefox, other Gecko */
 	box-sizing:			border-box;		/* Opera/IE 8+ */
-	border:				solid blue 1px;
+	// border:				solid blue 1px;
     font-size:			4vmin;
     font:				inherit;
     margin:				0;
@@ -44,23 +44,13 @@ svg {
 	position:			absolute;
 	top:				0%;
 	height:				100%;
-	left:				0%;
-	width:				15%;
+	left:				0vw;
+	width:				15vw;
 }
 
-#divmap {
-	position:			absolute;
-	top:				0%;
-	height:				100%;
-	left:				15%;
-	right:				0%;
-	background-color:	black;
-}
-	
 #divmenu {
 	position:			absolute;
-	top:				0%;
-	height:				70%;
+	top:				0vw;
 	left:				0%;
 	width:				100%;
 	background-color:	#222;
@@ -69,10 +59,19 @@ svg {
 #divmapcontrol {
 	position:			absolute;
 	bottom:				0%;
-	height:				20%;
+	height:				4vw;
 	left:				0%;
 	width:				100%;
-	background-color:	green;
+	background-color:	#222;
 }
 
+#divmap {
+	position:			absolute;
+	top:				0%;
+	height:				100%;
+	left:				15vw;
+	right:				0vw;
+	background-color:	black;
+}
+	
 
