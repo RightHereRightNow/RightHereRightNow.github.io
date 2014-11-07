@@ -5,15 +5,17 @@
 }
 
 .level1button:hover {
-	fill:				#3db7e4;
+	stroke:				#3db7e4;
+	stroke-width:		5px;
+	// fill:				#3db7e4;
 }
 
 .level2button {
-
 }
 
 .level2button:hover {
-
+	stroke:				#3db7e4;
+	stroke-width:		5px;
 }
 
 
