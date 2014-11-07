@@ -1,8 +1,11 @@
-function controller() {
+function Controller() {
 
 	console.log("CONTROLLER initialized");
 
-	thisController = this;
+	this.map = null;
+	this.layers = [];
+	this.dataManager = null;
+	this.modes = null;
 
 	thisController.refreshrate = 5000; // Rate at which new data is queried
 
@@ -18,13 +21,23 @@ function controller() {
 	// thisController.map = new map();
 	// thisController.layer = new layer();
 	
-	thisController.update();
+	
+}
+
+Controller.prototype.addMap = function(){
 
 }
 
+Controller.prototype.addLayer = function(){
+
+}
+
+Controller.prototype.attachLayerToMap = function(){
+	
+}
 
 // This function automatically calls itself in regular intervals
-controller.prototype.update = function() {
+Controller.prototype.update = function() {
 
 	thisController.getData();
 
