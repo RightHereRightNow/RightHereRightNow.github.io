@@ -1,4 +1,4 @@
-function drawMap() {
+drawMap =  function() {
 	/**
 	 * Created by krbalmryde on 11/2/14.
 	 */
@@ -54,7 +54,7 @@ function drawMap() {
 
 
 
-	map = L.map('divmap', {
+	this.map = L.map('divmap', {
 		center: LatLon.Focus,  // Pretty sure these two calls are
 		zoom: 16,        // the same as .setView(latlon 13)
 		layers: [streetLayer, placesOfInterest],
@@ -62,8 +62,8 @@ function drawMap() {
 	});
 
 
-	map.on('click', onMapClick);
+	this.map.on('click', onMapClick);
 
-	L.control.layers(baseMaps, overlayMaps).addTo(map);
+	L.control.layers(baseMaps, overlayMaps).addTo(this.map);
 
 }

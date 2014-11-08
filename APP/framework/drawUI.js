@@ -144,7 +144,7 @@ function drawUI() {
 		.style("fill","transparent")
 		// .attr("class","level1button")
 		.on("click", function() { 
-			map.zoomIn(1);
+			context.map.zoomIn(1);
 		})
 		.on("mouseover", function() {
 			d3.select(this).style("fill","#3db7e4")
@@ -179,7 +179,7 @@ function drawUI() {
 		.attr("fill","transparent")
 		// .attr("class","level1button")
 		.on("click", function() { 
-			map.zoomOut(1);
+			context.map.zoomOut(1);
 		})
 		.on("mouseover", function() {
 			d3.select(this).style("fill","#3db7e4");
@@ -210,10 +210,10 @@ function drawUI() {
 		.style("stroke-width","10")
 		// .attr("class","level1button")
 		.on("click", function() { 
-			// map.zoomOut(1);
+			// context.map.zoomOut(1);
 			// TODO: change layer
 			// should be possible using addLayer().
-			if(toggler /*map.satelliteLayer()*/) {
+			if(toggler /*context.map.satelliteLayer()*/) {
 				toggler = false;
 				console.log("TODO: remove satellite Layer");
 				appendSatelliteRect();
