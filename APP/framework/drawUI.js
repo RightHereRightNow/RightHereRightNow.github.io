@@ -62,6 +62,7 @@ function createLevel2Button(svg,yOffset,str,iconname,fOnClick) {
 		.attr("fill","#333")
 		.attr("class","level2button")
 		.attr("transform","translate(0," + yOffset + ")")
+		.attr('opacity',0)
 		.on("click", function() { 
 			fOnClick();	
 		});
@@ -90,6 +91,21 @@ function createLevel2Button(svg,yOffset,str,iconname,fOnClick) {
 }
 
 
+function fadeOutLevel2Buttons() {
+	d3.select("#ui").selectAll(".level2button")
+		.transition()
+		.duration(1000)
+		.attr('opacity', 0)
+}
+
+function fadeInLevel2Buttons() {
+	d3.select("#ui").selectAll(".level2button")
+		.transition()
+		.duration(1000)
+		.attr('opacity', 1)
+}
+
+
 
 function drawUI() {
 
@@ -108,21 +124,33 @@ function drawUI() {
 
 	// Selection Button
 
-	function setSelection() { context.setMode(context.modes.SELECTION); }
-	function setTrafficLayer() { context.setMode(context.modes.TRAFFICLAYER); }
-	function setCrimeLayer() { context.setMode(context.modes.CRIMELAYER); }
-	function setPlacesOfInterestLayer() { context.setMode(context.modes.PLACESOFINTEREST); }
 
-	createLevel1Button(svgmenu,0,"Project Homepage","house28",function() {})
-	createLevel1Button(svgmenu,(button1height+3*button1dy),"Selection Mode","distance1",setSelection)
-	createLevel1Button(svgmenu,(2*button1height+4*button1dy),"Layers","stack9",setTrafficLayer)
+	var layersActive = false;
 
-	createLevel2Button(svgmenu,(3*button1height+6*button1dy),"Traffic Layer","front1",setTrafficLayer)
-	createLevel2Button(svgmenu,(4*button1height+7*button1dy),"Crime Layer","crime1",setCrimeLayer)
-	createLevel2Button(svgmenu,(5*button1height+8*button1dy),"Places of Interest","information38",setPlacesOfInterestLayer)
+	function clickHomepage() { console.log("TODO: link to homepage");
+		window.location.href = "../"; }
+	function clickSelection() { context.setMode(context.modes.SELECTION); }
+	function clickLayer() {
+		if(layersActive) {
+			fadeOutLevel2Buttons();
+			layersActive = false;
+		} else {
+			fadeInLevel2Buttons();
+			layersActive = true;
+		}
+	}
 
+	function clickTrafficLayer() { context.setMode(context.modes.TRAFFICLAYER); }
+	function clickCrimeLayer() { context.setMode(context.modes.CRIMELAYER); }
+	function clickPlacesOfInterestLayer() { context.setMode(context.modes.PLACESOFINTEREST); }
 
+	createLevel1Button(svgmenu,0,"Project Homepage","house28",clickHomepage)
+	createLevel1Button(svgmenu,(button1height+3*button1dy),"Selection Mode","distance1",clickSelection)
+	createLevel1Button(svgmenu,(2*button1height+4*button1dy),"Layers","stack9",clickLayer)
 
+	createLevel2Button(svgmenu,(3*button1height+6*button1dy),"Traffic Layer","front1",clickTrafficLayer)
+	createLevel2Button(svgmenu,(4*button1height+7*button1dy),"Crime Layer","crime1",clickCrimeLayer)
+	createLevel2Button(svgmenu,(5*button1height+8*button1dy),"Places of Interest","information38",clickPlacesOfInterestLayer)
 
 
 
