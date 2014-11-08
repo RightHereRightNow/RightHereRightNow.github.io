@@ -120,7 +120,7 @@ Database.prototype.potHoles = function(weekOrMonth,fromLat, fromLong, toLat, toL
 		default: console.log("errore db");
 					break;
 	}
-	this.genericQuery("status, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/7as2-ds3y.json", callback,iden );
+	this.genericQuery("creation_date, status, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/7as2-ds3y.json", callback,iden );
 
 };
 
@@ -608,15 +608,60 @@ function getVehicles (route,fromLat, fromLong, toLat, toLong, callback, iden){
 }
 
 /*
-Returns all data regarding divvy bikes
+Returns all data regarding filtered divvy bikes
  */
-Database.prototype.divvyBikes = function(callback,iden){
+Database.prototype.divvyBikes = function(fromLat, fromLong, toLat, toLong, callback,iden){
+	var filtered_divvy = [];
+	var fromLo,toLo,fromLa,toLa;
+	if(fromLat < toLat){
+		fromLa = fromLat;
+		toLa = toLat;
+	}else{
+		fromLa = toLat;
+		toLa = fromLat;
+	}
+
+	if(fromLong < toLong){
+		fromLo = fromLong;
+		toLo = toLong;
+	}else{
+		fromLo = toLong;
+		toLo = fromLong;
+	}
+
+
+
 	var site = "http://www.divvybikes.com/stations/json/";
 	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="' + site + '"') + '&format=xml&callback=?';
 	$.getJSON(yql, function(data){
 		var x2js = new X2JS();
 		var json = x2js.xml_str2json(data.results);
-		callback(json.json,iden);
+		/*FILTERING*/
+		var divvy = json.json.stationBeanList;
+		for(var i = 0; i< divvy.length; i++){
+
+			if(divvy[i].latitude >= fromLa && divvy[i].latitude <= toLa && divvy[i].longitude >= fromLo && divvy[i].longitude <= toLo){
+				var divvy_element = {
+					availableBikes : divvy[i].availableBikes,
+					availableDocks : divvy[i].availableDocks,
+					id : divvy[i].id,
+					lastCommunicationTime : divvy[i].lastCommunicationTime,
+					latitude : divvy[i].latitude,
+					longitude : divvy[i].longitude,
+					location : divvy[i].location,
+					stAddress1: divvy[i].stAddress1,
+					stationName : divvy[i].stationName,
+					statusKey : divvy[i].statusKey,
+					statusValue : divvy[i].statusValue,
+					testStation : divvy[i].testStation,
+					totalDocks : divvy[i].totalDocks
+				}
+				filtered_divvy.push(divvy_element);
+			}
+		}
+		/**/
+		//callback(json.json,iden);
+		callback(filtered_divvy,iden);
 	});
 };
 
