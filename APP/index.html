@@ -8,12 +8,18 @@
 	<!-- StyleSheets -->
     <link rel="stylesheet" type="text/css" href="css/style.css" id="style"/>
     <link rel="stylesheet" type="text/css" href="css/ui.css" id="style"/>
+    <link rel="stylesheet" href="css/font-awesome-4.2.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+
 
     <!-- Leaflet and D3-->
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
+
+    <!-- Awesome-Markers for cool markers -->
+    <script src="js/leaflet.awesome-markers.js"></script>
+    <script src="js/IconsForMarkers.js"></script>  <!-- Some predefined Icons for later use -->
 
     <!-- MapQuest for routing -->
     <script src="http://www.mapquestapi.com/sdk/leaflet/v1.s/mq-map.js?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da"></script>
@@ -24,8 +30,7 @@
     <script src="framework/controller.js"></script>
     <script src="framework/drawUI.js"></script>
     <script src="framework/drawMap.js"></script>
-    <script src="framework/markers.js"></script>
-
+    <script src="framework/markerFactory.js"></script>
     <!-- Database -->
     <script src="data/database.js"></script>
 
@@ -38,7 +43,7 @@
 		<div id="divmenu"></div>
 		<div id="divmapcontrol"></div>
 	</div>
-	
+
 	<div id="divmap"></div>
 
 </body>
