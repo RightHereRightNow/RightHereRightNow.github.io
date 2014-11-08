@@ -18,15 +18,6 @@ function init() {
 	// Initialize controller in selection mode
 	context.setMode(context.modes.SELECTION);
 
-
-
-	// Dummy Function to demonstrate Marker functionality
-	markerChicago = new abstractMarker();
-	markerChicago.lat = 41.865;
-	markerChicago.lon = -87.61;
-	markerChicago.draw(context);
-
-
 	drawUI();
 
 }

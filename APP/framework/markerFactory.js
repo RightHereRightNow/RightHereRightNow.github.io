@@ -1,6 +1,8 @@
 /**
  * Created by krbalmryde on 11/8/14.
  */
+
+
 function AbstractMarker() {
 
     this.marker = L.marker();   // The actual marker object itself
@@ -76,3 +78,4 @@ function DivvyMarker(data) {
 }
 
 DivvyMarker.prototype = Object.create(AbstractMarker.prototype);
+
