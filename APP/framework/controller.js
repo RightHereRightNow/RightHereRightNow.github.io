@@ -168,18 +168,18 @@ Controller.prototype.drawMap =  function() {
 
 	L.control.layers(baseMaps, overlayMaps).addTo(this.map);
 
-}
+};
 
 
 Controller.prototype.addRouteLayer = function(){
 
-}
+};
 
 
 
 Controller.prototype.attachLayerToMap = function(){
 	
-}
+};
 
 // This function automatically calls itself in regular intervals
 Controller.prototype.update = function() {
@@ -209,9 +209,9 @@ Controller.prototype.getData = function() {
 Controller.prototype.setMode = function(newmode) {
 	console.log("\tSet mode: " + newmode);
 	//thisController.activeMode = newmode;
-}
+};
 
 // Returns current mode
 Controller.prototype.getMode = function() {
 	//return thisController.activeMode;
-}
+};

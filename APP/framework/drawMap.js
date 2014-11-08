@@ -64,6 +64,7 @@ drawMap =  function() {
 
 	this.map.on('click', onMapClick);
 
-	L.control.layers(baseMaps, overlayMaps).addTo(this.map);
+	L.control.layers(baseMaps, overlayMaps).addTo(this.map);  // This is the feature which controls the map layers,
+															  // remove this and we shouldnt have to see that icon anymore
 
 }
