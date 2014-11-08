@@ -6,6 +6,7 @@ function Controller() {
 	this.mapId = null;
 	this.layers = [];
 	this.dataManager = new Database();
+	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
 
 	//thisController.refreshrate = 5000; // Rate at which new data is queried
@@ -28,8 +29,6 @@ function Controller() {
 	this.mapCenter = new L.LatLng(41.8369, -87.6847);
 	this.pathLine = null;
 
-	
-	
 }
 
 Controller.prototype.getRoute = function(locations){

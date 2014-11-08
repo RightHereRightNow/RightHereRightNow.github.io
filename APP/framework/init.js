@@ -18,6 +18,6 @@ function init() {
 	// Initialize controller in selection mode
 	context.setMode(context.modes.SELECTION);
 
-	drawUI();
+	context.ui.draw();
 
 }
