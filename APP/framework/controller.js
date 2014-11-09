@@ -124,8 +124,8 @@ Controller.prototype.init = function(){
 
 		// Our focus points
 	var markerData = {
-		"Divvy": {latitude: 41.869912359714654, longitude: -87.64772415161133},
-		"Simple": {latitude: 41.86624, longitude: -87.61702, description: "Electronic Visualization Lab"},
+		"Divvy": {latitude: 41.86624, longitude: -87.61702},
+		"Simple": {latitude: 41.869912359714654, longitude: -87.64772415161133, description: "Electronic Visualization Lab"},
 		"Car": { service_request_number: 12345, creation_date: "11/09/2014", vehicle_make_model: "Ferrari", vehicle_color: "Red", latitude: 41.86761, longitude: -87.61365},
 		"Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
 	};
