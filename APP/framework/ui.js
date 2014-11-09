@@ -293,9 +293,9 @@ ui.prototype.draw = function() {
 			.attr("width", this.viewBoxWidth/2 - 2*this.zoomButtonMargin).attr("height",this.zoomButtonSize)
 			.attr("fill", function() {
 				if(context.base === 0) {
-					return 'url(#imgsatellite)';
-				} else {
 					return 'url(#imgmap)';
+				} else {
+					return 'url(#imgsatellite)';
 				}
 			});
 	
