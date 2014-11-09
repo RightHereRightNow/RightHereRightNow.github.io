@@ -9,8 +9,6 @@ function Controller() {
 	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
 
-	//thisController.refreshrate = 5000; // Rate at which new data is queried
-
 	this.routePoints = null;
 	// Possible modes of our application
 	this.modes = {
@@ -29,7 +27,35 @@ function Controller() {
 	this.mapCenter = new L.LatLng(41.8369, -87.6847);
 	this.pathLine = null;
 
+	var refreshrate = 5000; // Rate at which new data is queried
+	this.getData();
+	setInterval(this.getData, refreshrate);
+
 }
+
+// Queries Data from Database and writes to Marker Objects
+// Function calls itself in regular intervals of length "refreshrate"
+
+Controller.prototype.getData = function() {
+
+	console.log("\tCONTROLLER - getData");
+	
+	// TODO: Query data from database
+	// TODO: check which data has changed from previous update
+	// TODO: write data to marker objects
+	// TODO: update layer
+	//
+	//
+	
+	// this.dataManager.potHoles();
+
+	//
+	//
+	//
+	
+
+}
+
 
 Controller.prototype.getRoute = function(locations){
 	var locJsonStr = JSON.stringify(locations);
@@ -67,6 +93,8 @@ Controller.prototype.httpGet = function(theUrl)
     var response = JSON.parse(xmlHttp.responseText);
     return response;
 }
+
+
 
 			
 Controller.prototype.drawPath = function(points){
@@ -178,29 +206,6 @@ Controller.prototype.addRouteLayer = function(){
 
 Controller.prototype.attachLayerToMap = function(){
 	
-};
-
-// This function automatically calls itself in regular intervals
-Controller.prototype.update = function() {
-
-	/*thisController.getData();
-
-	// Automatically calls itself in regular intervals
-	setTimeout(thisController.update, thisController.refreshrate); */
-
-};
-
-
-
-// Queries Data from Database and writes to Marker Objects
-Controller.prototype.getData = function() {
-
-	console.log("\tCONTROLLER - getData");
-	
-	// TODO: Query data from database
-	// TODO: write data to marker objects
-	// TODO: update layer
-
 };
 
 

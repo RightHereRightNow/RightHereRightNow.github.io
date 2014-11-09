@@ -102,7 +102,8 @@ ui.prototype.fadeOutLevel2Buttons = function() {
 	d3.select(this.menutag).selectAll(".level2button")
 		.transition()
 		.duration(1000)
-		.attr('opacity', 0);
+		.attr('opacity', 0)
+		// .attr("transform","translate(" + 100 + "," + 200 + ")");
 }
 
 ui.prototype.fadeInLevel2Buttons = function() {
