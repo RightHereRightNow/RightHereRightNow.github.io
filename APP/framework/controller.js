@@ -35,22 +35,24 @@ function Controller() {
 Controller.prototype.getRoute = function(locations){
 	var locJsonStr = JSON.stringify(locations);
 	var url = "http://www.mapquestapi.com/directions/v2/route?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&options={outShapeFormat:cmp}&generalize=250&json=" + locJsonStr + "&narrativeType=none";
-	return this.httpGet(url);
+	this.httpGet(url, this.getRouteShape);
 }
 
-Controller.prototype.getRouteShape = function(sessionId){
-	var url = "http://www.mapquestapi.com/directions/v2/routeShape?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&options={outShapeFormat:cmp}&fullShape=true&sessionId=" + sessionId ; //"&narrativeType=none";
-	return this.httpGet(url);
-}
-
-Controller.prototype.getRouteShapePoints = function(locations){
-	var routeObject = this.getRoute(locations);
+Controller.prototype.getRouteShape = function(routeObject){
+	console.log(routeObject);
+	if (!routeObject) return;
 	if (routeObject.info.statuscode===0){
-		var shapeResponse = this.getRouteShape(routeObject.route.sessionId);
-		if (shapeResponse === null) return null;
-		return  shapeResponse.route.shape.shapePoints;
+		var url = "http://www.mapquestapi.com/directions/v2/routeShape?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&options={outShapeFormat:cmp}&fullShape=true&sessionId=" + routeObject.route.sessionId ; //"&narrativeType=none";
+		this.httpGet(url,this.getRouteShapePoints);
 	}
-	return null;
+	
+}
+
+Controller.prototype.getRouteShapePoints = function(shapeResponse){
+	if (shapeResponse===null) return;
+	if (shapeResponse.info.statuscode === 0){
+		this.drawPath(shapeResponse.route.shape.shapePoints);	
+	}
 }
 			
 Controller.prototype.startNewPath = function(){
@@ -58,23 +60,25 @@ Controller.prototype.startNewPath = function(){
 	this.pathLine = null;
 }
 
-Controller.prototype.httpGet = function(theUrl)
+Controller.prototype.httpGet = function (sURL, fCallback)
 {
-    var xmlHttp = null;
-
-    xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", theUrl, false );
-    xmlHttp.send( null );
-    var response = JSON.parse(xmlHttp.responseText);
-    return response;
+	fCallback = fCallback.bind(this);
+	$.ajax({
+		url: sURL,
+		dataType: "json",
+		success: function(data) {
+			fCallback(data);
+		}
+	});
 }
 
 			
 Controller.prototype.drawPath = function(points){
 	if (!points) return;
-    if (this.pathLine !== null) this.startNewPath();
-
-    this.pathLine = L.polyline([],{color: "red", opacity:"0.8"}).addTo(this.map);
+    if (this.pathLine === null){
+    	this.pathLine = L.polyline([],{color: "red", opacity:"0.8"});
+    	this.map.addLayer(this.pathLine);
+    }
     console.log(points);
     for(var i=0;i<points.length/2;i++){
     	this.pathLine.addLatLng(new L.LatLng(points[2*i],points[2*i+1]));
@@ -85,26 +89,25 @@ Controller.prototype.drawPath = function(points){
 			
 
 
-/*Controller.prototype.init = function(){
-	/*map = new L.Map('map');
+Controller.prototype.init = function(){
+	this.map = new L.Map('divmap');
 
 	// create the tile layer with correct attribution
 	var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 	var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
 	var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 16, attribution: osmAttrib});		
 
-	map.setView(chicagoCenter,11);
-	map.addLayer(osm);
+	this.map.setView(this.mapCenter,11);
+	this.map.addLayer(osm);
 	
-	this.drawMap();
-	this.map.on('click',onMapClick);
-}*/
+}
 
 Controller.prototype.drawMap =  function() {
 	/**
 	 * Created by krbalmryde on 11/2/14.
 	 */
 	// Necessary stuff...
+
 	var MapID = {
 		"street": "krbalmryde.jk1dm68f",
 		"arial": "krbalmryde.jko2k1c4"
@@ -166,10 +169,13 @@ Controller.prototype.drawMap =  function() {
 
 	//this.map.on('click', onMapClick);
 
-	L.control.layers(baseMaps, overlayMaps).addTo(this.map);
+	//L.control.layers(baseMaps, overlayMaps).addTo(this.map);
 
 }
 
+Controller.prototype.getPerimeterAroundPath = function(radius){
+
+}
 
 Controller.prototype.addRouteLayer = function(){
 
