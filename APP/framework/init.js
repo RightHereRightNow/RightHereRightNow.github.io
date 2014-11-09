@@ -20,9 +20,6 @@ function init() {
 	// Initialize controller in selection mode
 	context.setMode(context.modes.SELECTION);
 
-	// TODO: create buttons
-	drawUI();
-
-	//drawMap();
+	context.ui.draw();
 
 }
