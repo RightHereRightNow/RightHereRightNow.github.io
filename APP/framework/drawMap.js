@@ -5,7 +5,7 @@ drawMap =  function() {
 	// Necessary stuff...
 	var MapID = {
 		"street": "krbalmryde.jk1dm68f",
-		"arial": "krbalmryde.jko2k1c4"
+		"aerial": "krbalmryde.jko2k1c4"
 	};
 
 	var mapboxURL = 'http://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png'
@@ -21,9 +21,9 @@ drawMap =  function() {
 		"Focus": [41.864755, -87.631474]  // This is between EVL and Soldiers Field
 	};
 
-	// Create our street and arial view base layers
+	// Create our street and aerial view base layers
 	var streetLayer = L.tileLayer(mapboxURL, {id: MapID.street, attribution: mapboxAttribution});
-	var arialLayer = L.tileLayer(mapboxURL, {id: MapID.arial, attribution: mapboxAttribution});
+	var aerialLayer = L.tileLayer(mapboxURL, {id: MapID.aerial, attribution: mapboxAttribution});
 
 	// an empty popup object
 	var popup = L.popup();
@@ -37,7 +37,7 @@ drawMap =  function() {
 
 
 	var baseMaps = {
-		"Arial": arialLayer,
+		"Aerial": aerialLayer,
 		"Street": streetLayer
 	};
 

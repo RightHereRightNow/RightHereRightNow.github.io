@@ -8,7 +8,7 @@ function MapManager() {
 
     var MapID = {
         "street": "krbalmryde.jk1dm68f",
-        "arial": "krbalmryde.jko2k1c4"
+        "aerial": "krbalmryde.jko2k1c4"
     };
 
     var mapboxURL = 'http://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png'
@@ -17,10 +17,10 @@ function MapManager() {
     // var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     // var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
 
-    // Create our street and arial view base layers
+    // Create our street and aerial view base layers
     // Keeping these as public parameters so we can turn them on and off at will;
     this.streetBaseLayer = L.tileLayer(mapboxURL, {id: MapID.street, attribution: mapboxAttribution});
-    this.arialBaseLayer = L.tileLayer(mapboxURL, {id: MapID.arial, attribution: mapboxAttribution});
+    this.aerialBaseLayer = L.tileLayer(mapboxURL, {id: MapID.aerial, attribution: mapboxAttribution});
 
 
     /*
@@ -58,7 +58,7 @@ MapManager.prototype.init = function(mapCenter, zoom){
     this.map.setView(mapCenter, zoom);
 
     this.map.addLayer(this.streetBaseLayer);
-    this.map.addLayer(this.arialBaseLayer);
+    this.map.addLayer(this.aerialBaseLayer);
     this.viewStreet();
 };
 
@@ -129,13 +129,13 @@ MapManager.prototype.fitBounds = function(bounds){
     this.map.fitBounds(bounds);
 };
 
-MapManager.prototype.viewArial = function(){
+MapManager.prototype.viewAerial = function(){
     this.map.removeLayer(this.streetBaseLayer);
-    this.map.addLayer(this.arialBaseLayer);
+    this.map.addLayer(this.aerialBaseLayer);
 };
 
 MapManager.prototype.viewStreet = function(){
-    this.map.removeLayer(this.arialBaseLayer);
+    this.map.removeLayer(this.aerialBaseLayer);
     this.map.addLayer(this.streetBaseLayer);
 };
 
@@ -147,3 +147,10 @@ MapManager.prototype.bringToFront = function(layerGroupName){
     this.map.layerGroups[layerGroupName].bringToFront();
 };
 
+MapManager.prototype.zoomIn = function(factor){
+    this.map.zoomIn(factor);
+};
+
+MapManager.prototype.zoomOut = function(factor){
+    this.map.zoomOut(factor);
+};

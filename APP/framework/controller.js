@@ -3,7 +3,7 @@ function Controller() {
 	console.log("CONTROLLER initialized");
 
 	// this.mapId = null;
-	this.base = 0;
+	this.base = 1;
 
 	this.map = new MapManager();
 	this.dataManager = new Database();
@@ -48,6 +48,7 @@ Controller.prototype.getData = function() {
 	// TODO: update layer
 	//
 	//
+
 
 	// this.dataManager.potHoles();
 
