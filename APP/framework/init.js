@@ -11,6 +11,15 @@ function init() {
 			this.locations.splice(0,1);
 		var locObj = { locations:this.locations };
 		this.getRoute(locObj);
+
+		if (context.base === 0) {
+			context.map.viewStreet();
+			context.base = 1;
+		} else{
+			context.map.viewArial();
+			context.base = 0;
+		};
+
 	};
 
 	var onMapClickCallBack = onMapClick.bind(context);
