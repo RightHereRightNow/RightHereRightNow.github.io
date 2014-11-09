@@ -1,6 +1,7 @@
 /* remember to include:
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+ 	<script type="text/javascript" src="xml2json.js"></script>
 	*/
 
 /*
@@ -120,7 +121,8 @@ Database.prototype.potHoles = function(weekOrMonth,fromLat, fromLong, toLat, toL
 		default: console.log("errore db");
 					break;
 	}
-	this.genericQuery("creation_date, status, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/7as2-ds3y.json", callback,iden );
+
+	this.genericQuery("service_request_number,creation_date, status, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/7as2-ds3y.json", callback,iden );
 
 };
 
@@ -138,7 +140,7 @@ Database.prototype.abandonedVehicle = function(weekOrMonth,fromLat, fromLong, to
 		default: console.log("errore db");
 					break;
 	}
-	this.genericQuery("creation_date,vehicle_make_model,vehicle_color, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/3c9v-pnva.json", callback,iden );
+	this.genericQuery("service_request_number,creation_date,vehicle_make_model,vehicle_color, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/3c9v-pnva.json", callback,iden );
 };
 
 /*
@@ -156,7 +158,7 @@ Database.prototype.lightOutAllNotCompleted = function(weekOrMonth, fromLat,fromL
 		default: console.log("errore db");
 					break;
 	}
-	this.genericQuery("latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status ='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
+	this.genericQuery("service_request_number,latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status ='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
 };
 
 /*
@@ -173,7 +175,7 @@ Database.prototype.lightOutAllCompleted = function(weekOrMonth, fromLat,fromLong
 		default: console.log("errore db");
 			break;
 	}
-	this.genericQuery("latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status !='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
+	this.genericQuery("service_request_number,latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status !='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
 };
 
 /*
@@ -213,7 +215,7 @@ Database.prototype.lightOut1NotCompleted = function(weekOrMonth, fromLat,fromLon
 		toLo = fromLong;
 	}
 
-	this.genericQuery("latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status = 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
+	this.genericQuery("service_request_number,latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status = 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
 };
 
 /*
@@ -253,7 +255,7 @@ Database.prototype.lightOut1Completed = function(weekOrMonth, fromLat,fromLong, 
 		toLo = fromLong;
 	}
 
-	this.genericQuery("latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status != 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
+	this.genericQuery("service_request_number,latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status != 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
 };
 
 
@@ -281,9 +283,9 @@ Database.prototype.crimes = function(weekOrMonth, fromLat,fromLong, toLat, toLon
 					break;
 	}
 	if(fromLong == 0 && fromLat == 0 && toLong == 0 && toLat == 0 ){
-		this.genericQuery("date,primary_type, description, latitude, longitude", "date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
+		this.genericQuery("case_number,date,primary_type, description, latitude, longitude", "date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
 	}else{
-		this.genericQuery("date,primary_type, description, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
+		this.genericQuery("case_number,date,primary_type, description, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
 	}
 
 
@@ -608,60 +610,15 @@ function getVehicles (route,fromLat, fromLong, toLat, toLong, callback, iden){
 }
 
 /*
-Returns all data regarding filtered divvy bikes
+Returns all data regarding divvy bikes
  */
-Database.prototype.divvyBikes = function(fromLat, fromLong, toLat, toLong, callback,iden){
-	var filtered_divvy = [];
-	var fromLo,toLo,fromLa,toLa;
-	if(fromLat < toLat){
-		fromLa = fromLat;
-		toLa = toLat;
-	}else{
-		fromLa = toLat;
-		toLa = fromLat;
-	}
-
-	if(fromLong < toLong){
-		fromLo = fromLong;
-		toLo = toLong;
-	}else{
-		fromLo = toLong;
-		toLo = fromLong;
-	}
-
-
-
+Database.prototype.divvyBikes = function(callback,iden){
 	var site = "http://www.divvybikes.com/stations/json/";
 	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="' + site + '"') + '&format=xml&callback=?';
 	$.getJSON(yql, function(data){
 		var x2js = new X2JS();
 		var json = x2js.xml_str2json(data.results);
-		/*FILTERING*/
-		var divvy = json.json.stationBeanList;
-		for(var i = 0; i< divvy.length; i++){
-
-			if(divvy[i].latitude >= fromLa && divvy[i].latitude <= toLa && divvy[i].longitude >= fromLo && divvy[i].longitude <= toLo){
-				var divvy_element = {
-					availableBikes : divvy[i].availableBikes,
-					availableDocks : divvy[i].availableDocks,
-					id : divvy[i].id,
-					lastCommunicationTime : divvy[i].lastCommunicationTime,
-					latitude : divvy[i].latitude,
-					longitude : divvy[i].longitude,
-					location : divvy[i].location,
-					stAddress1: divvy[i].stAddress1,
-					stationName : divvy[i].stationName,
-					statusKey : divvy[i].statusKey,
-					statusValue : divvy[i].statusValue,
-					testStation : divvy[i].testStation,
-					totalDocks : divvy[i].totalDocks
-				}
-				filtered_divvy.push(divvy_element);
-			}
-		}
-		/**/
-		//callback(json.json,iden);
-		callback(filtered_divvy,iden);
+		callback(json.json,iden);
 	});
 };
 
@@ -725,5 +682,6 @@ function xmlToJson(xml) {
 	}
 	return obj;
 };
-
-
+ /*
+ YELP : http://api.yelp.com/v2/search?term=food&location=San+Francisco&oauth_consumer_key=vQDt1XRP96cp8PKpSoTjng&oauth_token=zUTnrBovkPeORRyRWdDcrjY7jS_L2h29&oauth_signature_method=HMAC-SHA1&oauth_signature=A5L5DIi0t6B_AJEi16jcxUUCheE&oauth_timestamp=1415487690&oauth_nonce=1234
+  */

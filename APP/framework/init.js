@@ -7,26 +7,19 @@ function init() {
 	var onMapClick = function (e) {
   		var point = e.latlng;
 		this.locations.push({latLng: {lat:point.lat,lng:point.lng}});
+		if (this.locations.length > 2)
+			this.locations.splice(0,1);
 		var locObj = { locations:this.locations };
-		this.drawPath(this.getRouteShapePoints(locObj));
+		this.getRoute(locObj);
 	};
 
 	var onMapClickCallBack = onMapClick.bind(context);
-	context.drawMap();
+	context.init();
 	context.map.on("click", onMapClickCallBack);
 
 	// Initialize controller in selection mode
 	context.setMode(context.modes.SELECTION);
 
-
-
-	// Dummy Function to demonstrate Marker functionality
-	markerChicago = new abstractMarker();
-	markerChicago.lat = 41.865;
-	markerChicago.lon = -87.61;
-	markerChicago.draw(context);
-
-
-	drawUI();
+	context.ui.draw();
 
 }
