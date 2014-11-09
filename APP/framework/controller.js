@@ -6,7 +6,7 @@ function Controller() {
 	// this.mapId = null;
 	this.base = 0;
 
-	this.map = new MapManager();
+	// this.map = new MapManager();
 	this.dataManager = new Database();
 	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
@@ -120,7 +120,7 @@ Controller.prototype.drawPath = function(points){
 
 
 Controller.prototype.init = function(){
-	this.map.init(this.mapCenter, 16);
+	// this.map.init(this.mapCenter, 16);
 
 		// Our focus points
 	var markerData = {
@@ -131,11 +131,11 @@ Controller.prototype.init = function(){
 	};
 
 	var markerArray = [
-		new DivvyMarker(markerData.Divvy),
+	/*	new DivvyMarker(markerData.Divvy),
 		new SimpleMarker(markerData.Simple),
 		new AbandonedVehicleMarker(markerData.Car),
 		new CrimeMarker(markerData.Crime)
-	];
+	*/];
 
 	markerArray.forEach(function(marker){
 		console.log(marker)

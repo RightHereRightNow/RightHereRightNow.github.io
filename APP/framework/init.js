@@ -24,7 +24,7 @@ function init() {
 
 	var onMapClickCallBack = onMapClick.bind(context);
 	context.init();
-	context.map.on("click", onMapClickCallBack);
+	// context.map.on("click", onMapClickCallBack);
 
 	// Initialize controller in selection mode
 	context.setMode(context.modes.SELECTION);
