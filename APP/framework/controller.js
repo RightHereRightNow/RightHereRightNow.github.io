@@ -10,6 +10,8 @@ function Controller() {
 	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
 
+
+
 	this.routePoints = null;
 	// Possible modes of our application
 	this.modes = {
@@ -33,7 +35,11 @@ function Controller() {
 	this.getData();
 	setInterval(this.getData, refreshrate);
 
+
 }
+
+
+potHolesArray = [];
 
 // Queries Data from Database and writes to Marker Objects
 // Function calls itself in regular intervals of length "refreshrate"
@@ -50,7 +56,7 @@ Controller.prototype.getData = function() {
 	//
 
 
-	// this.dataManager.potHoles();
+	 this.dataManager.potHoles('month',41.8747107, -87.6968277, 41.8710629, -87.6758785, callback,'potHoles');
 
 	//
 	//
@@ -59,6 +65,21 @@ Controller.prototype.getData = function() {
 
 }
 
+function callback(data,iden){
+		switch(iden){
+			case 'potHoles': this.generatePotholes(data,this);
+							break;
+			default: console.log("error callback");
+						break;
+		}
+}
+
+function generatePotholes(data,ref){
+	for(var i = 0; i< data.length; i++){
+		ref.potHolesArray.push(new PotholeMarker(data[i]));
+		ref.potHolesArray[i].addTo(this.map);
+	}
+}
 
 Controller.prototype.getRoute = function(locations){
 	var locJsonStr = JSON.stringify(locations);
