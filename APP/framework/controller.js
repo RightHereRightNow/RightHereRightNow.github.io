@@ -10,7 +10,7 @@ function Controller() {
 	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
 
-	this.perimeterRadiusInMiles = 1.0;
+	this.perimeterRadiusInMiles = 0.25;
 
 	this.routePoints = null;
 	// Possible modes of our application
@@ -72,8 +72,10 @@ Controller.prototype.getData = function() {
 		this.dataManager.abandonedVehicle("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "abandonedVehicles" );
 		this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
 		this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );
-		
-		this.dataManager.divvyBikes(this.filterByPerimeter.bind(this), "divyStations" );
+		var getStationBeanArray = function (data, iden){
+			this.filterByPerimeter(data.stationBeanList,iden);
+		}
+		this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
 	}
 	
 
