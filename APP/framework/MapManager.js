@@ -3,7 +3,7 @@
  */
 function MapManager() {
 
-    this.map = new L.Map("divmap");
+    this.map = new L.Map("divmap", {zoomControl: false} );
 
 
     var MapID = {
