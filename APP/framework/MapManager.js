@@ -37,13 +37,20 @@ function MapManager() {
 
             *: Adding or removing a layer form the group ALSO adds/removes layer from the map as well
      */
-    this.layerGroups = {
-        potholes: {},
-        crime: {},
-        divvy: {},
-        abandonedVehicles: {},
-        placesOfInterest: {}
-    };
+
+    //this.potHolesArray = [];
+    //this.crime = [];
+    //this.divvy = [];
+    //this.abandonedVehicles = [];
+    //this.placesOfInterest = [];
+
+    //this.layerGroups = {
+    //    potholes: {},
+    //    crime: {},
+    //    divvy: {},
+    //    abandonedVehicles: {},
+    //    placesOfInterest: {}
+    //};
 }
 
 /*

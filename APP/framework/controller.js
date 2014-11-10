@@ -9,7 +9,7 @@ function Controller() {
 	this.dataManager = new Database();
 	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
-
+	this.potHolesArray = [];
 
 
 	this.routePoints = null;
@@ -40,7 +40,7 @@ function Controller() {
 }
 
 
-potHolesArray = [];
+
 
 // Queries Data from Database and writes to Marker Objects
 // Function calls itself in regular intervals of length "refreshrate"
@@ -64,7 +64,7 @@ Controller.prototype.getData = function() {
 	}
 	
 
-	 this.dataManager.potHoles('month',41.8747107, -87.6968277, 41.8710629, -87.6758785, callback,'potHoles');
+	 //this.dataManager.potHoles('month',41.8747107, -87.6968277, 41.8710629, -87.6758785, callback,'potHoles');
 
 
 	//
@@ -78,6 +78,14 @@ Controller.prototype.getData = function() {
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	var filteredData = [];
 	console.log(data);
+	for(var i = 0; i< data.length; i++){
+		this.potHolesArray.push(new PotholeMarker(data[i]));
+		this.potHolesArray[i].init();
+		console.log("HERE!!!",this.potHolesArray[i]);
+
+		this.potHolesArray[i].addTo(this.map);
+	}
+	console.log(this.potHolesArray);
 }
 
 function callback(data,iden){
@@ -90,12 +98,6 @@ function callback(data,iden){
 }
 
 function generatePotholes(data,ref){
-	for(var i = 0; i< data.length; i++){
-		ref.potHolesArray.push(new PotholeMarker(data[i]));
-		console.log("HERE!!!");
-		console.log(ref.potHolesArray[i]);
-		ref.potHolesArray[i].addTo(this.map);
-	}
 
 }
 
@@ -233,15 +235,16 @@ Controller.prototype.init = function(){
 		"Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
 	};
 
-	var markerArray = [
+	window.markerArray = [
 		new DivvyMarker(markerData.Divvy),
-		new SimpleMarker(markerData.Simple),
-		new AbandonedVehicleMarker(markerData.Car),
-		new CrimeMarker(markerData.Crime)
+		new DivvyMarker(markerData.Simple),
+		new DivvyMarker(markerData.Car),
+		new DivvyMarker(markerData.Crime)
 	];
 
 	markerArray.forEach(function(marker){
-		console.log(marker)
+		marker.init();
+		console.log(marker.marker)
 		marker.addTo(this.map);
 	});
 

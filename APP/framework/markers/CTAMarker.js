@@ -23,5 +23,5 @@ var CTAMarker = function(data) {
     this.setIconNew(iconNew);
     this.setIconOld(iconOld);
     this.setLatLng(latlng);
-    this.viewNewIcon();
+    //this.viewNewIcon();
 };
