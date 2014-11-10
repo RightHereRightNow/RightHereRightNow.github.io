@@ -2,9 +2,10 @@ function Controller() {
 
 	console.log("CONTROLLER initialized");
 
-	this.map = null;
-	this.mapId = null;
-	this.layers = [];
+	// this.mapId = null;
+	this.base = 1;
+
+	this.map = new MapManager();
 	this.dataManager = new Database();
 	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
@@ -17,7 +18,12 @@ function Controller() {
 		CRIMELAYER:		2
 	};
 
-	
+	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
+	//thisController.activeMode = 0;
+
+	// thisController.map = new map();
+	// thisController.layer = new layer();
+
 	this.locations = [];
 	var response;
 	this.mapCenter = new L.LatLng(41.8369, -87.6847);
@@ -35,20 +41,21 @@ function Controller() {
 Controller.prototype.getData = function() {
 
 	console.log("\tCONTROLLER - getData");
-	
+
 	// TODO: Query data from database
 	// TODO: check which data has changed from previous update
 	// TODO: write data to marker objects
 	// TODO: update layer
 	//
 	//
-	
+
+
 	// this.dataManager.potHoles();
 
 	//
 	//
 	//
-	
+
 
 }
 
@@ -66,16 +73,16 @@ Controller.prototype.getRouteShape = function(routeObject){
 		var url = "http://www.mapquestapi.com/directions/v2/routeShape?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&options={outShapeFormat:cmp}&fullShape=true&sessionId=" + routeObject.route.sessionId ; //"&narrativeType=none";
 		this.httpGet(url,this.getRouteShapePoints);
 	}
-	
+
 }
 
 Controller.prototype.getRouteShapePoints = function(shapeResponse){
 	if (shapeResponse===null) return;
 	if (shapeResponse.info.statuscode === 0){
-		this.drawPath(shapeResponse.route.shape.shapePoints);	
+		this.drawPath(shapeResponse.route.shape.shapePoints);
 	}
 }
-			
+
 Controller.prototype.startNewPath = function(){
 	this.map.removeLayer(this.pathLine);
 	this.pathLine = null;
@@ -91,11 +98,11 @@ Controller.prototype.httpGet = function (sURL, fCallback)
 			fCallback(data);
 		}
 	});
-}
+};
 
 
 
-			
+
 Controller.prototype.drawPath = function(points){
 	if (!points) return;
     if (this.pathLine === null){
@@ -166,37 +173,37 @@ Controller.prototype.drawMap =  function() {
 		L.marker(LatLon.Shedd).bindPopup("The Shedd Aquarium"),
 		L.marker(LatLon.Alder).bindPopup("The Alder Planetarium")
 	]);
+    console.log("Get bounds", this.pathLine.getBounds());
+    this.map.fitBounds(this.pathLine.getBounds());
+};
 
 
-	var baseMaps = {
-		"Arial": arialLayer,
-		"Street": streetLayer
+
+
+Controller.prototype.init = function(){
+	this.map.init(this.mapCenter, 16);
+
+		// Our focus points
+	var markerData = {
+		"Divvy": {latitude: 41.86624, longitude: -87.61702},
+		"Simple": {latitude: 41.869912359714654, longitude: -87.64772415161133, description: "Electronic Visualization Lab"},
+		"Car": { service_request_number: 12345, creation_date: "11/09/2014", vehicle_make_model: "Ferrari", vehicle_color: "Red", latitude: 41.86761, longitude: -87.61365},
+		"Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
 	};
 
-	var overlayMaps = {
-		"Places of Interest": placesOfInterest
-	};
+	var markerArray = [
+		new DivvyMarker(markerData.Divvy),
+		new SimpleMarker(markerData.Simple),
+		new AbandonedVehicleMarker(markerData.Car),
+		new CrimeMarker(markerData.Crime)
+	];
 
-	/*function onMapClick(e) {
-		popup
-			.setLatLng(e.latlng)
-			.setContent("You have clicked the map at " + e.latlng.toString())
-			.openOn(divmap);
-	}*/
-
-
-
-	this.map = L.map('divmap', {
-		center: LatLon.Focus,  // Pretty sure these two calls are
-		zoom: 16,        // the same as .setView(latlon 13)
-		layers: [streetLayer, placesOfInterest],
-		zoomControl:false
+	markerArray.forEach(function(marker){
+		console.log(marker)
+		marker.addTo(this.map);
 	});
 
 
-	//this.map.on('click', onMapClick);
-
-	//L.control.layers(baseMaps, overlayMaps).addTo(this.map);
 
 };
 
@@ -234,7 +241,7 @@ Controller.prototype.getPerimeterAroundPath = function(radius){
 	this.map.addLayer(new L.polygon(this.pathPerimeter,{color:"red",stroke:false}));
 	console.log(this.pathPerimeter);
 
-}
+};
 
 Controller.prototype.addRouteLayer = function(){
 
@@ -243,7 +250,7 @@ Controller.prototype.addRouteLayer = function(){
 
 
 Controller.prototype.attachLayerToMap = function(){
-	
+
 };
 
 

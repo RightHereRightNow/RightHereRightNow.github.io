@@ -600,9 +600,6 @@ function getVehicles (route,fromLat, fromLong, toLat, toLong, callback, iden){
 				//console.log(vehicle);
 				vehicles.push(vehicle);
 			}
-
-
-
 		});
 
 	callback(vehicles,iden);

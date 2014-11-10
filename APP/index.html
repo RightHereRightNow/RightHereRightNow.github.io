@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/style.css" id="style"/>
     <link rel="stylesheet" type="text/css" href="css/ui.css" id="style"/>
     <link rel="stylesheet" href="css/font-awesome-4.2.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="css/leaflet.awesome-markers.css">
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
 
 
@@ -27,11 +28,22 @@
     <script src="http://www.mapquestapi.com/sdk/leaflet/v1.s/mq-routing.js?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da"></script>
 
 	<!-- Classes & Scripts -->
-    <script src="framework/init.js"></script>
-    <script src="framework/controller.js"></script>
+	<script src="framework/MapManager.js"></script>
     <script src="framework/ui.js"></script>
-    <script src="framework/drawMap.js"></script>
-    <script src="framework/markerFactory.js"></script>
+    <script src="framework/controller.js"></script>
+    <script src="framework/init.js"></script>
+
+
+    <!-- Markers & Maps -->
+    <script src="framework/markers/AbstractMarker.js"></script>
+    <script src="framework/markers/DivvyMarker.js"></script>
+    <script src="framework/markers/AbandonedVehicleMarker.js"></script>
+    <script src="framework/markers/CrimeMarker.js"></script>
+    <script src="framework/markers/CTAMarker.js"></script>
+    <script src="framework/markers/PotholeMarker.js"></script>
+    <script src="framework/markers/SimpleMarker.js"></script>
+    <script src="framework/markers/markers.js"></script>
+
     <!-- Database -->
     <script src="data/database.js"></script>
 

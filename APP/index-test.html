@@ -20,91 +20,80 @@
     .map { height: 100%; }
 </style>
 <body>
-    <div id="map" class="map"></div>
+    <div id="divmap" class="map"></div>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="js/leaflet.awesome-markers.js"></script>
-    <script src="framework/markerFactory.js"></script>
+    <!-- Markers & Maps -->
+    <script src="framework/MapManager.js"></script>
+    <script src="framework/markers/AbstractMarker.js"></script>
+    <script src="framework/markers/DivvyMarker.js"></script>
+    <script src="framework/markers/AbandonedVehicleMarker.js"></script>
+    <script src="framework/markers/CrimeMarker.js"></script>
+    <script src="framework/markers/CTAMarker.js"></script>
+    <script src="framework/markers/PotholeMarker.js"></script>
+    <script src="framework/markers/SimpleMarker.js"></script>
+    <script src="framework/markers/markers.js"></script>
     <script>
 
         /**
          * Created by krbalmryde on 11/2/14.
          */
 // Necessary stuff...
-        var MapID = {
-            "street": "krbalmryde.jk1dm68f",
-            "arial": "krbalmryde.jko2k1c4"
+        window.map = new MapManager();
+        map.init(L.latLng(41.864755, -87.631474), 16);
+
+        var markerData = {
+            "Divvy": {latitude: 41.869912359714654, longitude: -87.64772415161133},
+            "Simple": {latitude: 41.86624, longitude: -87.61702, description: "Electronic Visualization Lab"},
+            "Car": { service_request_number: 12345, creation_date: "11/09/2014", vehicle_make_model: "Ferrari", vehicle_color: "Red", latitude: 41.86761, longitude: -87.61365},
+            "Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
         };
+//        var divvy = new DivvyMarker(markerData.Divvy);
+        var markerArray = [
+            new DivvyMarker(markerData.Divvy),
+            new SimpleMarker(markerData.Simple),
+            new AbandonedVehicleMarker(markerData.Car),
+            new CrimeMarker(markerData.Crime)
+        ];
 
-        var mapboxURL = 'http://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png'
-        var mapboxAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
-
-//        var divyMarker = new AbstractMarker(){latlng: });
-        var divyMarker = new AbstractMarker();
-        divyMarker.setLatLng(L.latLng(41.869912359714654, -87.64772415161133));
-        divyMarker.setIcon(L.AwesomeMarkers.icon({
-            icon: "bicycle",
-            spin:true,
-            markerColor: "blue",
-            iconColor: "white"
-        }));
-
-
-        // Our focus points
-        var LatLon = {
-//            "EVL": [41.869912359714654, -87.64772415161133],  // The Electronic Visualization Lab
-            "Field": [41.86624, -87.61702],  // The Field Natural History Museum
-            "Shedd": [41.86761, -87.61365],  // The Shedd Aquarium
-            "Alder": [41.86635, -87.60659],  // The Alder Planetarium
-            "Focus": [41.864755, -87.631474]  // This is between EVL and Soldiers Field
-        };
-
-        // Create our street and arial view base layers
-        var streetLayer = L.tileLayer(mapboxURL, {id: MapID.street, attribution: mapboxAttribution});
-        var arialLayer = L.tileLayer(mapboxURL, {id: MapID.arial, attribution: mapboxAttribution});
+//        map.addLayers("placesOfInterest", [
+//            new DivvyMarker(markerData.Divvy),
+//            new SimpleMarker(markerData.Simple),
+//            new AbandonedVehicleMarker(markerData.Car),
+//            new CrimeMarker(markerData.Crime)
+//        ]);
 
         // an empty popup object
         var popup = L.popup();
-
-        var placesOfInterest = L.layerGroup([
-//            L.marker(LatLon.EVL).bindPopup("Electronic Visualization Lab"),
-            L.marker(LatLon.Field).bindPopup("The Field Museum of Natural History"),
-            L.marker(LatLon.Shedd).bindPopup("The Shedd Aquarium"),
-            L.marker(LatLon.Alder).bindPopup("The Alder Planetarium")
-        ]);
-
-
-        var baseMaps = {
-            "Arial": arialLayer,
-            "Street": streetLayer
-        };
-
-        var overlayMaps = {
-            "Places of Interest": placesOfInterest
-        };
-
+        var state = 0;
         function onMapClick(e) {
             popup
-                    .setLatLng(e.latlng)
-                    .setContent("You have clicked the map at " + e.latlng.toString())
-                    .openOn(map);
+                .setLatLng(e.latlng)
+                .setContent("You have clicked the map at " + e.latlng.toString())
+                .openOn(map.map);
+
+//            if (state === 0) {
+//                map.bringToFront("placesOfInterest");
+////                markerArray.forEach(function(marker){
+////                    marker.viewOldIcon();
+////                });
+////                state = 1;
+//            } else {
+//                map.bringToBack("placesOfInterest");
+////                markerArray.forEach(function(marker){
+////                    marker.viewNewIcon();
+////                });
+////                state = 0;
+//            }
         }
 
-
-        var map = L.map('map', {
-            center: LatLon.Focus,  // Pretty sure these two calls are
-            zoom: 16,        // the same as .setView(latlon 13)
-            layers: [streetLayer, placesOfInterest]
-        });
-
-
         map.on('click', onMapClick);
-
-        L.control.layers(baseMaps, overlayMaps).addTo(map);
-
-        divyMarker.addTo(map);
-
+//        map.addLayer(divvy.getMarker());
+        markerArray.forEach(function(marker){
+            marker.addTo(map);
+        });
 
     </script>
 </body>

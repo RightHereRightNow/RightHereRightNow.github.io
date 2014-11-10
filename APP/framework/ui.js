@@ -235,23 +235,19 @@ ui.prototype.draw = function() {
 
 	
 	// Toggle SatelliteView Button
-	var toggler = true;
-	
 	var gSatelliteView = svgmapcontrol.append("svg:g")
 		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (this.zoomButtonMargin) + ")")
 		.style("stroke-width","10")
 		// .attr("class","level1button")
 		.on("click", function() { 
-			// context.map.zoomOut(1);
-			// TODO: change layer
-			// should be possible using addLayer().
-			if(toggler /*context.map.satelliteLayer()*/) {
-				toggler = false;
-				console.log("TODO: remove satellite Layer");
+			console.log(context.base);
+			if(context.base === 0) {
+				context.map.viewStreet();
+				context.base = 1;
 				appendSatelliteRect();
 			} else {
-				toggler = true;
-				console.log("TODO: add satellite Layer");
+				context.map.viewAerial();
+				context.base = 0;
 				appendSatelliteRect();
 			}
 
@@ -296,10 +292,10 @@ ui.prototype.draw = function() {
 			.attr("x",0).attr("y",0)
 			.attr("width", this.viewBoxWidth/2 - 2*this.zoomButtonMargin).attr("height",this.zoomButtonSize)
 			.attr("fill", function() {
-				if(toggler) {
-					return 'url(#imgsatellite)';
-				} else {
+				if(context.base === 0) {
 					return 'url(#imgmap)';
+				} else {
+					return 'url(#imgsatellite)';
 				}
 			});
 	
