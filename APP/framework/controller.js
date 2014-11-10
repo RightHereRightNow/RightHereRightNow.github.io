@@ -17,11 +17,7 @@ function Controller() {
 		CRIMELAYER:		2
 	};
 
-	//thisController.activeMode = 0;
-
-	// thisController.map = new map();
-	// thisController.layer = new layer();
-
+	
 	this.locations = [];
 	var response;
 	this.mapCenter = new L.LatLng(41.8369, -87.6847);
@@ -103,15 +99,19 @@ Controller.prototype.httpGet = function (sURL, fCallback)
 Controller.prototype.drawPath = function(points){
 	if (!points) return;
     if (this.pathLine === null){
-    	this.pathLine = L.polyline([],{color: "red", opacity:"0.8"});
-    	this.map.addLayer(this.pathLine);
+    	this.pathLine = L.polyline([],{className:"route"});
+    	this.map.addLayer(this.pathLine,false);
+    	this.pathLine.bringToFront();
     }
     console.log(points);
     for(var i=0;i<points.length/2;i++){
     	this.pathLine.addLatLng(new L.LatLng(points[2*i],points[2*i+1]));
     }
+    this.pathLine.redraw();
     console.log(this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
+    
+    //this.getPerimeterAroundPath(30);
 }
 			
 
@@ -201,6 +201,38 @@ Controller.prototype.drawMap =  function() {
 };
 
 Controller.prototype.getPerimeterAroundPath = function(radius){
+	var points = this.pathLine.getLatLngs();
+	var pointsXY = [];
+	var firstHalfOfPerimeter = [];
+	var secondHalfOfPerimeter = [];
+	pointsXY.push(this.map.latLngToLayerPoint(points[0]));
+	var slopeFlag ;
+	var i;
+	for (i=1;i<points.length;i++){
+		pointsXY.push(this.map.latLngToLayerPoint(points[i]));
+		if (Math.abs(pointsXY[i].y-pointsXY[i-1].y)<=Math.abs(pointsXY[i].x-pointsXY[i-1].x)){
+			firstHalfOfPerimeter.push(this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x,pointsXY[i-1].y - radius)));
+			secondHalfOfPerimeter.splice(0,0,this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x,pointsXY[i-1].y + radius)));
+			slopeFlag = 1;
+		}
+		else{
+			firstHalfOfPerimeter.push(this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x + radius,pointsXY[i-1].y)));
+			secondHalfOfPerimeter.splice(0,0,this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x - radius,pointsXY[i-1].y)));
+			slopeFlag = 0;
+		}
+	}
+	if (slopeFlag===1){
+		firstHalfOfPerimeter.push(this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x,pointsXY[i-1].y - radius)));
+		secondHalfOfPerimeter.splice(0,0,this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x,pointsXY[i-1].y + radius)));
+	}
+	else{
+		firstHalfOfPerimeter.push(this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x + radius,pointsXY[i-1].y)));
+		secondHalfOfPerimeter.splice(0,0,this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x - radius,pointsXY[i-1].y)));
+	}
+
+	this.pathPerimeter = firstHalfOfPerimeter.concat(secondHalfOfPerimeter);
+	this.map.addLayer(new L.polygon(this.pathPerimeter,{color:"red",stroke:false}));
+	console.log(this.pathPerimeter);
 
 }
 
