@@ -33,7 +33,7 @@ function Controller() {
 
 	var refreshrate = 5000; // Rate at which new data is queried
 	this.getData();
-	setInterval(this.getData, refreshrate);
+	//setInterval(this.getData, refreshrate);
 
 
 }
@@ -77,6 +77,8 @@ function callback(data,iden){
 function generatePotholes(data,ref){
 	for(var i = 0; i< data.length; i++){
 		ref.potHolesArray.push(new PotholeMarker(data[i]));
+		console.log("HERE!!!");
+		console.log(ref.potHolesArray[i]);
 		ref.potHolesArray[i].addTo(this.map);
 	}
 }
