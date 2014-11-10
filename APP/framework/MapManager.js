@@ -4,7 +4,7 @@
 function MapManager() {
 
     this.map = new L.Map("divmap", {zoomControl: false} );
-
+    this.mapCenter = new L.LatLng(41.8369, -87.6847);
 	L.control.scale().addTo(this.map);
 
     var MapID = {

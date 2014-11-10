@@ -10,7 +10,7 @@ function Controller() {
 	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
 
-
+	this.perimeterRadiusInMiles = 1.0;
 
 	this.routePoints = null;
 	// Possible modes of our application
@@ -90,7 +90,31 @@ Controller.prototype.getData = function() {
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	var filteredData = [];
+	var points = this.pathLine.getLatLngs();
+	var radiusInLng = this.perimeterRadiusInMiles/53.00;
+	var radiusInLat = this.perimeterRadiusInMiles/68.90;
+	var radius = Math.sqrt(radiusInLng*radiusInLng + radiusInLat * radiusInLat);
+	function distance (x1,y1,x2,y2) {
+		return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+	}
+
+	for (var d=0;d<data.length;d++){
+		var dist = 100; // Too far away!
+		for(var i=0;i<points.length;i++){
+			var tempDist = distance(points[i].lat,points[i].lng,data[d].latitude,data[d].longitude);
+			if (tempDist <= radius){
+				filteredData.push(data[d]);
+				break;
+			}
+			else if (tempDist < dist)
+				dist = tempDist;
+			else
+				break;
+		}
+	}
+	
 	console.log(identifierStr,data);
+	console.log(filteredData);
 }
 
 function callback(data,iden){
@@ -178,65 +202,12 @@ Controller.prototype.drawPath = function(points){
 			
 
 
-Controller.prototype.init = function(){
-	this.map = new L.Map('divmap');
-
-	// create the tile layer with correct attribution
-	var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-	var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-	var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 16, attribution: osmAttrib});		
-
-	this.map.setView(this.mapCenter,11);
-	this.map.addLayer(osm);
-	
-}
-
-Controller.prototype.drawMap =  function() {
-	/**
-	 * Created by krbalmryde on 11/2/14.
-	 */
-	// Necessary stuff...
-
-	var MapID = {
-		"street": "krbalmryde.jk1dm68f",
-		"arial": "krbalmryde.jko2k1c4"
-	};
-
-	var mapboxURL = 'http://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png'
-	var mapboxAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
-
-
-	// Our focus points
-	var LatLon = {
-		"EVL": [41.869912359714654, -87.64772415161133],  // The Electronic Visualization Lab
-		"Field": [41.86624, -87.61702],  // The Field Natural History Museum
-		"Shedd": [41.86761, -87.61365],  // The Shedd Aquarium
-		"Alder": [41.86635, -87.60659],  // The Alder Planetarium
-		"Focus": [41.864755, -87.631474]  // This is between EVL and Soldiers Field
-	};
-
-	// Create our street and arial view base layers
-	var streetLayer = L.tileLayer(mapboxURL, {id: MapID.street, attribution: mapboxAttribution});
-	var arialLayer = L.tileLayer(mapboxURL, {id: MapID.arial, attribution: mapboxAttribution});
-
-	// an empty popup object
-	var popup = L.popup();
-
-	var placesOfInterest = L.layerGroup([
-		L.marker(LatLon.EVL).bindPopup("Electronic Visualization Lab"),
-		L.marker(LatLon.Field).bindPopup("The Field Museum of Natural History"),
-		L.marker(LatLon.Shedd).bindPopup("The Shedd Aquarium"),
-		L.marker(LatLon.Alder).bindPopup("The Alder Planetarium")
-	]);
-    console.log("Get bounds", this.pathLine.getBounds());
-    this.map.fitBounds(this.pathLine.getBounds());
-};
 
 
 
 
 Controller.prototype.init = function(){
-	this.map.init(this.mapCenter, 16);
+	this.map.init(this.mapCenter, 11);
 
 		// Our focus points
 	var markerData = {
