@@ -1,7 +1,7 @@
 // BUTTONS
 
 .level1button {
-	fill:				black;
+	fill:				red;
 }
 
 .level1button:hover {
@@ -11,6 +11,7 @@
 }
 
 .level2button {
+	fill:				#333;
 }
 
 .level2button:hover {
@@ -23,7 +24,7 @@
 
 // TEXT
 .buttontext {
-	font-family:		Roboto, sans serif;
-	fill: black;
-	color: green;
+//	font-family:		Roboto, sans serif;
+//	fill:				blue;
+//	color:				green;
 }
