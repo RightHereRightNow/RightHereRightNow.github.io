@@ -28,10 +28,11 @@ function Controller() {
 	var response;
 	this.mapCenter = new L.LatLng(41.8369, -87.6847);
 	this.pathLine = null;
+	this.pathLineConstructed = false;
 
 	var refreshrate = 5000; // Rate at which new data is queried
 	this.getData();
-	setInterval(this.getData, refreshrate);
+	setInterval(this.getData.bind(this), refreshrate);
 
 }
 
@@ -47,11 +48,14 @@ Controller.prototype.getData = function() {
 	// TODO: write data to marker objects
 	// TODO: update layer
 	//
+	console.log(this.pathLineConstructed);
 	//
-
-
-	// this.dataManager.potHoles();
-
+	if (this.pathLineConstructed === true){
+		var bounds = this.pathLine.getBounds();
+		console.log("fetching data");
+		this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
+	}
+	
 	//
 	//
 	//
@@ -59,8 +63,13 @@ Controller.prototype.getData = function() {
 
 }
 
+Controller.prototype.filterByPerimeter = function(data,identifierStr){
+	var filteredData = [];
+	console.log(data);
+}
 
 Controller.prototype.getRoute = function(locations){
+	this.pathLineConstructed = false;
 	var locJsonStr = JSON.stringify(locations);
 	var url = "http://www.mapquestapi.com/directions/v2/route?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&options={outShapeFormat:cmp}&generalize=250&json=" + locJsonStr + "&narrativeType=none";
 	this.httpGet(url, this.getRouteShape);
@@ -104,6 +113,7 @@ Controller.prototype.httpGet = function (sURL, fCallback)
 
 
 Controller.prototype.drawPath = function(points){
+
 	if (!points) return;
     if (this.pathLine === null){
     	this.pathLine = L.polyline([],{className:"route"});
@@ -114,6 +124,7 @@ Controller.prototype.drawPath = function(points){
     for(var i=0;i<points.length/2;i++){
     	this.pathLine.addLatLng(new L.LatLng(points[2*i],points[2*i+1]));
     }
+    this.pathLineConstructed = true;
     this.pathLine.redraw();
     console.log(this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
