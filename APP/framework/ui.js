@@ -52,6 +52,7 @@ ui.prototype.createLevel1Button = function(svg,yOffset,str,iconname,fOnClick) {
 		.attr("text-anchor","bottom")
 		.attr("font-size", this.font1size)
 		.attr("font-variant", "small-caps")
+		.attr("font-family", "Roboto")
 		.attr("cursor","default");
 
 	g.append("svg:image")
@@ -67,7 +68,6 @@ ui.prototype.createLevel1Button = function(svg,yOffset,str,iconname,fOnClick) {
 ui.prototype.createLevel2Button = function(svg,yOffset,str,iconname,fOnClick) {
 
 	var g = svg.append("svg:g")
-		.attr("fill","#333")
 		.attr("class","level2button")
 		.attr("transform","translate(0," + yOffset + ")")
 		.attr('opacity',0)
@@ -80,12 +80,13 @@ ui.prototype.createLevel2Button = function(svg,yOffset,str,iconname,fOnClick) {
 		.attr("width",this.button2width).attr("height",this.button2height);
 
 	g.append("svg:text")
-		.attr("fill","#ccc")
-		// .attr("class","buttontext")
+		.attr("class","buttontext")
 		.attr("transform","translate(" + (this.button2dx+this.textpadding) + "," + (this.font1size+this.button2dy+(this.button2height-this.font1size)/2) + ")")
 		.text(str)
+		.attr("fill","#ccc")
 		.attr("text-anchor","bottom")
 		.attr("font-size", this.font1size)
+		.attr("font-family", "Roboto")
 		.attr("font-variant", "small-caps")
 		.attr("cursor","default");
 
@@ -122,6 +123,7 @@ ui.prototype.draw = function() {
 
 	var svgmenu = d3.select(this.menutag).append("svg:svg")
 		.attr("id","menu")
+		.attr("class","uisvgelement")
 		.attr("viewBox", "0 0 " + this.viewBoxWidth + " " + this.viewBoxMenuHeight)
 		.attr("preserveAspectRatio", "xMinYMin meet")
 		.attr("width",this.viewBoxWidth).attr("height",this.viewBoxMenuHeight)
@@ -164,6 +166,7 @@ ui.prototype.draw = function() {
 	
 	var svgmapcontrol = d3.select(this.mapcontroltag).append("svg:svg")
 		.attr("id","mapcontrol")
+		.attr("class","uisvgelement")
 		.attr("viewBox", "0 0 " + this.viewBoxWidth + " " + this.viewBoxMapControlHeight)
 		.attr("preserveAspectRatio", "xMinYMin meet")
 		.attr("width",this.viewBoxWidth).attr("height",this.viewBoxMapControlHeight)
