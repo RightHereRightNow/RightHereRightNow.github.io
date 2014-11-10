@@ -5,6 +5,7 @@ function MapManager() {
 
     this.map = new L.Map("divmap", {zoomControl: false} );
 
+	L.control.scale().addTo(this.map);
 
     var MapID = {
         "street": "krbalmryde.jk1dm68f",

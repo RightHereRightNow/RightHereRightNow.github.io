@@ -11,7 +11,7 @@ extend(DivvyMarker, AbstractMarker);
 extend(AbandonedVehicleMarker, AbstractMarker);
 extend(SimpleMarker, AbstractMarker);
 extend(CrimeMarker, AbstractMarker);
-//extend(PotholeMarker, AbstractMarker);
+extend(PotholeMarker, AbstractMarker);
 //extend(CTAMarker, AbstractMarker);
 
 

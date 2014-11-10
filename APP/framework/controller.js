@@ -10,6 +10,8 @@ function Controller() {
 	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
 
+
+
 	this.routePoints = null;
 	// Possible modes of our application
 	this.modes = {
@@ -32,9 +34,13 @@ function Controller() {
 
 	var refreshrate = 5000; // Rate at which new data is queried
 	this.getData();
+
 	setInterval(this.getData.bind(this), refreshrate);
 
 }
+
+
+potHolesArray = [];
 
 // Queries Data from Database and writes to Marker Objects
 // Function calls itself in regular intervals of length "refreshrate"
@@ -50,12 +56,17 @@ Controller.prototype.getData = function() {
 	//
 	console.log(this.pathLineConstructed);
 	//
+
 	if (this.pathLineConstructed === true){
 		var bounds = this.pathLine.getBounds();
 		console.log("fetching data");
 		this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
 	}
 	
+
+	 this.dataManager.potHoles('month',41.8747107, -87.6968277, 41.8710629, -87.6758785, callback,'potHoles');
+
+
 	//
 	//
 	//
@@ -63,9 +74,29 @@ Controller.prototype.getData = function() {
 
 }
 
+
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	var filteredData = [];
 	console.log(data);
+}
+
+function callback(data,iden){
+		switch(iden){
+			case 'potHoles': this.generatePotholes(data,this);
+							break;
+			default: console.log("error callback");
+						break;
+		}
+}
+
+function generatePotholes(data,ref){
+	for(var i = 0; i< data.length; i++){
+		ref.potHolesArray.push(new PotholeMarker(data[i]));
+		console.log("HERE!!!");
+		console.log(ref.potHolesArray[i]);
+		ref.potHolesArray[i].addTo(this.map);
+	}
+
 }
 
 Controller.prototype.getRoute = function(locations){
