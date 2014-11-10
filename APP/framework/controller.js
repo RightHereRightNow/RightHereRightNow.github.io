@@ -32,11 +32,19 @@ function Controller() {
 	this.pathLine = null;
 	this.pathLineConstructed = false;
 
+	
+	this.getUpdates();
+	
+}
+
+Controller.prototype.getUpdates = function(){
 	var refreshrate = 5000; // Rate at which new data is queried
-	this.getData();
+	this.updateId = setInterval(this.getData.bind(this), refreshrate);
+}
 
-	setInterval(this.getData.bind(this), refreshrate);
+Controller.prototype.stopUpdates = function(){
 
+	clearInterval(this.updateId);
 }
 
 
@@ -61,6 +69,11 @@ Controller.prototype.getData = function() {
 		var bounds = this.pathLine.getBounds();
 		console.log("fetching data");
 		this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
+		this.dataManager.abandonedVehicle("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "abandonedVehicles" );
+		this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
+		this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );
+		
+		this.dataManager.divvyBikes(this.filterByPerimeter.bind(this), "divyStations" );
 	}
 	
 
@@ -86,6 +99,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		this.potHolesArray[i].addTo(this.map);
 	}
 	console.log(this.potHolesArray);
+	console.log(identifierStr,data);
 }
 
 function callback(data,iden){
@@ -235,11 +249,11 @@ Controller.prototype.init = function(){
 		"Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
 	};
 
-	window.markerArray = [
+	var markerArray = [
 		new DivvyMarker(markerData.Divvy),
-		new DivvyMarker(markerData.Simple),
-		new DivvyMarker(markerData.Car),
-		new DivvyMarker(markerData.Crime)
+		new SimpleMarker(markerData.Simple),
+		new AbandonedVehicleMarker(markerData.Car),
+		new CrimeMarker(markerData.Crime)
 	];
 
 	markerArray.forEach(function(marker){
