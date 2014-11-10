@@ -106,16 +106,77 @@ Controller.prototype.httpGet = function (sURL, fCallback)
 Controller.prototype.drawPath = function(points){
 	if (!points) return;
     if (this.pathLine === null){
-    	this.pathLine = L.polyline([],{color: "red", opacity:"0.8"});
-    	this.map.addLayer(this.pathLine);
+    	this.pathLine = L.polyline([],{className:"route"});
+    	this.map.addLayer(this.pathLine,false);
+    	this.pathLine.bringToFront();
     }
     console.log(points);
     for(var i=0;i<points.length/2;i++){
     	this.pathLine.addLatLng(new L.LatLng(points[2*i],points[2*i+1]));
     }
+    this.pathLine.redraw();
+    console.log(this.pathLine.getBounds());
+    this.map.fitBounds(this.pathLine.getBounds());
+    
+    //this.getPerimeterAroundPath(30);
+}
+			
+
+
+Controller.prototype.init = function(){
+	this.map = new L.Map('divmap');
+
+	// create the tile layer with correct attribution
+	var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+	var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+	var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 16, attribution: osmAttrib});		
+
+	this.map.setView(this.mapCenter,11);
+	this.map.addLayer(osm);
+	
+}
+
+Controller.prototype.drawMap =  function() {
+	/**
+	 * Created by krbalmryde on 11/2/14.
+	 */
+	// Necessary stuff...
+
+	var MapID = {
+		"street": "krbalmryde.jk1dm68f",
+		"arial": "krbalmryde.jko2k1c4"
+	};
+
+	var mapboxURL = 'http://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png'
+	var mapboxAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
+
+
+	// Our focus points
+	var LatLon = {
+		"EVL": [41.869912359714654, -87.64772415161133],  // The Electronic Visualization Lab
+		"Field": [41.86624, -87.61702],  // The Field Natural History Museum
+		"Shedd": [41.86761, -87.61365],  // The Shedd Aquarium
+		"Alder": [41.86635, -87.60659],  // The Alder Planetarium
+		"Focus": [41.864755, -87.631474]  // This is between EVL and Soldiers Field
+	};
+
+	// Create our street and arial view base layers
+	var streetLayer = L.tileLayer(mapboxURL, {id: MapID.street, attribution: mapboxAttribution});
+	var arialLayer = L.tileLayer(mapboxURL, {id: MapID.arial, attribution: mapboxAttribution});
+
+	// an empty popup object
+	var popup = L.popup();
+
+	var placesOfInterest = L.layerGroup([
+		L.marker(LatLon.EVL).bindPopup("Electronic Visualization Lab"),
+		L.marker(LatLon.Field).bindPopup("The Field Museum of Natural History"),
+		L.marker(LatLon.Shedd).bindPopup("The Shedd Aquarium"),
+		L.marker(LatLon.Alder).bindPopup("The Alder Planetarium")
+	]);
     console.log("Get bounds", this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
 };
+
 
 
 
@@ -147,6 +208,38 @@ Controller.prototype.init = function(){
 };
 
 Controller.prototype.getPerimeterAroundPath = function(radius){
+	var points = this.pathLine.getLatLngs();
+	var pointsXY = [];
+	var firstHalfOfPerimeter = [];
+	var secondHalfOfPerimeter = [];
+	pointsXY.push(this.map.latLngToLayerPoint(points[0]));
+	var slopeFlag ;
+	var i;
+	for (i=1;i<points.length;i++){
+		pointsXY.push(this.map.latLngToLayerPoint(points[i]));
+		if (Math.abs(pointsXY[i].y-pointsXY[i-1].y)<=Math.abs(pointsXY[i].x-pointsXY[i-1].x)){
+			firstHalfOfPerimeter.push(this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x,pointsXY[i-1].y - radius)));
+			secondHalfOfPerimeter.splice(0,0,this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x,pointsXY[i-1].y + radius)));
+			slopeFlag = 1;
+		}
+		else{
+			firstHalfOfPerimeter.push(this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x + radius,pointsXY[i-1].y)));
+			secondHalfOfPerimeter.splice(0,0,this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x - radius,pointsXY[i-1].y)));
+			slopeFlag = 0;
+		}
+	}
+	if (slopeFlag===1){
+		firstHalfOfPerimeter.push(this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x,pointsXY[i-1].y - radius)));
+		secondHalfOfPerimeter.splice(0,0,this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x,pointsXY[i-1].y + radius)));
+	}
+	else{
+		firstHalfOfPerimeter.push(this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x + radius,pointsXY[i-1].y)));
+		secondHalfOfPerimeter.splice(0,0,this.map.layerPointToLatLng(new L.point(pointsXY[i-1].x - radius,pointsXY[i-1].y)));
+	}
+
+	this.pathPerimeter = firstHalfOfPerimeter.concat(secondHalfOfPerimeter);
+	this.map.addLayer(new L.polygon(this.pathPerimeter,{color:"red",stroke:false}));
+	console.log(this.pathPerimeter);
 
 };
 
