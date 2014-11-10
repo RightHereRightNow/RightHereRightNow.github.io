@@ -28,7 +28,7 @@ function Controller() {
 
 	this.locations = [];
 	var response;
-	this.mapCenter = new L.LatLng(41.8369, -87.6847);
+	this.mapCenter = new L.LatLng(41.864755, -87.631474);
 	this.pathLine = null;
 	this.pathLineConstructed = false;
 
