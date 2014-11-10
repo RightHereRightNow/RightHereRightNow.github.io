@@ -45,10 +45,7 @@ Controller.prototype.getUpdates = function(){
 Controller.prototype.stopUpdates = function(){
 
 	clearInterval(this.updateId);
-}
-
-
-potHolesArray = [];
+};
 
 // Queries Data from Database and writes to Marker Objects
 // Function calls itself in regular intervals of length "refreshrate"
@@ -117,7 +114,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	
 	console.log(identifierStr,data);
 	console.log(filteredData);
-}
+};
 
 function callback(data,iden){
 		switch(iden){
@@ -219,14 +216,17 @@ Controller.prototype.init = function(){
 		"Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
 	};
 
+	window.divy = new DivvyMarker(markerData.Divvy);
+	divy.init(); divy.addTo(this.map);
 	var markerArray = [
-		new DivvyMarker(markerData.Divvy),
+		//new DivvyMarker(markerData.Divvy),
 		new SimpleMarker(markerData.Simple),
 		new AbandonedVehicleMarker(markerData.Car),
 		new CrimeMarker(markerData.Crime)
 	];
 
 	markerArray.forEach(function(marker){
+		marker.init();
 		console.log(marker)
 		marker.addTo(this.map);
 	});
