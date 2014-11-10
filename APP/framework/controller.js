@@ -32,11 +32,19 @@ function Controller() {
 	this.pathLine = null;
 	this.pathLineConstructed = false;
 
+	
+	this.getUpdates();
+	
+}
+
+Controller.prototype.getUpdates = function(){
 	var refreshrate = 5000; // Rate at which new data is queried
-	this.getData();
+	this.updateId = setInterval(this.getData.bind(this), refreshrate);
+}
 
-	setInterval(this.getData.bind(this), refreshrate);
+Controller.prototype.stopUpdates = function(){
 
+	clearInterval(this.updateId);
 }
 
 
@@ -61,10 +69,15 @@ Controller.prototype.getData = function() {
 		var bounds = this.pathLine.getBounds();
 		console.log("fetching data");
 		this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
+		this.dataManager.abandonedVehicle("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "abandonedVehicles" );
+		this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
+		this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );
+		
+		this.dataManager.divvyBikes(this.filterByPerimeter.bind(this), "divyStations" );
 	}
 	
 
-	 this.dataManager.potHoles('month',41.8747107, -87.6968277, 41.8710629, -87.6758785, callback,'potHoles');
+	// this.dataManager.potHoles('month',41.8747107, -87.6968277, 41.8710629, -87.6758785, callback,'potHoles');
 
 
 	//
@@ -77,7 +90,7 @@ Controller.prototype.getData = function() {
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	var filteredData = [];
-	console.log(data);
+	console.log(identifierStr,data);
 }
 
 function callback(data,iden){
