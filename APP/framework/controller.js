@@ -106,6 +106,8 @@ Controller.prototype.getData = function() {
 	if (this.pathLineConstructed === true){
 		var bounds = this.pathLine.getBounds();
 		console.log("fetching data");
+		if (this.mode.CRIMELAYER===true)
+			this.dataManager.crimes("week2",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "crimes" );
 		if (this.mode.POTHOLES===true)
 			this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
 		if (this.mode.ABANDONEDVEHICLES===true)
@@ -181,6 +183,9 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	
 	// TODO: add more cases....
 	switch(identifierStr) {
+		case 'crimes':
+			this.updateCrimes(filteredData);
+			break;
 		case 'potHoles':
 			this.updatePotholes(filteredData);
 			break;
@@ -190,23 +195,36 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		case 'abandonedVehicles':
 			this.updateAbandonedVehicle(filteredData);
 			break;
+		case 'lightOutAll':
+			this.updateLightOutAllNotCompleted(filteredData, 'lightOutAll');
+			break;
+		case 'lightOutOne':
+			this.updateLightOutOneNotCompleted(filteredData, 'lightOutOne');
+			break;
 		default:
 			console.log('Invalid string');
 			break;
 	}
 };
 
+Controller.prototype.updateCrimes = function(data){
+
+	for(var i = 0; i< data.length; i++){
+		var key = data[i].case_number;
+		if(!this.crimeArray[key]) {
+			this.crimeArray[key] = new CrimeMarker(data[i]);
+			this.crimeArray[key].addTo(this.map);
+			this.crimeArray[key].viewNewIcon();
+		} else {
+			this.crimeArray[key].viewOldIcon()
+		}
+	}
+
+};
+
+
 Controller.prototype.updatePotholes = function(data){
 
-	// TODO: check which data has changed from previous update
-	// TODO: write data to marker objects
-	// TODO: update layer
-	//
-	//
-
-
-	// TODO: edit to recognize updated values
-	
 	for(var i = 0; i< data.length; i++){
 		var key = data[i].service_request_number;
 		if(!this.potholesArray[key]) {
@@ -253,6 +271,35 @@ Controller.prototype.updateAbandonedVehicle = function(data){
 };
 
 
+Controller.prototype.updateLightOutAllNotCompleted = function(data, type){
+
+	for(var i = 0; i< data.length; i++){
+		var key = data[i].service_request_number;
+		if(!this.lightsAllArray[key]) {
+			this.lightsAllArray[key] = new LightsOutMarker(data[i], type);
+			this.lightsAllArray[key].addTo(this.map);
+			this.lightsAllArray[key].viewNewIcon();
+		} else {
+			this.lightsAllArray[key].viewOldIcon();
+		}
+	}
+
+};
+
+Controller.prototype.updateLightOutOneNotCompleted = function(data, type){
+
+	for(var i = 0; i< data.length; i++){
+		var key = data[i].service_request_number;
+		if(!this.lights1Array[key]) {
+			this.lights1Array[key] = new LightsOutMarker(data[i], type);
+			this.lights1Array[key].addTo(this.map);
+			this.lights1Array[key].viewNewIcon();
+		} else {
+			this.lights1Array[key].viewOldIcon();
+		}
+	}
+
+};
 
 
 Controller.prototype.getRoute = function(locations){
@@ -398,6 +445,17 @@ Controller.prototype.toggleMode = function(mode) {
 						break;
 		case "CRIMELAYER":
 						this.mode.CRIMELAYER = !this.mode.CRIMELAYER;
+						if(!this.mode.CRIMELAYER ) {
+							console.log("HIDE!");
+							for( var key in this.crimeArray){
+								this.map.removeLayer(this.crimeArray[key]);
+							}
+						} else {
+							console.log("SHOW!");
+							for( var key in this.crimeArray){
+								this.map.addLayer(this.crimeArray[key]);
+							}
+						}
 						break;
 		case "PLACESOFINTEREST":
 						this.mode.PLACESOFINTEREST = !this.mode.PLACESOFINTEREST;
@@ -446,6 +504,24 @@ Controller.prototype.toggleMode = function(mode) {
 						break;
 		case "STREETLIGHTSOUT":
 						this.mode.STREETLIGHTSOUT = !this.mode.STREETLIGHTSOUT;
+						if(!this.mode.STREETLIGHTSOUT) {
+							console.log("HIDE!");
+							for( var key in this.lights1Array){
+								this.map.removeLayer(this.lights1Array[key]);
+							}
+							for( var key in this.lightsAllArray){
+								this.map.removeLayer(this.lightsAllArray[key]);
+							}
+						} else {
+							console.log("SHOW!");
+							for( var key in this.lights1Array){
+								this.map.addLayer(this.lights1Array[key]);
+							}
+							for( var key in this.lightsAllArray){
+								this.map.addLayer(this.lightsAllArray[key]);
+							}
+						}
+
 						break;
 		case "CURRENTWEATHER":
 						this.mode.CURRENTWEATHER = !this.mode.CURRENTWEATHER;

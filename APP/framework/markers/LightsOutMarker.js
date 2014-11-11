@@ -23,7 +23,7 @@ var LightsOutMarker = function(data, type) {
             colorOld = "darkpurple";
             colorNew = "purple";
             break;
-        case "lightOut1":
+        case "lightOutOne":
             iconStr = "lightbulb-o";
             colorOld = "beige";
             colorNew = "orange";
@@ -47,5 +47,6 @@ var LightsOutMarker = function(data, type) {
     this.setIconNew(iconNew);
     this.setIconOld(iconOld);
     this.setLatLng(latlng);
+    this.setPopupString(popupstr);
     this.init();
 };

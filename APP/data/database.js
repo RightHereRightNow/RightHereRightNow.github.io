@@ -269,6 +269,12 @@ returns
 	- longitude
 */
 
+/*
+Query without parameter in filtering.
+from -> website where to get the data
+dataType -> type of data that is returning : json, jsonP etc etc
+*/
+
 Database.prototype.crimes = function(weekOrMonth, fromLat,fromLong, toLat, toLong, callback, iden){
 	var date;
 
@@ -276,11 +282,11 @@ Database.prototype.crimes = function(weekOrMonth, fromLat,fromLong, toLat, toLon
 
 	switch(weekOrMonth){
 		case 'week2': date = this.currentDate('twoWeeksAgo');
-						break;
+			break;
 		case 'month': date = this.currentDate('oneMonthAgo');
-						break;
+			break;
 		default: console.log("errore db");
-					break;
+			break;
 	}
 	if(fromLong == 0 && fromLat == 0 && toLong == 0 && toLat == 0 ){
 		this.genericQuery("case_number,date,primary_type, description, latitude, longitude", "date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
@@ -290,12 +296,6 @@ Database.prototype.crimes = function(weekOrMonth, fromLat,fromLong, toLat, toLon
 
 
 };
-
-/*
-Query without parameter in filtering.
-from -> website where to get the data
-dataType -> type of data that is returning : json, jsonP etc etc
-*/
 Database.prototype.queryNoParam = function(from,dataType, callback, iden){
 		$.ajax({
 			url: from,
