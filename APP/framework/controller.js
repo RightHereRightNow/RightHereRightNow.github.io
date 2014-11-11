@@ -40,6 +40,9 @@ function Controller() {
 	this.pathLineConstructed = false;
 
 	this.firstload = true;
+	
+	this.updateCounter = 0; // counts number of updates - only for debugging
+	
 	this.cycles = -1;  // Keeps track of the number of update cycles, mostly important for the initial cycle
 
 	this.potholesArray = {};
@@ -52,14 +55,6 @@ function Controller() {
 	
 	this.getUpdates();
 
-
-	// TODO: remove and implement as layer object
-	// temporary container for crime data
-	this.oldPotholes = [];
-	this.newPotholes = ['t','e','s','t'];
-
-	this.updateCounter = 0; // counts number of updates - only for debugging
-	
 }
 
 Controller.prototype.getUpdates = function(){
@@ -76,6 +71,8 @@ Controller.prototype.stopUpdates = function(){
 // Function calls itself in regular intervals of length "refreshrate"
 
 Controller.prototype.getData = function() {
+
+	console.log("GET DATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
 	if (this.updateCounter < 4) {
 
@@ -112,7 +109,7 @@ Controller.prototype.getData = function() {
 	}	
 
 	// TODO: remove - only for testing
-	this.dataManager.potHoles("week",41.9,-87.7,41.8,-87.6,this.filterByPerimeter.bind(this), "potHoles" );
+	this.dataManager.potHoles("week",41.87,-87.68,41.83,-87.64,this.filterByPerimeter.bind(this), "potHoles" );
 
 
 	//
@@ -184,13 +181,35 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			break;
 	}
 
-	console.log(identifierStr,data);
-	console.log(filteredData);
+	// console.log(identifierStr,data);
+	// console.log(filteredData);
 };
 
 Controller.prototype.updatePotholes = function(data){
 
-	console.log('updatePothoooooooooooooooooooooooooooooooooooooooooooles');
+	this.oldPotholes = this.newPotholes;
+	this.newPotholes = [];
+
+	var stringComparison = function(a,b) {
+		if ( a < b ) {
+			return -1;
+		}
+		if ( a > b ) {
+			return 1;
+		}
+		return 0;
+	}
+
+	// Sort array 'data' according to key
+	console.log('Unordered');
+	for(var i=0; i<data.length; ++i) {
+		console.log(data[i].service_request_number);
+	}
+	/*this.newPotholes*/ data.sort(function(a,b) { stringComparison(a.service_request_number, b.service_request_number); });
+	console.log('Ordered');
+	for(var i=0; i<data.length; ++i) {
+		console.log(data[i].service_request_number);
+	}
 
 	// TODO: edit to recognize updated values
 	for(var i = 0; i< data.length; i++){
@@ -198,6 +217,10 @@ Controller.prototype.updatePotholes = function(data){
 		this.newPotholes[i].init();
 		this.newPotholes[i].addTo(this.map);
 	}
+
+
+
+
 
 }
 
