@@ -14,7 +14,7 @@ function Controller() {
 
 	this.routePoints = null;
 	// Possible modes of our application
-	
+
 	this.mode = {
 		SELECTION: false,
 		TRAFFICLAYER: false,
@@ -39,18 +39,25 @@ function Controller() {
 	this.pathLine = null;
 	this.pathLineConstructed = false;
 
-	
+	this.firstload = true;
 	this.getUpdates();
+
+	// TODO: remove and implement as layer object
+	// temporary container for crime data
+	this.oldPotholes = [];
+	this.newPotholes = ['t','e','s','t'];
+
+	this.updateCounter = 0; // counts number of updates - only for debugging
 	
 }
 
 Controller.prototype.getUpdates = function(){
 	var refreshrate = 5000; // Rate at which new data is queried
+	this.getData();
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
 }
 
 Controller.prototype.stopUpdates = function(){
-
 	clearInterval(this.updateId);
 };
 
@@ -58,6 +65,10 @@ Controller.prototype.stopUpdates = function(){
 // Function calls itself in regular intervals of length "refreshrate"
 
 Controller.prototype.getData = function() {
+
+	if (this.updateCounter < 4) {
+
+		this.updateCounter++;
 
 	console.log("\tCONTROLLER - getData");
 
@@ -80,21 +91,22 @@ Controller.prototype.getData = function() {
 			this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
 			this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );	
 		}
+
 		if (this.mode.DIVVYBIKES===true){
 			var getStationBeanArray = function (data, iden){
 				this.filterByPerimeter(data.stationBeanList,iden);
 			}
 			this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
-	}	}
-	
+		}	
 
-	// this.dataManager.potHoles('month',41.8747107, -87.6968277, 41.8710629, -87.6758785, callback,'potHoles');
+	// TODO: remove - only for testing
+	this.dataManager.potHoles("week",41.9,-87.7,41.8,-87.6,this.filterByPerimeter.bind(this), "potHoles" );
 
 
 	//
 	//
 	//
-
+	}
 
 }
 
@@ -118,7 +130,11 @@ Controller.prototype.normalModeClick = function(e){
 }
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
+
 	var filteredData = [];
+
+	// TODO: not filtering for path yet - only for debugging
+/*
 	var points = this.pathLine.getLatLngs();
 	var radiusInLng = this.perimeterRadiusInMiles/53.00;
 	var radiusInLat = this.perimeterRadiusInMiles/68.90;
@@ -142,25 +158,33 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		}
 	}
 	
+*/
+	filteredData = data; // TODO: remove
+	
+	
+	// TODO: add more cases....
+	switch(identifierStr) {
+		case 'potHoles':
+			this.updatePotholes(filteredData);
+			break;
+		default:
+			console.log('Invalid string');
+			break;
+	}
+
 	console.log(identifierStr,data);
 	console.log(filteredData);
 };
 
-function callback(data,iden){
-		switch(iden){
-			case 'potHoles': this.generatePotholes(data,this);
-							break;
-			default: console.log("error callback");
-						break;
-		}
-}
+Controller.prototype.updatePotholes = function(data){
 
-function generatePotholes(data,ref){
+	console.log('updatePothoooooooooooooooooooooooooooooooooooooooooooles');
+
+	// TODO: edit to recognize updated values
 	for(var i = 0; i< data.length; i++){
-		ref.potHolesArray.push(new PotholeMarker(data[i]));
-		console.log("HERE!!!");
-		console.log(ref.potHolesArray[i]);
-		ref.potHolesArray[i].addTo(this.map);
+		this.newPotholes[i] = new PotholeMarker(data[i]);
+		this.newPotholes[i].init();
+		this.newPotholes[i].addTo(this.map);
 	}
 
 }
