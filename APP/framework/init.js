@@ -23,11 +23,11 @@ function init() {
 		};
 
 	};
-	var onMapClickCallBack = onMapClick.bind(context);
-	context.map.on("click", onMapClickCallBack);
-	*/
+	var onMapClickCallBack = onMapClick.bind(context);*/
+	
 
 	context.init();
+	context.map.on("click", context.onMapClick.bind(context));
 
 	// Initialize controller in selection mode
 	context.toggleMode("SELECTION");

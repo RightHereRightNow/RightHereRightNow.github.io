@@ -98,16 +98,22 @@ Controller.prototype.getData = function() {
 
 }
 
-Controller.prototype.selectionModeClick = function(){
-	var point = e.latlng;
-	this.locations.push({latLng: {lat:point.lat,lng:point.lng}});
-	if (this.locations.length > 2)
-		this.locations.splice(0,1);
-	var locObj = { locations:this.locations };
-	this.getRoute(locObj);
+Controller.prototype.onMapClick = function(e){
+	if (this.mode.SELECTION === true){
+		var point = e.latlng;
+		this.locations.push({latLng: {lat:point.lat,lng:point.lng}});
+		if (this.locations.length > 2)
+			this.locations.splice(0,1);
+		var locObj = { locations:this.locations };
+		this.getRoute(locObj);
+	}
+	else{
+		//Do stuff like clicking on marker and popups
+	}
+	
 }
 
-Controller.prototype.normalModeClick = function(){
+Controller.prototype.normalModeClick = function(e){
 
 }
 
@@ -309,14 +315,7 @@ Controller.prototype.attachLayerToMap = function(){
 Controller.prototype.toggleMode = function(mode) {
 	switch(mode){
 		case "SELECTION":
-						this.mode.SELECTION = !this.mode.SELECTION;
-						if (this.mode.SELECTION === true){
-							this.map.on("click", this.selectionModeClick.bind(this));	
-						}
-						else{
-							this.map.on("click", this.normalModeClick.bind(this));
-						}
-						
+						this.mode.SELECTION = !this.mode.SELECTION;						
 						break;
 		case "TRAFFICLAYER":
 						this.mode.TRAFFICLAYER = !this.mode.TRAFFICLAYER;
