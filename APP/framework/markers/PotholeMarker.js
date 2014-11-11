@@ -16,7 +16,7 @@ var PotholeMarker = function(data) {
     var iconNew = L.AwesomeMarkers.icon({
         icon: "bicycle",
         spin:false,
-        markerColor: "green",
+        markerColor: "darkgreen",
         iconColor: "white"
     });
 

@@ -72,21 +72,13 @@ Controller.prototype.stopUpdates = function(){
 
 Controller.prototype.getData = function() {
 
-	console.log("GET DATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
 	if (this.updateCounter < 4) {
 
 		this.updateCounter++;
 
 	console.log("\tCONTROLLER - getData");
 
-	// TODO: Query data from database
-	// TODO: check which data has changed from previous update
-	// TODO: write data to marker objects
-	// TODO: update layer
-	//
 	console.log(this.pathLineConstructed);
-	//
 
 	if (this.pathLineConstructed === true){
 		var bounds = this.pathLine.getBounds();
@@ -110,11 +102,6 @@ Controller.prototype.getData = function() {
 
 	// TODO: remove - only for testing
 	this.dataManager.potHoles("week",41.87,-87.68,41.83,-87.64,this.filterByPerimeter.bind(this), "potHoles" );
-
-
-	//
-	//
-	//
 	}
 
 }
@@ -187,40 +174,25 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 
 Controller.prototype.updatePotholes = function(data){
 
-	this.oldPotholes = this.newPotholes;
-	this.newPotholes = [];
+	// TODO: check which data has changed from previous update
+	// TODO: write data to marker objects
+	// TODO: update layer
+	//
+	//
 
-	var stringComparison = function(a,b) {
-		if ( a < b ) {
-			return -1;
-		}
-		if ( a > b ) {
-			return 1;
-		}
-		return 0;
-	}
-
-	// Sort array 'data' according to key
-	console.log('Unordered');
-	for(var i=0; i<data.length; ++i) {
-		console.log(data[i].service_request_number);
-	}
-	/*this.newPotholes*/ data.sort(function(a,b) { stringComparison(a.service_request_number, b.service_request_number); });
-	console.log('Ordered');
-	for(var i=0; i<data.length; ++i) {
-		console.log(data[i].service_request_number);
-	}
 
 	// TODO: edit to recognize updated values
+	
 	for(var i = 0; i< data.length; i++){
-		this.newPotholes[i] = new PotholeMarker(data[i]);
-		this.newPotholes[i].init();
-		this.newPotholes[i].addTo(this.map);
+		key = data[i].service_request_number;
+		if(!this.potholesArray[key]) {
+			this.potholesArray[key] = new PotholeMarker(data[i]);
+			this.potholesArray[key].viewNewIcon();
+			this.potholesArray[key].addTo(this.map);
+		} else {
+			this.potholesArray[key].viewOldIcon()
+		}
 	}
-
-
-
-
 
 }
 
