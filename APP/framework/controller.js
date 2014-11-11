@@ -14,10 +14,17 @@ function Controller() {
 
 	this.routePoints = null;
 	// Possible modes of our application
-	this.modes = {
-		SELECTION:		0,
-		TRAFFICLAYER:	1,
-		CRIMELAYER:		2
+	this.mode = {
+		SELECTION: false,
+		TRAFFICLAYER: false,
+		CRIMELAYER:	false,
+		POTHOLES: false,
+		VEHICLES: false,
+		LIGHTS: false,
+		BIKESTATIONS: false,
+		PLACESOFINTEREST: false,
+		BUSSTATIONS: false,
+		BUSLAOCATIONS: false
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -68,6 +75,7 @@ Controller.prototype.getData = function() {
 	if (this.pathLineConstructed === true){
 		var bounds = this.pathLine.getBounds();
 		console.log("fetching data");
+		if (this.mode)
 		this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
 		this.dataManager.abandonedVehicle("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "abandonedVehicles" );
 		this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
@@ -283,12 +291,39 @@ Controller.prototype.attachLayerToMap = function(){
 
 
 // Sets current mode
-Controller.prototype.setMode = function(newmode) {
-	console.log("\tSet mode: " + newmode);
-	//thisController.activeMode = newmode;
+Controller.prototype.toggleMode = function(mode) {
+	switch(mode){
+		case "SELECTION":
+						this.mode.SELECTION = !this.mode.SELECTION;
+						break;
+		case "TRAFFICLAYER":
+						this.mode.TRAFFICLAYER = !this.mode.SELECTION;
+						break;
+		case "CRIMELAYER":
+						this.mode.CRIMELAYER = !this.mode.CRIMELAYER;
+						break;
+		case "POTHOLES":
+						this.mode.POTHOLES = !this.mode.POTHOLES;
+						break;
+		case "VEHICLES":
+						this.mode.VEHICLES = !this.mode.VEHICLES;
+						break;
+		case "LIGHTS":
+						this.mode.LIGHTS = !this.mode.LIGHTS;
+						break;
+		case "BIKESTATIONS":
+						this.mode.BIKESTATIONS = !this.mode.BIKESTATIONS;
+						break;
+		case "PLACESOFINTEREST":
+						this.mode.PLACESOFINTEREST = !this.mode.PLACESOFINTEREST;
+						break;
+		default:
+				break;
+	}
+};
+Controller.prototype.getMode = function(mode) {
+	if (mode in this.mode)
+		return this.mode[mode];
+	return null;
 };
 
-// Returns current mode
-Controller.prototype.getMode = function() {
-	//return thisController.activeMode;
-};

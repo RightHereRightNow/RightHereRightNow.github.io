@@ -30,7 +30,7 @@ function init() {
 	context.init();
 
 	// Initialize controller in selection mode
-	context.setMode(context.modes.SELECTION);
+	context.toggleMode("SELECTION");
 
 	context.ui.draw();
 
