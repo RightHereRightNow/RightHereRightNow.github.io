@@ -97,7 +97,8 @@ Controller.prototype.getData = function() {
 				this.filterByPerimeter(data.stationBeanList,iden);
 			}
 			this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
-		}	
+		}
+	}	
 
 	// TODO: remove - only for testing
 	this.dataManager.potHoles("week",41.9,-87.7,41.8,-87.6,this.filterByPerimeter.bind(this), "potHoles" );
