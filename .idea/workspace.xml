@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f2fef77e-4aff-4123-8742-00668532cf30" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/APP/framework/markers/PotholeMarker.js" afterPath="$PROJECT_DIR$/APP/framework/markers/PotholeMarker.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/APP/framework/controller.js" afterPath="$PROJECT_DIR$/APP/framework/controller.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -43,9 +42,21 @@
       <file leaf-file-name="controller.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/APP/framework/controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4955157" vertical-offset="1159" max-vertical-offset="6450">
-              <caret line="92" column="9" selection-start-line="92" selection-start-column="9" selection-end-line="92" selection-end-column="9" />
+            <state vertical-scroll-proportion="0.33183858" vertical-offset="2057" max-vertical-offset="6945">
+              <caret line="147" column="13" selection-start-line="147" selection-start-column="13" selection-end-line="147" selection-end-column="13" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbandonedVehicleMarker.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/APP/framework/markers/AbandonedVehicleMarker.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="630">
+              <caret line="5" column="61" selection-start-line="5" selection-start-column="39" selection-end-line="5" selection-end-column="61" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -491,7 +502,13 @@
       <option name="project" value="LOCAL" />
       <updated>1415672054470</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Have potholes and divvy markers added to the map. Can turn them on and off. This is f*ing awesome">
+      <created>1415674075407</created>
+      <option name="number" value="00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1415674075407</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -546,7 +563,8 @@
     <MESSAGE value="adding functionality to control groups of markers" />
     <MESSAGE value="Added update function to DivvyMarkers. Fixed inconsistencies in functionality" />
     <MESSAGE value="Fixed potholes Markers" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed potholes Markers" />
+    <MESSAGE value="Have potholes and divvy markers added to the map. Can turn them on and off. This is f*ing awesome" />
+    <option name="LAST_COMMIT_MESSAGE" value="Have potholes and divvy markers added to the map. Can turn them on and off. This is f*ing awesome" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -909,16 +927,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/APP/framework/markers/AbandonedVehicleMarker.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.34456354" vertical-offset="0" max-vertical-offset="653">
-          <caret line="15" column="52" selection-start-line="15" selection-start-column="52" selection-end-line="15" selection-end-column="52" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/APP/data/database.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-4.780269" vertical-offset="2327" max-vertical-offset="10290">
@@ -961,10 +969,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/APP/framework/markers/AbandonedVehicleMarker.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="630">
+          <caret line="5" column="61" selection-start-line="5" selection-start-column="39" selection-end-line="5" selection-end-column="61" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/APP/framework/controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4955157" vertical-offset="1159" max-vertical-offset="6450">
-          <caret line="92" column="9" selection-start-line="92" selection-start-column="9" selection-end-line="92" selection-end-column="9" />
+        <state vertical-scroll-proportion="0.33183858" vertical-offset="2057" max-vertical-offset="6945">
+          <caret line="147" column="13" selection-start-line="147" selection-start-column="13" selection-end-line="147" selection-end-column="13" />
           <folding />
         </state>
       </provider>

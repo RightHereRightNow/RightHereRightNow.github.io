@@ -154,7 +154,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	}
 
 	filteredData = data; // TODO: remove
-	
+
 	
 	// TODO: add more cases....
 	switch(identifierStr) {
@@ -163,6 +163,9 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			break;
 		case 'divyStations':
 			this.updateDivvyStations(filteredData);
+			break;
+		case 'abandonedVehicles':
+			this.updateAbandonedVehicle(filteredData);
 			break;
 		default:
 			console.log('Invalid string');
@@ -209,6 +212,23 @@ Controller.prototype.updateDivvyStations = function(data){
 	}
 
 };
+
+
+Controller.prototype.updateAbandonedVehicle = function(data){
+
+	for(var i = 0; i< data.length; i++){
+		var key = data[i].service_request_number;
+		if(!this.carsArray[key]) {
+			this.carsArray[key] = new AbandonedVehicleMarker(data[i]);
+			this.carsArray[key].addTo(this.map);
+			this.carsArray[key].viewNewIcon();
+		} else {
+			this.carsArray[key].viewOldIcon();
+		}
+	}
+
+};
+
 
 
 
@@ -385,6 +405,19 @@ Controller.prototype.toggleMode = function(mode) {
 						break;
 		case "ABANDONEDVEHICLES":
 						this.mode.ABANDONEDVEHICLES = !this.mode.ABANDONEDVEHICLES;
+						if(!this.mode.ABANDONEDVEHICLES) {
+							console.log("HIDE!");
+							for( var key in this.carsArray){
+								//this.potholesArray[key]
+								this.map.removeLayer(this.carsArray[key]);
+							}
+						} else {
+							console.log("SHOW!");
+							for( var key in this.carsArray){
+								this.map.addLayer(this.carsArray[key]);
+							}
+						}
+
 						break;
 		case "STREETLIGHTSOUT":
 						this.mode.STREETLIGHTSOUT = !this.mode.STREETLIGHTSOUT;
