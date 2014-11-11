@@ -12,12 +12,5 @@ extend(AbandonedVehicleMarker, AbstractMarker);
 extend(SimpleMarker, AbstractMarker);
 extend(CrimeMarker, AbstractMarker);
 extend(PotholeMarker, AbstractMarker);
-//extend(CTAMarker, AbstractMarker);
-
-
-
-//lightOutAllNotCompleted
-//lightOutAllCompleted
-//lightOut1NotCompleted
-//lightOut1Completed
-//Crimes
+extend(CTAMarker, AbstractMarker);
+extend(LightsOutMarker, AbstractMarker);

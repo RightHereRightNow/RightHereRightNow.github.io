@@ -35,7 +35,7 @@ var AbandonedVehicleMarker = function(data) {
 
     var iconNew = L.AwesomeMarkers.icon({
         icon: "car",
-        spin:true,
+        spin:false,
         markerColor: "lightgray",
         iconColor: "white"
     });
@@ -44,5 +44,4 @@ var AbandonedVehicleMarker = function(data) {
     this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
-    this.viewNewIcon();
 };

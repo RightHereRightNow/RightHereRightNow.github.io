@@ -9,7 +9,7 @@ function init() {
 	/*
 	TODO: I'm not sure this is needed anymore at all - we can check on monday
 	*/
-	var onMapClick = function (e) {
+	/*var onMapClick = function (e) {
   		var point = e.latlng;
 		this.locations.push({latLng: {lat:point.lat,lng:point.lng}});
 		if (this.locations.length > 2)
@@ -20,12 +20,12 @@ function init() {
 			context.map.viewAerial();
 		} else{
 			context.map.viewStreet();
-		};*/
+		};
 
 	};
 	var onMapClickCallBack = onMapClick.bind(context);
 	context.map.on("click", onMapClickCallBack);
-	
+	*/
 
 	context.init();
 

@@ -14,17 +14,17 @@ function Controller() {
 
 	this.routePoints = null;
 	// Possible modes of our application
+	
 	this.mode = {
 		SELECTION: false,
 		TRAFFICLAYER: false,
 		CRIMELAYER:	false,
-		POTHOLES: false,
-		VEHICLES: false,
-		LIGHTS: false,
-		BIKESTATIONS: false,
 		PLACESOFINTEREST: false,
-		BUSSTATIONS: false,
-		BUSLAOCATIONS: false
+		DIVVYBIKES: false,
+		ABANDONEDVEHICLES: false,
+		STREETLIGHTSOUT: false,
+		CURRENTWEATHER:false,
+		POTHOLES: false,
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -35,7 +35,7 @@ function Controller() {
 
 	this.locations = [];
 	var response;
-	this.mapCenter = new L.LatLng(41.8369, -87.6847);
+	this.mapCenter = new L.LatLng(41.864755, -87.631474);
 	this.pathLine = null;
 	this.pathLineConstructed = false;
 
@@ -52,10 +52,7 @@ Controller.prototype.getUpdates = function(){
 Controller.prototype.stopUpdates = function(){
 
 	clearInterval(this.updateId);
-}
-
-
-potHolesArray = [];
+};
 
 // Queries Data from Database and writes to Marker Objects
 // Function calls itself in regular intervals of length "refreshrate"
@@ -75,16 +72,20 @@ Controller.prototype.getData = function() {
 	if (this.pathLineConstructed === true){
 		var bounds = this.pathLine.getBounds();
 		console.log("fetching data");
-		if (this.mode)
-		this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
-		this.dataManager.abandonedVehicle("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "abandonedVehicles" );
-		this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
-		this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );
-		var getStationBeanArray = function (data, iden){
-			this.filterByPerimeter(data.stationBeanList,iden);
+		if (this.mode.POTHOLES===true)
+			this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
+		if (this.mode.ABANDONEDVEHICLES===true)
+			this.dataManager.abandonedVehicle("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "abandonedVehicles" );
+		if (this.mode.STREETLIGHTSOUT===true){
+			this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
+			this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );	
 		}
-		this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
-	}
+		if (this.mode.DIVVYBIKES===true){
+			var getStationBeanArray = function (data, iden){
+				this.filterByPerimeter(data.stationBeanList,iden);
+			}
+			this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
+	}	}
 	
 
 	// this.dataManager.potHoles('month',41.8747107, -87.6968277, 41.8710629, -87.6758785, callback,'potHoles');
@@ -97,6 +98,18 @@ Controller.prototype.getData = function() {
 
 }
 
+Controller.prototype.selectionModeClick = function(){
+	var point = e.latlng;
+	this.locations.push({latLng: {lat:point.lat,lng:point.lng}});
+	if (this.locations.length > 2)
+		this.locations.splice(0,1);
+	var locObj = { locations:this.locations };
+	this.getRoute(locObj);
+}
+
+Controller.prototype.normalModeClick = function(){
+
+}
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	var filteredData = [];
@@ -125,7 +138,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	
 	console.log(identifierStr,data);
 	console.log(filteredData);
-}
+};
 
 function callback(data,iden){
 		switch(iden){
@@ -227,14 +240,17 @@ Controller.prototype.init = function(){
 		"Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
 	};
 
+	window.divy = new DivvyMarker(markerData.Divvy);
+	divy.init(); divy.addTo(this.map);
 	var markerArray = [
-		new DivvyMarker(markerData.Divvy),
+		//new DivvyMarker(markerData.Divvy),
 		new SimpleMarker(markerData.Simple),
 		new AbandonedVehicleMarker(markerData.Car),
 		new CrimeMarker(markerData.Crime)
 	];
 
 	markerArray.forEach(function(marker){
+		marker.init();
 		console.log(marker)
 		marker.addTo(this.map);
 	});
@@ -290,37 +306,50 @@ Controller.prototype.attachLayerToMap = function(){
 };
 
 
-// Sets current mode
 Controller.prototype.toggleMode = function(mode) {
 	switch(mode){
 		case "SELECTION":
 						this.mode.SELECTION = !this.mode.SELECTION;
+						if (this.mode.SELECTION === true){
+							this.map.on("click", this.selectionModeClick.bind(this));	
+						}
+						else{
+							this.map.on("click", this.normalModeClick.bind(this));
+						}
+						
 						break;
 		case "TRAFFICLAYER":
-						this.mode.TRAFFICLAYER = !this.mode.SELECTION;
+						this.mode.TRAFFICLAYER = !this.mode.TRAFFICLAYER;
 						break;
 		case "CRIMELAYER":
 						this.mode.CRIMELAYER = !this.mode.CRIMELAYER;
 						break;
-		case "POTHOLES":
-						this.mode.POTHOLES = !this.mode.POTHOLES;
-						break;
-		case "VEHICLES":
-						this.mode.VEHICLES = !this.mode.VEHICLES;
-						break;
-		case "LIGHTS":
-						this.mode.LIGHTS = !this.mode.LIGHTS;
-						break;
-		case "BIKESTATIONS":
-						this.mode.BIKESTATIONS = !this.mode.BIKESTATIONS;
-						break;
 		case "PLACESOFINTEREST":
 						this.mode.PLACESOFINTEREST = !this.mode.PLACESOFINTEREST;
+						break;
+		case "DIVVYBIKES":
+						this.mode.DIVVYBIKES = !this.mode.DIVVYBIKES;
+						break;
+		case "ABANDONEDVEHICLES":
+						this.mode.ABANDONEDVEHICLES = !this.mode.ABANDONEDVEHICLES;
+						break;
+		case "STREETLIGHTSOUT":
+						this.mode.STREETLIGHTSOUT = !this.mode.STREETLIGHTSOUT;
+						break;
+		case "CURRENTWEATHER":
+						this.mode.CURRENTWEATHER = !this.mode.CURRENTWEATHER;
+						break;
+		case "POTHOLES":
+						this.mode.POTHOLES = !this.mode.POTHOLES;
 						break;
 		default:
 				break;
 	}
 };
+
+
+
+
 Controller.prototype.getMode = function(mode) {
 	if (mode in this.mode)
 		return this.mode[mode];
