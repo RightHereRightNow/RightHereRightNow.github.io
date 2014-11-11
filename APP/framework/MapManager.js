@@ -37,13 +37,29 @@ function MapManager() {
 
             *: Adding or removing a layer form the group ALSO adds/removes layer from the map as well
      */
+
+    //this.potHolesArray = [];
+    //this.crime = [];
+    //this.divvy = [];
+    //this.abandonedVehicles = [];
+    //this.placesOfInterest = [];
     this.layerGroups = {
-        potholes: {},
-        crime: {},
-        divvy: {},
-        abandonedVehicles: {},
-        placesOfInterest: {}
+        potholes: L.featureGroup([]).addTo(this.map),
+        crime: L.featureGroup([]).addTo(this.map),
+        divvy: L.featureGroup([]).addTo(this.map),
+        cars: L.featureGroup([]).addTo(this.map),
+        lightsAll: L.featureGroup([]).addTo(this.map),
+        lights1: L.featureGroup([]).addTo(this.map),
+        cta: L.featureGroup([]).addTo(this.map)
     };
+
+    //this.layerGroups = {
+    //    potholes: {},
+    //    crime: {},
+    //    divvy: {},
+    //    abandonedVehicles: {},
+    //    placesOfInterest: {}
+    //};
 }
 
 /*

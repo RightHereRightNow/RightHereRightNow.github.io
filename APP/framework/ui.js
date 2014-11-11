@@ -151,6 +151,11 @@ ui.prototype.draw = function() {
 	function clickTrafficLayer() { context.setMode(context.modes.TRAFFICLAYER); }
 	function clickCrimeLayer() { context.setMode(context.modes.CRIMELAYER); }
 	function clickPlacesOfInterestLayer() { context.setMode(context.modes.PLACESOFINTEREST); }
+	function clickDivvyBikes() { context.setMode(context.modes.DIVVYBIKES);}
+	function clickAbandonedVehicles() { context.setMode(context.modes.ABANDONEDVEHICLES); }
+	function clickStreetLightsOut() {context.setMode(context.modes.STREETLIGHTSOUT); }
+	function clickCurrentWeather() {context.setMode(context.modes.CURRENTWEATHER); }
+	function clickPotholes() {context.setMode(contex.modes.POTHOLES);}
 
 	this.createLevel1Button(svgmenu,0,"Project Homepage","house28",clickHomepage)
 	this.createLevel1Button(svgmenu,(this.button1height+3*this.button1dy),"Selection Mode","distance1",clickSelection)
@@ -159,6 +164,11 @@ ui.prototype.draw = function() {
 	this.createLevel2Button(svgmenu,(3*this.button1height+6*this.button1dy),"Traffic Layer","front1",clickTrafficLayer)
 	this.createLevel2Button(svgmenu,(4*this.button1height+7*this.button1dy),"Crime Layer","crime1",clickCrimeLayer)
 	this.createLevel2Button(svgmenu,(5*this.button1height+8*this.button1dy),"Places of Interest","information38",clickPlacesOfInterestLayer)
+	this.createLevel2Button(svgmenu,(6*this.button1height+9*this.button1dy), "Divvy Bikes", "regular2", clickDivvyBikes);
+	this.createLevel2Button(svgmenu,(7*this.button1height+10*this.button1dy), "Abandoned Vehicles", "criminal20", clickAbandonedVehicles);
+	this.createLevel2Button(svgmenu,(8*this.button1height+11*this.button1dy), "Street Lights Out", "street9", clickStreetLightsOut);
+	this.createLevel2Button(svgmenu,(9*this.button1height+12*this.button1dy), "Current Weather", "cold5", clickCurrentWeather);
+	this.createLevel2Button(svgmenu,(10*this.button1height+13*this.button1dy), "Potholes" ,"road22", clickPotholes);
 
 
 

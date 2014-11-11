@@ -32,7 +32,7 @@ var CrimeMarker = function(data) {
 
     var iconNew = L.AwesomeMarkers.icon({
         icon: "frown-o",
-        spin:true,
+        spin:false,
         markerColor: "red",
         iconColor: "white"
     });
@@ -41,7 +41,6 @@ var CrimeMarker = function(data) {
     this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
-    this.viewNewIcon();
 };
 
 

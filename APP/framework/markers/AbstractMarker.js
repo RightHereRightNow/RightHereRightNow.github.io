@@ -1,8 +1,9 @@
 //////////////////////////////////////////////////////////////
 //           Divvy Marker object
 //////////////////////////////////////////////////////////////
+
 function AbstractMarker() {
-    this.marker = L.marker();   // The actual marker object itself
+    this.marker = null;   // The actual marker object itself
     this.LatLng = null;        // This will contain the markers LatLng object coordinates
     this.iconOld = null;       // For the icon indicating its "Old-ness"
     this.iconNew = null;      // Icon for representing new
@@ -16,27 +17,25 @@ function AbstractMarker() {
 AbstractMarker.prototype = {
     setLatLng: function(newLatLngObj) {
         this.LatLng = newLatLngObj; // This should be a LatLng leaflets object!!
-        this.marker.setLatLng(this.LatLng);
-        this.update();
     },
 
     setPopupString: function(popupString) {
         this.popupString = popupString;
-        this.bindPopup();
     },
 
     // Top level method to set a new Icon. Assumes a Icon object!
     setIconOld: function(oldIcon) {
         this.iconOld = oldIcon;  //
-        this.update();
     },
 
     // Top level method to set a new Icon. Assumes a Icon object!
     setIconNew: function(newIcon) {
         this.iconNew = newIcon;  //
-        this.update();
     },
 
+    init: function() {
+        this.marker = L.marker(this.LatLng, {icon: this.iconNew})
+    },
     viewOldIcon: function() {
         this.marker.setIcon(this.iconOld );
         this.update();
@@ -47,8 +46,13 @@ AbstractMarker.prototype = {
         this.update();
     },
 
+    getMarker: function() {
+        return this.marker;
+    },
+
     // Calls the marker's update() method to update its state (if necessary)
     update: function() {
+        this.marker.setLatLng(this.LatLng);
         this.marker.update();
     },
 
@@ -58,11 +62,8 @@ AbstractMarker.prototype = {
 
     bindPopup: function(){
         this.marker.bindPopup(this.popupString);
-    },
-
-    getMarker: function() {
-        return this.marker;
     }
+
 };
 
 
