@@ -10,6 +10,9 @@ function Controller() {
 	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
 
+	this.weatherBox = null;
+
+
 	this.perimeterRadiusInMiles = 0.25;
 
 	this.routePoints = null;
@@ -60,7 +63,25 @@ function Controller() {
 Controller.prototype.getUpdates = function(){
 	var refreshrate = 5000; // Rate at which new data is queried
 	this.getData();
+	this.updateWeather();
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
+}
+
+Controller.prototype.updateWeather = function(){
+	// if(this.weatherBox != null){
+	// 	this.weatherBox.remove()
+	// }
+	this.dataManager.currentWeather(this.weatherFun,'weather');
+}
+
+Controller.prototype.weatherFun =  function (data, iden){
+	console.log(this.weatherBox);
+	if(this.weatherBox != undefined){
+		this.weatherBox.svg.remove();
+		console.log("removed");
+	}
+	this.weatherBox = new Weather();
+	this.weatherBox.create('#weather', "100%","100%", '0.7', data);
 }
 
 Controller.prototype.stopUpdates = function(){
@@ -79,6 +100,8 @@ Controller.prototype.getData = function() {
 	console.log("\tCONTROLLER - getData");
 
 	console.log(this.pathLineConstructed);
+
+		console.log(this.pathLineConstructed);
 
 	if (this.pathLineConstructed === true){
 		var bounds = this.pathLine.getBounds();
