@@ -47,6 +47,7 @@ function Controller() {
 	
 	this.cycles = -1;  // Keeps track of the number of update cycles, mostly important for the initial cycle
 
+	this.pointsOfInterestArray = {};
 	this.potholesArray = {};
 	this.crimeArray = {};
 	this.divvyArray = {};
@@ -328,25 +329,14 @@ Controller.prototype.drawPath = function(points){
 Controller.prototype.init = function(){
 	this.map.init(this.mapCenter, 11);
 
-		// Our focus points
-	var markerData = {
-		"Divvy": {"id":5,"stationName":"State St & Harrison St","availableDocks":13,"totalDocks":19,"latitude":41.8739580629,"longitude":-87.6277394859,"statusValue":"In Service","statusKey":1,"availableBikes":6,"stAddress1":"State St & Harrison St","stAddress2":"","city":"","postalCode":"","location":"620 S. State St.","altitude":"","testStation":false,"lastCommunicationTime":null,"landMark":"030"},
-		"Simple": {latitude: 41.869912359714654, longitude: -87.64772415161133, description: "Electronic Visualization Lab"},
-		"Car": { service_request_number: 12345, creation_date: "11/09/2014", vehicle_make_model: "Ferrari", vehicle_color: "Red", latitude: 41.86761, longitude: -87.61365},
-		"Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
-	};
+	this.pointsOfInterestArray[0] =	new SimpleMarker({latitude: 41.869912359714654, longitude:-87.64772415161133, description:"Electronic Visualization Lab" });
+	this.pointsOfInterestArray[1] = new SimpleMarker({latitude: 41.86624, longitude: -87.61702, description: "The Field Museum of Natural History"});
+	this.pointsOfInterestArray[2] = new SimpleMarker({latitude: 41.86761, longitude: -87.61365, description: "The Shedd Aquarium"});
+	this.pointsOfInterestArray[3] = new SimpleMarker({latitude: 41.86635, longitude: -87.60659, description: "The Alder Planetarium"});
 
-
-	var markerArray = [
-		new DivvyMarker(markerData.Divvy),
-		new SimpleMarker(markerData.Simple),
-		new AbandonedVehicleMarker(markerData.Car),
-		new CrimeMarker(markerData.Crime)
-	];
-	markerArray.forEach(function(marker){
-		console.log(marker);
-		marker.addTo(this.map);
-	});
+	for( var key in this.pointsOfInterestArray){
+		this.pointsOfInterestArray[key].addTo(this.map);
+	}
 
 };
 
@@ -410,6 +400,18 @@ Controller.prototype.toggleMode = function(mode) {
 						break;
 		case "PLACESOFINTEREST":
 						this.mode.PLACESOFINTEREST = !this.mode.PLACESOFINTEREST;
+						if(!this.mode.PLACESOFINTEREST ) {
+							console.log("HIDE!");
+							for( var key in this.pointsOfInterestArray){
+								this.map.removeLayer(this.pointsOfInterestArray[key]);
+							}
+						} else {
+							console.log("SHOW!");
+							for( var key in this.pointsOfInterestArray){
+								this.map.addLayer(this.pointsOfInterestArray[key]);
+							}
+						}
+
 						break;
 		case "DIVVYBIKES":
 						this.mode.DIVVYBIKES = !this.mode.DIVVYBIKES;
