@@ -14,10 +14,17 @@ function Controller() {
 
 	this.routePoints = null;
 	// Possible modes of our application
-	this.modes = {
-		SELECTION:		0,
-		TRAFFICLAYER:	1,
-		CRIMELAYER:		2
+
+	this.mode = {
+		SELECTION: false,
+		TRAFFICLAYER: false,
+		CRIMELAYER:	false,
+		PLACESOFINTEREST: false,
+		DIVVYBIKES: false,
+		ABANDONEDVEHICLES: false,
+		STREETLIGHTSOUT: false,
+		CURRENTWEATHER:false,
+		POTHOLES: false,
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -32,6 +39,7 @@ function Controller() {
 	this.pathLine = null;
 	this.pathLineConstructed = false;
 
+	this.firstload = true;
 	this.cycles = -1;  // Keeps track of the number of update cycles, mostly important for the initial cycle
 
 	this.potholesArray = {};
@@ -41,18 +49,26 @@ function Controller() {
 	this.lightsAllArray = {};
 	this.lights1Array = {};
 	this.ctaArray = {};
-
+	
 	this.getUpdates();
 
+
+	// TODO: remove and implement as layer object
+	// temporary container for crime data
+	this.oldPotholes = [];
+	this.newPotholes = ['t','e','s','t'];
+
+	this.updateCounter = 0; // counts number of updates - only for debugging
+	
 }
 
 Controller.prototype.getUpdates = function(){
 	var refreshrate = 5000; // Rate at which new data is queried
+	this.getData();
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
-};
+}
 
 Controller.prototype.stopUpdates = function(){
-
 	clearInterval(this.updateId);
 };
 
@@ -60,6 +76,10 @@ Controller.prototype.stopUpdates = function(){
 // Function calls itself in regular intervals of length "refreshrate"
 
 Controller.prototype.getData = function() {
+
+	if (this.updateCounter < 4) {
+
+		this.updateCounter++;
 
 	console.log("\tCONTROLLER - getData");
 
@@ -74,20 +94,59 @@ Controller.prototype.getData = function() {
 	if (this.pathLineConstructed === true){
 		var bounds = this.pathLine.getBounds();
 		console.log("fetching data");
-		this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
-		this.dataManager.abandonedVehicle("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "abandonedVehicles" );
-		this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
-		this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );
-		var getStationBeanArray = function (data, iden){
-			this.filterByPerimeter(data.stationBeanList,iden);
-		};
-		this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
-	}
-};
+		if (this.mode.POTHOLES===true)
+			this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
+		if (this.mode.ABANDONEDVEHICLES===true)
+			this.dataManager.abandonedVehicle("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "abandonedVehicles" );
+		if (this.mode.STREETLIGHTSOUT===true){
+			this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
+			this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );	
+		}
 
+		if (this.mode.DIVVYBIKES===true){
+			var getStationBeanArray = function (data, iden){
+				this.filterByPerimeter(data.stationBeanList,iden);
+			}
+			this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
+		}
+	}	
+
+	// TODO: remove - only for testing
+	this.dataManager.potHoles("week",41.9,-87.7,41.8,-87.6,this.filterByPerimeter.bind(this), "potHoles" );
+
+
+	//
+	//
+	//
+	}
+
+}
+
+Controller.prototype.onMapClick = function(e){
+	if (this.mode.SELECTION === true){
+		var point = e.latlng;
+		this.locations.push({latLng: {lat:point.lat,lng:point.lng}});
+		if (this.locations.length > 2)
+			this.locations.splice(0,1);
+		var locObj = { locations:this.locations };
+		this.getRoute(locObj);
+	}
+	else{
+		//Do stuff like clicking on marker and popups
+	}
+	
+}
+
+Controller.prototype.normalModeClick = function(e){
+
+}
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
+
 	var filteredData = [];
+
+	// TODO: not filtering for path yet - only for debugging
+/*
 	var points = this.pathLine.getLatLngs();
 	var radiusInLng = this.perimeterRadiusInMiles/53.00;
 	var radiusInLat = this.perimeterRadiusInMiles/68.90;
@@ -110,42 +169,34 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 				break;
 		}
 	}
+	
+*/
+	filteredData = data; // TODO: remove
+	
+	
+	// TODO: add more cases....
+	switch(identifierStr) {
+		case 'potHoles':
+			this.updatePotholes(filteredData);
+			break;
+		default:
+			console.log('Invalid string');
+			break;
+	}
 
 	console.log(identifierStr,data);
 	console.log(filteredData);
 };
 
+Controller.prototype.updatePotholes = function(data){
 
-function generateAbandonedCars(data) {
-	for	(var i = 0; i < data.length(); i++){
-		var id = data[i].service_request_number;
-		if (!this.carsArray[id]) {
-			this.carsArray[id] = new AbandonedVehicleMarker(data[i])
-		} else {
-			this.carsArray[id].updateData(data[i]);
-		}
-	}
-}
+	console.log('updatePothoooooooooooooooooooooooooooooooooooooooooooles');
 
-
-
-
-
-function callback(data,iden){
-		switch(iden){
-			case 'potHoles': this.generatePotholes(data,this);
-							break;
-			default: console.log("error callback");
-						break;
-		}
-}
-
-function generatePotholes(data,ref){
+	// TODO: edit to recognize updated values
 	for(var i = 0; i< data.length; i++){
-		ref.potHolesArray.push(new PotholeMarker(data[i]));
-		console.log("HERE!!!");
-		console.log(ref.potHolesArray[i]);
-		ref.potHolesArray[i].addTo(this.map);
+		this.newPotholes[i] = new PotholeMarker(data[i]);
+		this.newPotholes[i].init();
+		this.newPotholes[i].addTo(this.map);
 	}
 
 }
@@ -210,9 +261,10 @@ Controller.prototype.drawPath = function(points){
     this.pathLine.redraw();
     console.log(this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
-
+    
     //this.getPerimeterAroundPath(30);
-};
+}
+			
 
 
 
@@ -307,13 +359,46 @@ Controller.prototype.attachLayerToMap = function(){
 };
 
 
-// Sets current mode
-Controller.prototype.setMode = function(newmode) {
-	console.log("\tSet mode: " + newmode);
-	//thisController.activeMode = newmode;
+Controller.prototype.toggleMode = function(mode) {
+	switch(mode){
+		case "SELECTION":
+						this.mode.SELECTION = !this.mode.SELECTION;						
+						break;
+		case "TRAFFICLAYER":
+						this.mode.TRAFFICLAYER = !this.mode.TRAFFICLAYER;
+						break;
+		case "CRIMELAYER":
+						this.mode.CRIMELAYER = !this.mode.CRIMELAYER;
+						break;
+		case "PLACESOFINTEREST":
+						this.mode.PLACESOFINTEREST = !this.mode.PLACESOFINTEREST;
+						break;
+		case "DIVVYBIKES":
+						this.mode.DIVVYBIKES = !this.mode.DIVVYBIKES;
+						break;
+		case "ABANDONEDVEHICLES":
+						this.mode.ABANDONEDVEHICLES = !this.mode.ABANDONEDVEHICLES;
+						break;
+		case "STREETLIGHTSOUT":
+						this.mode.STREETLIGHTSOUT = !this.mode.STREETLIGHTSOUT;
+						break;
+		case "CURRENTWEATHER":
+						this.mode.CURRENTWEATHER = !this.mode.CURRENTWEATHER;
+						break;
+		case "POTHOLES":
+						this.mode.POTHOLES = !this.mode.POTHOLES;
+						break;
+		default:
+				break;
+	}
 };
 
-// Returns current mode
-Controller.prototype.getMode = function() {
-	//return thisController.activeMode;
+
+
+
+Controller.prototype.getMode = function(mode) {
+	if (mode in this.mode)
+		return this.mode[mode];
+	return null;
 };
+

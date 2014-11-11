@@ -122,6 +122,9 @@ MapManager.prototype.clearLayers = function(layerGroupName) {
 MapManager.prototype.on = function(eventType, callBack) {
     this.map.on(eventType, callBack);
 };
+MapManager.prototype.off = function(eventType, callBack) {
+    this.map.off(eventType, callBack);
+};
 
 
 MapManager.prototype.addLayer = function(singleLayer) {
