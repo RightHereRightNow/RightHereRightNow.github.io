@@ -34,7 +34,7 @@ var SimpleMarker = function(data) {
     this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
-    //this.viewNewIcon();
+    this.init();
 };
 
 

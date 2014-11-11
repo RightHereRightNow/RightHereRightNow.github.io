@@ -35,6 +35,11 @@ AbstractMarker.prototype = {
 
     init: function() {
         this.marker = L.marker(this.LatLng, {icon: this.iconNew})
+        if (this.popupString) {
+            console.log(this.popupString);
+            this.bindPopup();
+        }
+
     },
     viewOldIcon: function() {
         this.marker.setIcon(this.iconOld );
@@ -53,6 +58,11 @@ AbstractMarker.prototype = {
     // Calls the marker's update() method to update its state (if necessary)
     update: function() {
         this.marker.setLatLng(this.LatLng);
+        if (this.popupString) {
+            console.log(this.popupString);
+            this.bindPopup();
+        }
+
         this.marker.update();
     },
 

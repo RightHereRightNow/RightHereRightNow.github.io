@@ -32,15 +32,24 @@ function Controller() {
 	this.pathLine = null;
 	this.pathLineConstructed = false;
 
-	
+	this.cycles = -1;  // Keeps track of the number of update cycles, mostly important for the initial cycle
+
+	this.potholesArray = {};
+	this.crimeArray = {};
+	this.divvyArray = {};
+	this.carsArray = {};
+	this.lightsAllArray = {};
+	this.lights1Array = {};
+	this.ctaArray = {};
+
 	this.getUpdates();
-	
+
 }
 
 Controller.prototype.getUpdates = function(){
 	var refreshrate = 5000; // Rate at which new data is queried
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
-}
+};
 
 Controller.prototype.stopUpdates = function(){
 
@@ -71,20 +80,10 @@ Controller.prototype.getData = function() {
 		this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );
 		var getStationBeanArray = function (data, iden){
 			this.filterByPerimeter(data.stationBeanList,iden);
-		}
+		};
 		this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
 	}
-	
-
-	// this.dataManager.potHoles('month',41.8747107, -87.6968277, 41.8710629, -87.6758785, callback,'potHoles');
-
-
-	//
-	//
-	//
-
-
-}
+};
 
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
@@ -111,10 +110,26 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 				break;
 		}
 	}
-	
+
 	console.log(identifierStr,data);
 	console.log(filteredData);
 };
+
+
+function generateAbandonedCars(data) {
+	for	(var i = 0; i < data.length(); i++){
+		var id = data[i].service_request_number;
+		if (!this.carsArray[id]) {
+			this.carsArray[id] = new AbandonedVehicleMarker(data[i])
+		} else {
+			this.carsArray[id].updateData(data[i]);
+		}
+	}
+}
+
+
+
+
 
 function callback(data,iden){
 		switch(iden){
@@ -195,10 +210,10 @@ Controller.prototype.drawPath = function(points){
     this.pathLine.redraw();
     console.log(this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
-    
+
     //this.getPerimeterAroundPath(30);
-}
-			
+};
+
 
 
 
@@ -210,28 +225,38 @@ Controller.prototype.init = function(){
 
 		// Our focus points
 	var markerData = {
-		"Divvy": {latitude: 41.86624, longitude: -87.61702},
+		"Divvy": {"id":5,"stationName":"State St & Harrison St","availableDocks":13,"totalDocks":19,"latitude":41.8739580629,"longitude":-87.6277394859,"statusValue":"In Service","statusKey":1,"availableBikes":6,"stAddress1":"State St & Harrison St","stAddress2":"","city":"","postalCode":"","location":"620 S. State St.","altitude":"","testStation":false,"lastCommunicationTime":null,"landMark":"030"},
 		"Simple": {latitude: 41.869912359714654, longitude: -87.64772415161133, description: "Electronic Visualization Lab"},
 		"Car": { service_request_number: 12345, creation_date: "11/09/2014", vehicle_make_model: "Ferrari", vehicle_color: "Red", latitude: 41.86761, longitude: -87.61365},
 		"Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
 	};
+	var data2 = {"id":13,"stationName":"Wilton Ave & Diversey Pkwy","availableDocks":15,"totalDocks":19,"latitude":41.93250008,"longitude":-87.65268082,"statusValue":"In Service","statusKey":1,"availableBikes":4,"stAddress1":"Wilton Ave & Diversey Pkwy","stAddress2":"","city":"Chicago","postalCode":"","location":"2790 N.Wilton Ave","altitude":"","testStation":false,"lastCommunicationTime":null,"landMark":"066"}
 
-	window.divy = new DivvyMarker(markerData.Divvy);
-	divy.init(); divy.addTo(this.map);
+	var divy = new DivvyMarker(markerData.Divvy);
 	var markerArray = [
-		//new DivvyMarker(markerData.Divvy),
+		new DivvyMarker(markerData.Divvy),
 		new SimpleMarker(markerData.Simple),
 		new AbandonedVehicleMarker(markerData.Car),
 		new CrimeMarker(markerData.Crime)
 	];
-
+	divy.addTo(this.map);
 	markerArray.forEach(function(marker){
-		marker.init();
-		console.log(marker)
+		console.log(marker);
 		marker.addTo(this.map);
 	});
 
+	markerArray.forEach(function(marker){
+		console.log("removing ", marker);
+		map.removeLayer(marker);
+	});
 
+	markerArray.forEach(function(marker){
+		console.log("adding ", marker);
+		map.addLayer(marker);
+	});
+
+	for (var i = 0; i < 5000; i++){}
+	divy.updateData(data2);
 
 };
 

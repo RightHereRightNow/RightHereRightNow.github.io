@@ -9,17 +9,17 @@
     latitude,
     longitude
  */
-var CrimeMarker = function(data) {
+function CrimeMarker(data) {
 
     this.case_number = data.case_number;
     this.date = data.date;
     this.primary_type = data.primary_type;
     this.description = data.description;
 
-    var popupstr = "<p>Type: " + this.primary_type +
-                  "</p><p>Case #: "+ this.case_number +
-                  "</p><p>Date: " + this.date +
-                  "</p><p>Details: " + this.description + "</p>"
+    var popupstr = "<p><b>Type:</b> " + this.primary_type +
+                  "</br><b>Case #:</b> "+ this.case_number +
+                  "</br><b>Date:</b> " + this.date +
+                  "</br><b>Details:</b> " + this.description + "</p>"
 
     var latlng = L.latLng(data.latitude, data.longitude);
 
@@ -41,7 +41,9 @@ var CrimeMarker = function(data) {
     this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
-};
+    this.init();
+}
+
 
 
 

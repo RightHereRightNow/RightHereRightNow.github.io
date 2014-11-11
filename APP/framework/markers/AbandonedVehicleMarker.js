@@ -1,16 +1,6 @@
 //////////////////////////////////////////////////////////////
 //           Abandoned Vehicle Marker object
 //////////////////////////////////////////////////////////////
-/*
-    data: Json Object which assumes the following fields
-        service_request_number,
-        creation_date,  // aka date vehicle was reported missing
-        vehicle_make_model,
-        vehicle_color,
-        latitude,
-        longitude
-
- */
 
 var AbandonedVehicleMarker = function(data) {
     this.service_request_number = data.service_request_number;
@@ -20,11 +10,10 @@ var AbandonedVehicleMarker = function(data) {
 
     var latlng = L.latLng(data.latitude, data.longitude);
 
-    var popupstr = "<p>Request #: " + this.service_request_number + "</p>" +
-                   "<p>Date Stolen: " + this.creation_date + "</p>" +
-                   "<p>Vehicle Make/Model: " + this.vehicle_make_model + "</p>" +
-                   "<p>Vehicle Color: " + this.vehicle_color + "</p>";
-
+    var popupstr = "<p><b>Request #:</b> " + this.service_request_number +
+                   "</br><b>Date Stolen:</b>" + this.creation_date +
+                   "</br><b>Vehicle Make/Model:</b> " + this.vehicle_make_model +
+                   "</br><b>Vehicle Color:</b> " + this.vehicle_color + "</p>";
 
     var iconOld = L.AwesomeMarkers.icon({
         icon: "car",
@@ -44,4 +33,5 @@ var AbandonedVehicleMarker = function(data) {
     this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
+    this.init();
 };
