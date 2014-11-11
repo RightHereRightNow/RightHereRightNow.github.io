@@ -15,7 +15,7 @@ var PotholeMarker = function(data) {
 
     var iconNew = L.AwesomeMarkers.icon({
         icon: "bicycle",
-        spin:true,
+        spin:false,
         markerColor: "green",
         iconColor: "white"
     });
@@ -23,5 +23,5 @@ var PotholeMarker = function(data) {
     this.setIconNew(iconNew);
     this.setIconOld(iconOld);
     this.setLatLng(latlng);
-    //this.viewNewIcon();
+    this.init();
 };

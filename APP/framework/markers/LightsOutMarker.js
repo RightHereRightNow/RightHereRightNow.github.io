@@ -13,7 +13,7 @@ var LightsOutMarker = function(data, type) {
     var latlng = L.latLng(data.latitude, data.longitude);
 
     var popupstr = "<p>Type: " + type +
-                   "</p><p>Service #: " + this.service_request_number + "</p>"
+                   "</br>Service #: " + this.service_request_number + "</p>"
 
     var colorNew, colorOld, iconStr;
 
@@ -47,4 +47,5 @@ var LightsOutMarker = function(data, type) {
     this.setIconNew(iconNew);
     this.setIconOld(iconOld);
     this.setLatLng(latlng);
+    this.init();
 };

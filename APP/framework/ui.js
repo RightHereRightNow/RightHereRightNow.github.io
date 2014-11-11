@@ -134,7 +134,7 @@ ui.prototype.draw = function() {
 
 	function clickHomepage() { console.log("TODO: link to homepage");
 		window.location.href = "../"; }
-	function clickSelection() { context.setMode(context.modes.SELECTION); }
+	function clickSelection() { context.toggleMode("SELECTION"); }
 	
 	var clickLayer = function() {
 		if(layersActive) {
@@ -148,14 +148,15 @@ ui.prototype.draw = function() {
 
 	clickLayer = clickLayer.bind(this);
 
-	function clickTrafficLayer() { context.setMode(context.modes.TRAFFICLAYER); }
-	function clickCrimeLayer() { context.setMode(context.modes.CRIMELAYER); }
-	function clickPlacesOfInterestLayer() { context.setMode(context.modes.PLACESOFINTEREST); }
-	function clickDivvyBikes() { context.setMode(context.modes.DIVVYBIKES);}
-	function clickAbandonedVehicles() { context.setMode(context.modes.ABANDONEDVEHICLES); }
-	function clickStreetLightsOut() {context.setMode(context.modes.STREETLIGHTSOUT); }
-	function clickCurrentWeather() {context.setMode(context.modes.CURRENTWEATHER); }
-	function clickPotholes() {context.setMode(contex.modes.POTHOLES);}
+
+	function clickTrafficLayer() { context.toggleMode("TRAFFICLAYER"); }
+	function clickCrimeLayer() { context.toggleMode("CRIMELAYER"); }
+	function clickPlacesOfInterestLayer() { context.toggleMode("PLACESOFINTEREST"); }
+	function clickDivvyBikes() { context.toggleMode("DIVVYBIKES");}
+	function clickAbandonedVehicles() { context.toggleMode("ABANDONEDVEHICLES"); }
+	function clickStreetLightsOut() {context.toggleMode("STREETLIGHTSOUT"); }
+	function clickCurrentWeather() {context.toggleMode("CURRENTWEATHER"); }
+	function clickPotholes() {context.toggleMode("POTHOLES");}
 
 	this.createLevel1Button(svgmenu,0,"Project Homepage","house28",clickHomepage)
 	this.createLevel1Button(svgmenu,(this.button1height+3*this.button1dy),"Selection Mode","distance1",clickSelection)

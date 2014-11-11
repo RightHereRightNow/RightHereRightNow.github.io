@@ -14,16 +14,17 @@ function Controller() {
 
 	this.routePoints = null;
 	// Possible modes of our application
-	this.modes = {
-		SELECTION:		0,
-		TRAFFICLAYER:	1,
-		CRIMELAYER:		2,
-		PLACESOFINTEREST: 3,
-		DIVVYBIKES:		4,
-		ABANDONEDVEHICLES:	5,
-		STREETLIGHTSOUT:	6,
-		CURRENTWEATHER: 7,
-		POTHOLES:		8
+
+	this.mode = {
+		SELECTION: false,
+		TRAFFICLAYER: false,
+		CRIMELAYER:	false,
+		PLACESOFINTEREST: false,
+		DIVVYBIKES: false,
+		ABANDONEDVEHICLES: false,
+		STREETLIGHTSOUT: false,
+		CURRENTWEATHER:false,
+		POTHOLES: false,
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -41,14 +42,19 @@ function Controller() {
 	this.firstload = true;
 	
 	this.updateCounter = 0; // counts number of updates - only for debugging
+	
+	this.cycles = -1;  // Keeps track of the number of update cycles, mostly important for the initial cycle
+
+	this.potholesArray = {};
+	this.crimeArray = {};
+	this.divvyArray = {};
+	this.carsArray = {};
+	this.lightsAllArray = {};
+	this.lights1Array = {};
+	this.ctaArray = {};
+	
 	this.getUpdates();
 
-	// TODO: remove and implement as layer object
-	// temporary container for crime data
-	this.oldPotholes = [];
-	this.newPotholes = ['t','e','s','t'];
-
-	
 }
 
 Controller.prototype.getUpdates = function(){
@@ -85,15 +91,22 @@ Controller.prototype.getData = function() {
 	if (this.pathLineConstructed === true){
 		var bounds = this.pathLine.getBounds();
 		console.log("fetching data");
-		this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
-		this.dataManager.abandonedVehicle("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "abandonedVehicles" );
-		this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
-		this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );
-		var getStationBeanArray = function (data, iden){
-			this.filterByPerimeter(data.stationBeanList,iden);
+		if (this.mode.POTHOLES===true)
+			this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
+		if (this.mode.ABANDONEDVEHICLES===true)
+			this.dataManager.abandonedVehicle("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "abandonedVehicles" );
+		if (this.mode.STREETLIGHTSOUT===true){
+			this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
+			this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );	
 		}
-		this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
-	}
+
+		if (this.mode.DIVVYBIKES===true){
+			var getStationBeanArray = function (data, iden){
+				this.filterByPerimeter(data.stationBeanList,iden);
+			}
+			this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
+		}
+	}	
 
 	// TODO: remove - only for testing
 	this.dataManager.potHoles("week",41.87,-87.68,41.83,-87.64,this.filterByPerimeter.bind(this), "potHoles" );
@@ -106,6 +119,24 @@ Controller.prototype.getData = function() {
 
 }
 
+Controller.prototype.onMapClick = function(e){
+	if (this.mode.SELECTION === true){
+		var point = e.latlng;
+		this.locations.push({latLng: {lat:point.lat,lng:point.lng}});
+		if (this.locations.length > 2)
+			this.locations.splice(0,1);
+		var locObj = { locations:this.locations };
+		this.getRoute(locObj);
+	}
+	else{
+		//Do stuff like clicking on marker and popups
+	}
+	
+}
+
+Controller.prototype.normalModeClick = function(e){
+
+}
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 
@@ -263,33 +294,44 @@ Controller.prototype.drawPath = function(points){
 
 
 
+
 Controller.prototype.init = function(){
 	this.map.init(this.mapCenter, 11);
 
 		// Our focus points
 	var markerData = {
-		"Divvy": {latitude: 41.86624, longitude: -87.61702},
+		"Divvy": {"id":5,"stationName":"State St & Harrison St","availableDocks":13,"totalDocks":19,"latitude":41.8739580629,"longitude":-87.6277394859,"statusValue":"In Service","statusKey":1,"availableBikes":6,"stAddress1":"State St & Harrison St","stAddress2":"","city":"","postalCode":"","location":"620 S. State St.","altitude":"","testStation":false,"lastCommunicationTime":null,"landMark":"030"},
 		"Simple": {latitude: 41.869912359714654, longitude: -87.64772415161133, description: "Electronic Visualization Lab"},
 		"Car": { service_request_number: 12345, creation_date: "11/09/2014", vehicle_make_model: "Ferrari", vehicle_color: "Red", latitude: 41.86761, longitude: -87.61365},
 		"Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
 	};
+	var data2 = {"id":13,"stationName":"Wilton Ave & Diversey Pkwy","availableDocks":15,"totalDocks":19,"latitude":41.93250008,"longitude":-87.65268082,"statusValue":"In Service","statusKey":1,"availableBikes":4,"stAddress1":"Wilton Ave & Diversey Pkwy","stAddress2":"","city":"Chicago","postalCode":"","location":"2790 N.Wilton Ave","altitude":"","testStation":false,"lastCommunicationTime":null,"landMark":"066"}
 
-	window.divy = new DivvyMarker(markerData.Divvy);
-	divy.init(); divy.addTo(this.map);
+	var divy = new DivvyMarker(markerData.Divvy);
 	var markerArray = [
-		//new DivvyMarker(markerData.Divvy),
+		new DivvyMarker(markerData.Divvy),
 		new SimpleMarker(markerData.Simple),
 		new AbandonedVehicleMarker(markerData.Car),
 		new CrimeMarker(markerData.Crime)
 	];
-
+	divy.addTo(this.map);
 	markerArray.forEach(function(marker){
-		marker.init();
-		console.log(marker)
+		console.log(marker);
 		marker.addTo(this.map);
 	});
 
+	markerArray.forEach(function(marker){
+		console.log("removing ", marker);
+		map.removeLayer(marker);
+	});
 
+	markerArray.forEach(function(marker){
+		console.log("adding ", marker);
+		map.addLayer(marker);
+	});
+
+	for (var i = 0; i < 5000; i++){}
+	divy.updateData(data2);
 
 };
 
@@ -340,13 +382,46 @@ Controller.prototype.attachLayerToMap = function(){
 };
 
 
-// Sets current mode
-Controller.prototype.setMode = function(newmode) {
-	console.log("\tSet mode: " + newmode);
-	//thisController.activeMode = newmode;
+Controller.prototype.toggleMode = function(mode) {
+	switch(mode){
+		case "SELECTION":
+						this.mode.SELECTION = !this.mode.SELECTION;						
+						break;
+		case "TRAFFICLAYER":
+						this.mode.TRAFFICLAYER = !this.mode.TRAFFICLAYER;
+						break;
+		case "CRIMELAYER":
+						this.mode.CRIMELAYER = !this.mode.CRIMELAYER;
+						break;
+		case "PLACESOFINTEREST":
+						this.mode.PLACESOFINTEREST = !this.mode.PLACESOFINTEREST;
+						break;
+		case "DIVVYBIKES":
+						this.mode.DIVVYBIKES = !this.mode.DIVVYBIKES;
+						break;
+		case "ABANDONEDVEHICLES":
+						this.mode.ABANDONEDVEHICLES = !this.mode.ABANDONEDVEHICLES;
+						break;
+		case "STREETLIGHTSOUT":
+						this.mode.STREETLIGHTSOUT = !this.mode.STREETLIGHTSOUT;
+						break;
+		case "CURRENTWEATHER":
+						this.mode.CURRENTWEATHER = !this.mode.CURRENTWEATHER;
+						break;
+		case "POTHOLES":
+						this.mode.POTHOLES = !this.mode.POTHOLES;
+						break;
+		default:
+				break;
+	}
 };
 
-// Returns current mode
-Controller.prototype.getMode = function() {
-	//return thisController.activeMode;
+
+
+
+Controller.prototype.getMode = function(mode) {
+	if (mode in this.mode)
+		return this.mode[mode];
+	return null;
 };
+

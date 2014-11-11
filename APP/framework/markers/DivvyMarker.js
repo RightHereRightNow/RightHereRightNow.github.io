@@ -9,26 +9,14 @@ function DivvyMarker(data) {
     this.availableDocks = data.availableDocks;
     this.totalDocks = data.totalDocks;
     this.statusValue = data.statusValue;
-    this.statusKey = data.statusKey;
     this.availableBikes = data.availableBikes;
-    this.stAddress1 = data.stAddress1;
-    this.location = data.location;
-    this.testStation = data.testStation;
-    this.lastCommunicationTime = data.lastCommunicationTime;
-    this.landMark = data.landMark;
 
-    var popupstr = "<p>Id: " + this.id +
-                "</p><p>StationName: " + this.stationName +
-                "</p><p>AvailableDocks: " + this.availableDocks +
-                "</p><p>TotalDocks: " + this.totalDocks +
-                "</p><p>StatusValue: " + this.statusValue +
-                "</p><p>StatusKey: " + this.statusKey +
-                "</p><p>AvailableBikes: " + this.availableBikes +
-                "</p><p>StAddress1: " + this.stAddress1 +
-                "</p><p>Location: " + this.location +
-                "</p><p>TestStation: " + this.testStation +
-                "</p><p>LastCommunicationTime: " + this.lastCommunicationTime +
-                "</p><p>LandMark: " + this.landMark + "</p>";
+    var popupstr = "<p><b>Id:</b> " + this.id +
+                    "</br><b>Station Name:</b> " + this.stationName +
+                    "</br><b>Available Docks:</b> " + this.availableDocks +
+                    "</br><b>Total Docks:</b> " + this.totalDocks +
+                    "</br><b>Status:</b> " + this.statusValue +
+                    "</br><b>Available Bikes:</b> " + this.availableBikes + "</p>";
 
 
     var latlng = L.latLng(data.latitude, data.longitude);
@@ -42,13 +30,34 @@ function DivvyMarker(data) {
 
     var iconNew = L.AwesomeMarkers.icon({
         icon: "bicycle",
-        spin:true,
+        spin:false,
         markerColor: "blue",
         iconColor: "white"
     });
+
+    this.updateData = function(data) {
+        this.id = data.id;
+        this.stationName = data.stationName;
+        this.availableDocks = data.availableDocks;
+        this.totalDocks = data.totalDocks;
+        this.statusValue = data.statusValue;
+        this.availableBikes = data.availableBikes;
+
+        var popupstr = "<p><b>Id:</b> " + this.id +
+            "</br><b>Station Name:</b> " + this.stationName +
+            "</br><b>Available Docks:</b> " + this.availableDocks +
+            "</br><b>Total Docks:</b> " + this.totalDocks +
+            "</br><b>Status:</b> " + this.statusValue +
+            "</br><b>Available Bikes:</b> " + this.availableBikes + "</p>";
+
+        this.setPopupString(popupstr);
+        this.viewOldIcon();
+    };
 
     this.setIconNew(iconNew);
     this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
+    this.init();
 }
+
