@@ -26,7 +26,7 @@ function Controller() {
 		ABANDONEDVEHICLES: false,
 		STREETLIGHTSOUT: false,
 		CURRENTWEATHER:false,
-		POTHOLES: false,
+		POTHOLES: false
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -75,11 +75,11 @@ Controller.prototype.updateWeather = function(){
 }
 
 Controller.prototype.weatherFun =  function (data, iden){
-	console.log(this.weatherBox);
-	if(this.weatherBox != undefined){
-		this.weatherBox.svg.remove();
-		console.log("removed");
-	}
+	//console.log(this.weatherBox);
+	//if(this.weatherBox != undefined){
+	//	this.weatherBox.svg.remove();
+	//	console.log("removed");
+	//}
 	this.weatherBox = new Weather();
 	this.weatherBox.create('#weather', "100%","100%", '0.7', data);
 }
@@ -101,7 +101,7 @@ Controller.prototype.getData = function() {
 
 	console.log(this.pathLineConstructed);
 
-	this.updateWeather();
+	//this.updateWeather();
 
 	if (this.pathLineConstructed === true){
 		var bounds = this.pathLine.getBounds();
