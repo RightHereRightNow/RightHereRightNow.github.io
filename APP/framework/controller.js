@@ -129,8 +129,6 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 
 	var filteredData = [];
 
-	// TODO: not filtering for path yet - only for debugging
-/*
 	var points = this.pathLine.getLatLngs();
 	var radiusInLng = this.perimeterRadiusInMiles/53.00;
 	var radiusInLat = this.perimeterRadiusInMiles/68.90;
@@ -154,12 +152,12 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		}
 	}
 	
-*/
-	filteredData = data; // TODO: remove
-	
 	
 	// TODO: add more cases....
 	switch(identifierStr) {
+		case 'potHoles':
+			this.updateMarkers(data,this.potholesArray,'service_request_number',PotholeMarker);
+			break;
 		case 'potHoles':
 			this.updateMarkers(data,this.potholesArray,'service_request_number',PotholeMarker);
 			break;
