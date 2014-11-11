@@ -17,7 +17,12 @@ function Controller() {
 	this.modes = {
 		SELECTION:		0,
 		TRAFFICLAYER:	1,
-		CRIMELAYER:		2
+		CRIMELAYER:		2,
+		PLACESOFINTEREST: 3,
+		DIVVYBIKES:		4,
+		ABANDONEDVEHICLES:	5,
+		STREETLIGHTSOUT:	6,
+		CURRENTWEATHER: 7
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
