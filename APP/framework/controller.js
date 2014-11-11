@@ -115,10 +115,10 @@ Controller.prototype.getData = function() {
 		}
 
 		if (this.mode.DIVVYBIKES===true){
-			var getStationBeanArray = function (data, iden){
-				this.filterByPerimeter(data.stationBeanList,iden);
-			};
-			this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
+			//var getStationBeanArray = function (data, iden){
+			//	this.filterByPerimeter(data.stationBeanList,iden);
+			//};
+			this.dataManager.divvyBikes(bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "divyStations" );
 		}
 	}	
 
