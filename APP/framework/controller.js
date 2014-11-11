@@ -72,9 +72,9 @@ Controller.prototype.stopUpdates = function(){
 
 Controller.prototype.getData = function() {
 
-	if (this.updateCounter < 4) {
-
-		this.updateCounter++;
+	//if (this.updateCounter < 4) {
+    //
+	//	this.updateCounter++;
 
 	console.log("\tCONTROLLER - getData");
 
@@ -95,14 +95,14 @@ Controller.prototype.getData = function() {
 		if (this.mode.DIVVYBIKES===true){
 			var getStationBeanArray = function (data, iden){
 				this.filterByPerimeter(data.stationBeanList,iden);
-			}
+			};
 			this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
 		}
 	}	
 
 	// TODO: remove - only for testing
-	this.dataManager.potHoles("week",41.87,-87.68,41.83,-87.64,this.filterByPerimeter.bind(this), "potHoles" );
-	}
+	//this.dataManager.potHoles("week",41.87,-87.68,41.83,-87.64,this.filterByPerimeter.bind(this), "potHoles" );
+	//}
 
 }
 
@@ -130,7 +130,6 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	var filteredData = [];
 
 	// TODO: not filtering for path yet - only for debugging
-/*
 	var points = this.pathLine.getLatLngs();
 	var radiusInLng = this.perimeterRadiusInMiles/53.00;
 	var radiusInLat = this.perimeterRadiusInMiles/68.90;
@@ -153,8 +152,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 				break;
 		}
 	}
-	
-*/
+
 	filteredData = data; // TODO: remove
 	
 	
@@ -163,13 +161,13 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		case 'potHoles':
 			this.updatePotholes(filteredData);
 			break;
+		case 'divyStations':
+			this.updateDivvyStations(filteredData);
+			break;
 		default:
 			console.log('Invalid string');
 			break;
 	}
-
-	// console.log(identifierStr,data);
-	// console.log(filteredData);
 };
 
 Controller.prototype.updatePotholes = function(data){
@@ -184,17 +182,35 @@ Controller.prototype.updatePotholes = function(data){
 	// TODO: edit to recognize updated values
 	
 	for(var i = 0; i< data.length; i++){
-		key = data[i].service_request_number;
+		var key = data[i].service_request_number;
 		if(!this.potholesArray[key]) {
 			this.potholesArray[key] = new PotholeMarker(data[i]);
-			this.potholesArray[key].viewNewIcon();
 			this.potholesArray[key].addTo(this.map);
+			this.potholesArray[key].viewNewIcon();
 		} else {
 			this.potholesArray[key].viewOldIcon()
 		}
 	}
 
-}
+};
+
+
+Controller.prototype.updateDivvyStations = function(data){
+
+	for(var i = 0; i< data.length; i++){
+		var key = data[i].id;
+		if(!this.divvyArray[key]) {
+			this.divvyArray[key] = new DivvyMarker(data[i]);
+			this.divvyArray[key].addTo(this.map);
+			this.divvyArray[key].viewNewIcon();
+		} else {
+			this.divvyArray[key].viewOldIcon();
+		}
+	}
+
+};
+
+
 
 Controller.prototype.getRoute = function(locations){
 	this.pathLineConstructed = false;
@@ -277,33 +293,18 @@ Controller.prototype.init = function(){
 		"Car": { service_request_number: 12345, creation_date: "11/09/2014", vehicle_make_model: "Ferrari", vehicle_color: "Red", latitude: 41.86761, longitude: -87.61365},
 		"Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
 	};
-	var data2 = {"id":13,"stationName":"Wilton Ave & Diversey Pkwy","availableDocks":15,"totalDocks":19,"latitude":41.93250008,"longitude":-87.65268082,"statusValue":"In Service","statusKey":1,"availableBikes":4,"stAddress1":"Wilton Ave & Diversey Pkwy","stAddress2":"","city":"Chicago","postalCode":"","location":"2790 N.Wilton Ave","altitude":"","testStation":false,"lastCommunicationTime":null,"landMark":"066"}
 
-	var divy = new DivvyMarker(markerData.Divvy);
+
 	var markerArray = [
 		new DivvyMarker(markerData.Divvy),
 		new SimpleMarker(markerData.Simple),
 		new AbandonedVehicleMarker(markerData.Car),
 		new CrimeMarker(markerData.Crime)
 	];
-	divy.addTo(this.map);
 	markerArray.forEach(function(marker){
 		console.log(marker);
 		marker.addTo(this.map);
 	});
-
-	markerArray.forEach(function(marker){
-		console.log("removing ", marker);
-		map.removeLayer(marker);
-	});
-
-	markerArray.forEach(function(marker){
-		console.log("adding ", marker);
-		map.addLayer(marker);
-	});
-
-	for (var i = 0; i < 5000; i++){}
-	divy.updateData(data2);
 
 };
 
@@ -370,6 +371,17 @@ Controller.prototype.toggleMode = function(mode) {
 						break;
 		case "DIVVYBIKES":
 						this.mode.DIVVYBIKES = !this.mode.DIVVYBIKES;
+						if(!this.mode.DIVVYBIKES ) {
+							console.log("HIDE!");
+							for( var key in this.divvyArray){
+								this.map.removeLayer(this.divvyArray[key]);
+							}
+						} else {
+							console.log("SHOW!");
+							for( var key in this.divvyArray){
+								this.map.addLayer(this.divvyArray[key]);
+							}
+						}
 						break;
 		case "ABANDONEDVEHICLES":
 						this.mode.ABANDONEDVEHICLES = !this.mode.ABANDONEDVEHICLES;
@@ -382,6 +394,19 @@ Controller.prototype.toggleMode = function(mode) {
 						break;
 		case "POTHOLES":
 						this.mode.POTHOLES = !this.mode.POTHOLES;
+						if(!this.mode.POTHOLES) {
+							console.log("HIDE!");
+							for( var key in this.potholesArray){
+								//this.potholesArray[key]
+								this.map.removeLayer(this.potholesArray[key]);
+							}
+						} else {
+							console.log("SHOW!");
+							for( var key in this.potholesArray){
+								this.map.addLayer(this.potholesArray[key]);
+							}
+						}
+
 						break;
 		default:
 				break;

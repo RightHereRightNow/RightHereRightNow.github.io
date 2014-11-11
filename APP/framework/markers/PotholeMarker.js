@@ -16,14 +16,14 @@ var PotholeMarker = function(data) {
 
 
     var iconOld = L.AwesomeMarkers.icon({
-        icon: "bicycle",
+        icon: "exclamation-triangle",
         spin:false,
         markerColor: "green",
         iconColor: "white"
     });
 
     var iconNew = L.AwesomeMarkers.icon({
-        icon: "bicycle",
+        icon: "exclamation-triangle",
         spin:false,
         markerColor: "darkgreen",
         iconColor: "white"

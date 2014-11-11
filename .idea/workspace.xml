@@ -40,31 +40,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="controller.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="controller.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/APP/framework/controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1132" max-vertical-offset="6390">
-              <caret line="97" column="33" selection-start-line="97" selection-start-column="33" selection-end-line="97" selection-end-column="33" />
+            <state vertical-scroll-proportion="0.4955157" vertical-offset="1159" max-vertical-offset="6450">
+              <caret line="92" column="9" selection-start-line="92" selection-start-column="9" selection-end-line="92" selection-end-column="9" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="database.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/APP/data/database.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1388" max-vertical-offset="10290">
-              <caret line="124" column="90" selection-start-line="124" selection-start-column="23" selection-end-line="124" selection-end-column="90" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PotholeMarker.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="PotholeMarker.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/APP/framework/markers/PotholeMarker.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.27565083" vertical-offset="0" max-vertical-offset="653">
-              <caret line="14" column="65" selection-start-line="14" selection-start-column="65" selection-end-line="14" selection-end-column="65" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="169" max-vertical-offset="615">
+              <caret line="18" column="37" selection-start-line="18" selection-start-column="37" selection-end-line="18" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -101,14 +91,14 @@
         <option value="$PROJECT_DIR$/APP/framework/MapManager.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/CTAMarker.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/SimpleMarker.js" />
-        <option value="$PROJECT_DIR$/APP/framework/markers/AbstractMarker.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/LightsOutMarker.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/CrimeMarker.js" />
         <option value="$PROJECT_DIR$/APP/framework/init.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/DivvyMarker.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/AbandonedVehicleMarker.js" />
-        <option value="$PROJECT_DIR$/APP/framework/controller.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/PotholeMarker.js" />
+        <option value="$PROJECT_DIR$/APP/framework/markers/AbstractMarker.js" />
+        <option value="$PROJECT_DIR$/APP/framework/controller.js" />
       </list>
     </option>
   </component>
@@ -268,11 +258,8 @@
             <option name="mySupportsDeletion" value="false" />
             <option name="myCanBeAbsent" value="false" />
             <option name="myId" value="UPDATED" />
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/css/style.css</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/MapManager.js</PATH>
             <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/controller.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/init.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/ui.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/markers/PotholeMarker.js</PATH>
           </FILE-GROUP>
           <FILE-GROUP>
             <option name="myUpdateName" value="Created" />
@@ -280,12 +267,6 @@
             <option name="mySupportsDeletion" value="false" />
             <option name="myCanBeAbsent" value="false" />
             <option name="myId" value="CREATED" />
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/img/cold5.svg</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/img/criminal20.svg</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/img/regular2.svg</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/img/road22.svg</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/img/street9.svg</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/img/thermometer14.svg</PATH>
           </FILE-GROUP>
           <FILE-GROUP>
             <option name="myUpdateName" value="Deleted" />
@@ -504,7 +485,13 @@
       <option name="project" value="LOCAL" />
       <updated>1415670229383</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Fixed potholes Markers">
+      <created>1415672054470</created>
+      <option name="number" value="00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1415672054470</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -522,7 +509,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30396476" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30396476" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -558,7 +545,8 @@
     <MESSAGE value="updated markers" />
     <MESSAGE value="adding functionality to control groups of markers" />
     <MESSAGE value="Added update function to DivvyMarkers. Fixed inconsistencies in functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added update function to DivvyMarkers. Fixed inconsistencies in functionality" />
+    <MESSAGE value="Fixed potholes Markers" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed potholes Markers" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -889,28 +877,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/APP/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-24.375" vertical-offset="0" max-vertical-offset="1080">
-          <caret line="39" column="60" selection-start-line="39" selection-start-column="60" selection-end-line="39" selection-end-column="60" />
-          <folding>
-            <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/APP/framework/markers/CTAMarker.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
           <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/APP/framework/markers/DivvyMarker.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="382" max-vertical-offset="1035">
-          <caret line="32" column="18" selection-start-line="32" selection-start-column="18" selection-end-line="32" selection-end-column="18" />
           <folding />
         </state>
       </provider>
@@ -923,28 +893,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/APP/framework/markers/AbandonedVehicleMarker.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="653">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/APP/framework/markers/SimpleMarker.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.34456354" vertical-offset="0" max-vertical-offset="765">
           <caret line="17" column="57" selection-start-line="17" selection-start-column="57" selection-end-line="17" selection-end-column="57" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/APP/framework/markers/AbstractMarker.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.517611" vertical-offset="247" max-vertical-offset="1320">
-          <caret line="41" column="0" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -957,26 +909,62 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/APP/framework/controller.js">
+    <entry file="file://$PROJECT_DIR$/APP/framework/markers/AbandonedVehicleMarker.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1132" max-vertical-offset="6390">
-          <caret line="97" column="33" selection-start-line="97" selection-start-column="33" selection-end-line="97" selection-end-column="33" />
-          <folding />
+        <state vertical-scroll-proportion="0.34456354" vertical-offset="0" max-vertical-offset="653">
+          <caret line="15" column="52" selection-start-line="15" selection-start-column="52" selection-end-line="15" selection-end-column="52" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/APP/data/database.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1388" max-vertical-offset="10290">
-          <caret line="124" column="90" selection-start-line="124" selection-start-column="23" selection-end-line="124" selection-end-column="90" />
+        <state vertical-scroll-proportion="-4.780269" vertical-offset="2327" max-vertical-offset="10290">
+          <caret line="17" column="4" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/framework/markers/DivvyMarker.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33632287" vertical-offset="420" max-vertical-offset="1035">
+          <caret line="38" column="25" selection-start-line="38" selection-start-column="18" selection-end-line="38" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/framework/markers/AbstractMarker.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33183858" vertical-offset="542" max-vertical-offset="1320">
+          <caret line="48" column="4" selection-start-line="48" selection-start-column="4" selection-end-line="48" selection-end-column="4" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/APP/framework/markers/PotholeMarker.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.27565083" vertical-offset="0" max-vertical-offset="653">
-          <caret line="14" column="65" selection-start-line="14" selection-start-column="65" selection-end-line="14" selection-end-column="65" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="169" max-vertical-offset="615">
+          <caret line="18" column="37" selection-start-line="18" selection-start-column="37" selection-end-line="18" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-24.375" vertical-offset="0" max-vertical-offset="1080">
+          <caret line="39" column="60" selection-start-line="39" selection-start-column="60" selection-end-line="39" selection-end-column="60" />
+          <folding>
+            <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/framework/controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4955157" vertical-offset="1159" max-vertical-offset="6450">
+          <caret line="92" column="9" selection-start-line="92" selection-start-column="9" selection-end-line="92" selection-end-column="9" />
           <folding />
         </state>
       </provider>
