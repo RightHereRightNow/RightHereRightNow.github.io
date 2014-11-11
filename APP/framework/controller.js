@@ -67,6 +67,8 @@ Controller.prototype.getData = function() {
 
 	if (this.updateCounter < 4) {
 
+		this.updateCounter++;
+
 	console.log("\tCONTROLLER - getData");
 
 	// TODO: Query data from database
