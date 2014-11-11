@@ -155,6 +155,7 @@ ui.prototype.draw = function() {
 	function clickAbandonedVehicles() { context.setMode(context.modes.ABANDONEDVEHICLES); }
 	function clickStreetLightsOut() {context.setMode(context.modes.STREETLIGHTSOUT); }
 	function clickCurrentWeather() {context.setMode(context.modes.CURRENTWEATHER); }
+	function clickPotholes() {context.setMode(contex.modes.POTHOLES);}
 
 	this.createLevel1Button(svgmenu,0,"Project Homepage","house28",clickHomepage)
 	this.createLevel1Button(svgmenu,(this.button1height+3*this.button1dy),"Selection Mode","distance1",clickSelection)
@@ -167,6 +168,7 @@ ui.prototype.draw = function() {
 	this.createLevel2Button(svgmenu,(7*this.button1height+10*this.button1dy), "Abandoned Vehicles", "criminal20", clickAbandonedVehicles);
 	this.createLevel2Button(svgmenu,(8*this.button1height+11*this.button1dy), "Street Lights Out", "street9", clickStreetLightsOut);
 	this.createLevel2Button(svgmenu,(9*this.button1height+12*this.button1dy), "Current Weather", "cold5", clickCurrentWeather);
+	this.createLevel2Button(svgmenu,(10*this.button1height+13*this.button1dy), "Potholes" ,"road22", clickPotholes);
 
 
 
