@@ -184,7 +184,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	// TODO: add more cases....
 	switch(identifierStr) {
 		case 'potHoles':
-			this.updatePotholes(filteredData);
+			this.updateMarkers(data,this.potholesArray,'service_request_number',PotholeMarker);
 			break;
 		default:
 			console.log('Invalid string');
@@ -195,29 +195,29 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	// console.log(filteredData);
 };
 
-Controller.prototype.updatePotholes = function(data){
 
-	// TODO: check which data has changed from previous update
-	// TODO: write data to marker objects
-	// TODO: update layer
-	//
-	//
+// Generic function to write new data to markers
+Controller.prototype.updateMarkers = function(data,array,idstr,marker) {
 
-
-	// TODO: edit to recognize updated values
-	
 	for(var i = 0; i< data.length; i++){
-		key = data[i].service_request_number;
-		if(!this.potholesArray[key]) {
-			this.potholesArray[key] = new PotholeMarker(data[i]);
-			this.potholesArray[key].viewNewIcon();
-			this.potholesArray[key].addTo(this.map);
+		var key = data[i][idstr];
+		if(!array[key]) {
+			array[key] = new marker(data[i]);
+			(this.firstload ? array[key].viewOldIcon() : array[key].viewNewIcon);
+			array[key].addTo(this.map);
 		} else {
-			this.potholesArray[key].viewOldIcon()
+			array[key].viewOldIcon()
 		}
 	}
 
 }
+
+
+
+
+
+
+
 
 Controller.prototype.getRoute = function(locations){
 	this.pathLineConstructed = false;
