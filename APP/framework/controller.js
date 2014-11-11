@@ -45,6 +45,8 @@ function Controller() {
 	// temporary container for crime data
 	this.oldPotholes = [];
 	this.newPotholes = ['t','e','s','t'];
+
+	this.updateCounter = 0; // counts number of updates - only for debugging
 	
 }
 
@@ -62,6 +64,8 @@ Controller.prototype.stopUpdates = function(){
 // Function calls itself in regular intervals of length "refreshrate"
 
 Controller.prototype.getData = function() {
+
+	if (this.updateCounter < 4) {
 
 	console.log("\tCONTROLLER - getData");
 
@@ -93,7 +97,7 @@ Controller.prototype.getData = function() {
 	//
 	//
 	//
-
+	}
 
 }
 
@@ -152,6 +156,7 @@ Controller.prototype.updatePotholes = function(data){
 	// TODO: edit to recognize updated values
 	for(var i = 0; i< data.length; i++){
 		this.newPotholes[i] = new PotholeMarker(data[i]);
+		this.newPotholes[i].init();
 		this.newPotholes[i].addTo(this.map);
 	}
 
