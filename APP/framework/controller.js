@@ -60,7 +60,7 @@ function Controller() {
 }
 
 Controller.prototype.getUpdates = function(){
-	var refreshrate = 30000; // Rate at which new data is queried
+	var refreshrate = 5000; // Rate at which new data is queried
 	this.getData();
 	this.updateWeather();
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
