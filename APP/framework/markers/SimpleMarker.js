@@ -19,7 +19,7 @@ var SimpleMarker = function(data) {
 
     var iconNew = L.AwesomeMarkers.icon({
         icon: "circle",
-        spin:true,
+        spin:false,
         markerColor: "orange",
         iconColor: "white"
     });
