@@ -101,7 +101,7 @@ Controller.prototype.getData = function() {
 	}
 	
 	console.log("\tCONTROLLER - getData");
-	console.log("Path line constructed:\t" + this.pathLineConstructed);
+	// console.log("Path line constructed:\t" + this.pathLineConstructed);
 	
 	if (this.pathLineConstructed){
 		
@@ -248,7 +248,7 @@ Controller.prototype.getRoute = function(locations){
 }
 
 Controller.prototype.getRouteShape = function(routeObject){
-	console.log(routeObject);
+	// console.log(routeObject);
 	if (!routeObject) return;
 	if (routeObject.info.statuscode===0){
 		var url = "http://www.mapquestapi.com/directions/v2/routeShape?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&options={outShapeFormat:cmp}&fullShape=true&sessionId=" + routeObject.route.sessionId ; //"&narrativeType=none";
