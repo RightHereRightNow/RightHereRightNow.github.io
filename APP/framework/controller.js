@@ -141,6 +141,9 @@ Controller.prototype.getData = function() {
 			this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divyStations" );
 		}
 	}
+
+	this.firstload = false;
+
 }
 
 Controller.prototype.onMapClick = function(e){
@@ -218,7 +221,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 
 
 // Generic function to write new data to markers
-// TODO: add particular event for updated icon
+// TODO: handle updated icons
 // 'data' is the (filtered) data that needs to be written to markers
 // 'array' is the array that will hold the markers, e.g. potholesArray
 // 'idstr' is the name of the field of the object that is used to uniquely identify the marker as a string
