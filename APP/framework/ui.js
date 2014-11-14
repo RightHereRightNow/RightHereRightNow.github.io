@@ -134,7 +134,7 @@ ui.prototype.draw = function() {
 
 	function clickHomepage() { console.log("TODO: link to homepage");
 		window.location.href = "../"; }
-	function clickSelection() { context.toggleMode("SELECTION"); }
+	function clickSelection() { context.toggleLayer("SELECTION"); }
 	
 	var clickLayer = function() {
 		if(layersActive) {
@@ -149,14 +149,14 @@ ui.prototype.draw = function() {
 	clickLayer = clickLayer.bind(this);
 
 
-	function clickTrafficLayer() { context.toggleMode("TRAFFICLAYER"); }
-	function clickCrimeLayer() { context.toggleMode("CRIMELAYER"); }
-	function clickPlacesOfInterestLayer() { context.toggleMode("PLACESOFINTEREST"); }
-	function clickDivvyBikes() { context.toggleMode("DIVVYBIKES");}
-	function clickAbandonedVehicles() { context.toggleMode("ABANDONEDVEHICLES"); }
-	function clickStreetLightsOut() {context.toggleMode("STREETLIGHTSOUT"); }
-	function clickCurrentWeather() {context.toggleMode("CURRENTWEATHER"); }
-	function clickPotholes() {context.toggleMode("POTHOLES");}
+	function clickTrafficLayer() { context.setLayer("TRAFFICLAYER",context.ctaArray,!context.getMode("TRAFFICLAYER")); context.getData(); }
+	function clickCrimeLayer() { context.setLayer("CRIMELAYER",context.crimeArray,!context.getMode("CRIMELAYER")); context.getData(); }
+	function clickPlacesOfInterestLayer() { context.setLayer("PLACESOFINTEREST",context.pointsOfInterestArray,!context.getMode("PLACESOFINTEREST")); context.getData(); }
+	function clickDivvyBikes() { context.setLayer("DIVVYBIKES",context.divvyArray,!context.getMode("DIVVYBIKES")); context.getData();}
+	function clickAbandonedVehicles() { context.setLayer("ABANDONEDVEHICLES",context.carsArray,!context.getMode("ABANDONEDVEHICLES")); context.getData(); }
+	function clickStreetLightsOut() {context.setLayer("STREETLIGHTSOUT",context.lights1Array,!context.getMode("STREETLIGHTSOUT")); context.getData(); }
+	function clickPotholes() {context.setLayer("POTHOLES",context.potholesArray,!context.getMode("POTHOLES")); context.getData();}
+	function clickCurrentWeather() {context.setWeather(!context.getMode("CURRENTWEATHER")); }
 
 	this.createLevel1Button(svgmenu,0,"Project Homepage","house28",clickHomepage)
 	this.createLevel1Button(svgmenu,(this.button1height+3*this.button1dy),"Selection Mode","distance1",clickSelection)
@@ -168,8 +168,8 @@ ui.prototype.draw = function() {
 	this.createLevel2Button(svgmenu,(6*this.button1height+9*this.button1dy), "Divvy Bikes", "regular2", clickDivvyBikes);
 	this.createLevel2Button(svgmenu,(7*this.button1height+10*this.button1dy), "Abandoned Vehicles", "criminal20", clickAbandonedVehicles);
 	this.createLevel2Button(svgmenu,(8*this.button1height+11*this.button1dy), "Street Lights Out", "street9", clickStreetLightsOut);
-	this.createLevel2Button(svgmenu,(9*this.button1height+12*this.button1dy), "Current Weather", "cold5", clickCurrentWeather);
-	this.createLevel2Button(svgmenu,(10*this.button1height+13*this.button1dy), "Potholes" ,"road22", clickPotholes);
+	this.createLevel2Button(svgmenu,(9*this.button1height+12*this.button1dy), "Potholes" ,"road22", clickPotholes);
+	this.createLevel2Button(svgmenu,(10*this.button1height+15*this.button1dy), "Current Weather", "cold5", clickCurrentWeather);
 
 
 
