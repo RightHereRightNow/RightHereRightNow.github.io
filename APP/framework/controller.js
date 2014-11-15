@@ -364,11 +364,11 @@ Controller.prototype.setLayer = function(layerName,array,b) {
 	
 	this.mode[layerName] = b;
 
-	for(var key in this.array) {
-		(this.mode[layerName] ?
-				this.map.addLayer(this.array[key]) :
-				this.map.removeLayer(this.array[key])
-		);
+	for(var key in array) {
+		(b ?
+			this.map.addLayer(array[key]) :
+			this.map.removeLayer(array[key])
+		)
 	}
 };
 
