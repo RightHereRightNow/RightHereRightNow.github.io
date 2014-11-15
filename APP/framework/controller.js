@@ -10,6 +10,8 @@ function Controller() {
 	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
 
+	this.weatherBox = null;
+
 	this.perimeterRadiusInMiles = 0.25;
 
 	this.routePoints = null;
@@ -19,12 +21,12 @@ function Controller() {
 		SELECTION: false,
 		TRAFFICLAYER: false,
 		CRIMELAYER:	false,
-		PLACESOFINTEREST: false,
+		PLACESOFINTEREST: true,
 		DIVVYBIKES: false,
 		ABANDONEDVEHICLES: false,
 		STREETLIGHTSOUT: false,
 		CURRENTWEATHER:false,
-		POTHOLES: false,
+		POTHOLES: false
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -40,20 +42,28 @@ function Controller() {
 	this.pathLineConstructed = false;
 
 	this.firstload = true;
-	this.getUpdates();
-
-	// TODO: remove and implement as layer object
-	// temporary container for crime data
-	this.oldPotholes = [];
-	this.newPotholes = ['t','e','s','t'];
-
+	
 	this.updateCounter = 0; // counts number of updates - only for debugging
 	
+	this.cycles = -1;  // Keeps track of the number of update cycles, mostly important for the initial cycle
+
+	this.pointsOfInterestArray = {};
+	this.potholesArray = {};
+	this.crimeArray = {};
+	this.divvyArray = {};
+	this.carsArray = {};
+	this.lightsAllArray = {};
+	this.lights1Array = {};
+	this.ctaArray = {};
+	
+	this.getUpdates();
+
 }
 
 Controller.prototype.getUpdates = function(){
 	var refreshrate = 5000; // Rate at which new data is queried
 	this.getData();
+	this.updateWeather();
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
 }
 
@@ -61,53 +71,79 @@ Controller.prototype.stopUpdates = function(){
 	clearInterval(this.updateId);
 };
 
+
+Controller.prototype.updateWeather = function(){
+	// if(this.weatherBox != null){
+	// 	this.weatherBox.remove()
+	// }
+	this.dataManager.currentWeather(this.weatherFun,'weather');
+}
+
+Controller.prototype.weatherFun =  function (data, iden){
+	//console.log(this.weatherBox);
+	//if(this.weatherBox != undefined){
+	//	this.weatherBox.svg.remove();
+	//	console.log("removed");
+	//}
+	this.weatherBox = new Weather();
+	this.weatherBox.create('#weather', "100%","100%", '0.7', data);
+}
+
 // Queries Data from Database and writes to Marker Objects
 // Function calls itself in regular intervals of length "refreshrate"
 
 Controller.prototype.getData = function() {
 
-	if (this.updateCounter < 4) {
-
-		this.updateCounter++;
-
-	console.log("\tCONTROLLER - getData");
-
-	// TODO: Query data from database
-	// TODO: check which data has changed from previous update
-	// TODO: write data to marker objects
-	// TODO: update layer
-	//
-	console.log(this.pathLineConstructed);
-	//
-
-	if (this.pathLineConstructed === true){
-		var bounds = this.pathLine.getBounds();
-		console.log("fetching data");
-		if (this.mode.POTHOLES===true)
-			this.dataManager.potHoles("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "potHoles" );
-		if (this.mode.ABANDONEDVEHICLES===true)
-			this.dataManager.abandonedVehicle("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "abandonedVehicles" );
-		if (this.mode.STREETLIGHTSOUT===true){
-			this.dataManager.lightOutAllNotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutAll" );
-			this.dataManager.lightOut1NotCompleted("week",bounds.getNorth(),bounds.getWest(),bounds.getSouth(),bounds.getEast(),this.filterByPerimeter.bind(this), "lightOutOne" );	
-		}
-
-		if (this.mode.DIVVYBIKES===true){
-			var getStationBeanArray = function (data, iden){
-				this.filterByPerimeter(data.stationBeanList,iden);
-			}
-			this.dataManager.divvyBikes(getStationBeanArray.bind(this), "divyStations" );
-		}
-	}	
-
-	// TODO: remove - only for testing
-	//this.dataManager.potHoles("week",41.9,-87.7,41.8,-87.6,this.filterByPerimeter.bind(this), "potHoles" );
-
-
-	//
-	//
-	//
+	// REDUCES NUMBER OF UPDATES - REMOVE IN FINAL VERSION
+	// IMPORTANT: don't remove while debugging, or we will make too many queries!!
+	if (this.updateCounter > 4) { 
+		this.stopUpdates();
 	}
+	
+	console.log("\tCONTROLLER - getData");
+	// console.log("Path line constructed:\t" + this.pathLineConstructed);
+	
+	if (this.pathLineConstructed){
+		
+		this.updateCounter++;
+		
+		var bounds = this.pathLine.getBounds();
+		var north = bounds.getNorth();
+		var west = bounds.getWest();
+		var south = bounds.getSouth();
+		var east = bounds.getEast();
+
+		var dataCallback = this.filterByPerimeter.bind(this);
+
+		console.log("fetching data");
+		
+		// Sending requests to database
+		if(this.mode.CURRENTWEATHER) {
+			// this.updateWeather();	
+		}
+		if (this.mode.CRIMELAYER) {
+			this.dataManager.crimes("week2",north,west,south,east,dataCallback, "crimes" );
+		}
+		if (this.mode.POTHOLES) {
+			this.dataManager.potHoles("week",north,west,south,east,dataCallback, "potHoles" );
+		}
+		if (this.mode.ABANDONEDVEHICLES) {
+			this.dataManager.abandonedVehicle("week",north,west,south,east,dataCallback, "abandonedVehicles" );
+		}
+		if (this.mode.STREETLIGHTSOUT) {
+			this.dataManager.lightOutAllNotCompleted("week",north,west,south,east,dataCallback, "lightOutAll" );
+			this.dataManager.lightOut1NotCompleted("week",north,west,south,east,dataCallback, "lightOutOne" );	
+		}
+		if (this.mode.DIVVYBIKES) {
+			//var getStationBeanArray = function (data, iden){
+			//	this.filterByPerimeter(data.stationBeanList,iden);
+			//};
+			this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divyStations" );
+		}
+
+	}
+
+	this.firstload = false;
 
 }
 
@@ -123,17 +159,16 @@ Controller.prototype.onMapClick = function(e){
 	else{
 		//Do stuff like clicking on marker and popups
 	}
-	
 }
 
-Controller.prototype.normalModeClick = function(e){
-
-}
+Controller.prototype.normalModeClick = function(e){};
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 
 	var filteredData = [];
 
+
+	// TODO: not filtering for path yet - only for debugging
 	var points = this.pathLine.getLatLngs();
 	var radiusInLng = this.perimeterRadiusInMiles/53.00;
 	var radiusInLat = this.perimeterRadiusInMiles/68.90;
@@ -156,37 +191,59 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 				break;
 		}
 	}
-	
 
-	/*filteredData = data; // TODO: remove
-	
-	
-	// TODO: add more cases....
 	switch(identifierStr) {
+		case 'crimes':
+			this.updateMarkers(data,this.crimeArray,'case_number',CrimeMarker);
+			break;
+		case 'divvyStations':
+			this.updateMarkers(data,this.divvyArray,'id',DivvyMarker);
+			break;
 		case 'potHoles':
-			this.updatePotholes(filteredData);
+			this.updateMarkers(data,this.potholesArray,'service_request_number',PotholeMarker);
+			break;
+		case 'abandonedVehicles':
+			this.updateMarkers(data,this.carsArray,'service_request_number',AbandonedVehicleMarker);
+			break;
+		case 'lightOutAll':
+			// TODO: add special marker for 'LightsOutAll' (maybe just with another icon indicating several lights out)
+			// this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutAllMarker);
+			break;
+		case 'lightOutOne':
+			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
+			break;
+		case 'cta':
+			this.updateMarkers(data,this.ctaArray,'service_request_number',CTAMarker);
 			break;
 		default:
 			console.log('Invalid string');
 			break;
 	}
-*/
 	console.log(identifierStr,data);
 	console.log(filteredData);
+
 };
 
-Controller.prototype.updatePotholes = function(data){
 
-	console.log('updatePothoooooooooooooooooooooooooooooooooooooooooooles');
-
-	// TODO: edit to recognize updated values
+// Generic function to write new data to markers
+// TODO: handle updated icons
+// 'data' is the (filtered) data that needs to be written to markers
+// 'array' is the array that will hold the markers, e.g. potholesArray
+// 'idstr' is the name of the field of the object that is used to uniquely identify the marker as a string
+// 'marker' is the class name of the marker object to be created, e.g. PotholeMarker, ect.
+Controller.prototype.updateMarkers = function(data,array,idstr,marker) {
 	for(var i = 0; i< data.length; i++){
-		this.newPotholes[i] = new PotholeMarker(data[i]);
-		this.newPotholes[i].init();
-		this.newPotholes[i].addTo(this.map);
+		var key = data[i][idstr];
+		if(!array[key]) {
+			array[key] = new marker(data[i]);
+			(this.firstload ? array[key].viewOldIcon() : array[key].viewNewIcon);
+			array[key].addTo(this.map);
+		} else {
+			array[key].viewOldIcon()
+		}
 	}
-
 }
+
 
 Controller.prototype.getRoute = function(locations){
 	this.pathLineConstructed = false;
@@ -196,13 +253,12 @@ Controller.prototype.getRoute = function(locations){
 }
 
 Controller.prototype.getRouteShape = function(routeObject){
-	console.log(routeObject);
+	// console.log(routeObject);
 	if (!routeObject) return;
 	if (routeObject.info.statuscode===0){
 		var url = "http://www.mapquestapi.com/directions/v2/routeShape?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&options={outShapeFormat:cmp}&fullShape=true&sessionId=" + routeObject.route.sessionId ; //"&narrativeType=none";
 		this.httpGet(url,this.getRouteShapePoints);
 	}
-
 }
 
 Controller.prototype.getRouteShapePoints = function(shapeResponse){
@@ -230,8 +286,6 @@ Controller.prototype.httpGet = function (sURL, fCallback)
 };
 
 
-
-
 Controller.prototype.drawPath = function(points){
 
 	if (!points) return;
@@ -252,39 +306,18 @@ Controller.prototype.drawPath = function(points){
     //this.getPerimeterAroundPath(30);
 }
 			
-
-
-
-
-
-
 Controller.prototype.init = function(){
 	this.map.init(this.mapCenter, 11);
 
-		// Our focus points
-	var markerData = {
-		"Divvy": {latitude: 41.86624, longitude: -87.61702},
-		"Simple": {latitude: 41.869912359714654, longitude: -87.64772415161133, description: "Electronic Visualization Lab"},
-		"Car": { service_request_number: 12345, creation_date: "11/09/2014", vehicle_make_model: "Ferrari", vehicle_color: "Red", latitude: 41.86761, longitude: -87.61365},
-		"Crime": {case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.86635, longitude: -87.60659 }
-	};
+	this.pointsOfInterestArray[0] =	new SimpleMarker({latitude: 41.869912359714654, longitude:-87.64772415161133, description:"Electronic Visualization Lab" });
+	this.pointsOfInterestArray[1] = new SimpleMarker({latitude: 41.86624, longitude: -87.61702, description: "The Field Museum of Natural History"});
+	this.pointsOfInterestArray[2] = new SimpleMarker({latitude: 41.86761, longitude: -87.61365, description: "The Shedd Aquarium"});
+	this.pointsOfInterestArray[3] = new SimpleMarker({latitude: 41.86635, longitude: -87.60659, description: "The Alder Planetarium"});
+	this.pointsOfInterestArray[4] = new CrimeMarker({case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.873519, longitude: -87.720375 });
 
-	window.divy = new DivvyMarker(markerData.Divvy);
-	divy.init(); divy.addTo(this.map);
-	var markerArray = [
-		//new DivvyMarker(markerData.Divvy),
-		new SimpleMarker(markerData.Simple),
-		new AbandonedVehicleMarker(markerData.Car),
-		new CrimeMarker(markerData.Crime)
-	];
-
-	markerArray.forEach(function(marker){
-		marker.init();
-		console.log(marker)
-		marker.addTo(this.map);
-	});
-
-
+	for( var key in this.pointsOfInterestArray){
+		this.pointsOfInterestArray[key].addTo(this.map);
+	}
 
 };
 
@@ -324,57 +357,37 @@ Controller.prototype.getPerimeterAroundPath = function(radius){
 
 };
 
-Controller.prototype.addRouteLayer = function(){
+Controller.prototype.addRouteLayer = function(){};
 
-};
+Controller.prototype.setLayer = function(layerName,array,b) {
+	// 'layerName' is the name of the layer to be set, e.g. DIVVYBIKES, PLACESOFINTEREST, CRIMELAYER, etc.
+	// 'array' is the array that holds the markers for the associated object, e.g. divvyArray, pointsOfInterestArray, crimeArray
+	// 'b' is the Boolean value to which the layer is set (true or false)
+	
+	console.log("MODENAME = " + layerName + ":\t" + this.mode[layerName] + " --> " + b);
+	console.log( (b ? "SHOW " : "HIDE ") + layerName );
+	
+	this.mode[layerName] = b;
 
-
-
-Controller.prototype.attachLayerToMap = function(){
-
-};
-
-
-Controller.prototype.toggleMode = function(mode) {
-	switch(mode){
-		case "SELECTION":
-						this.mode.SELECTION = !this.mode.SELECTION;						
-						break;
-		case "TRAFFICLAYER":
-						this.mode.TRAFFICLAYER = !this.mode.TRAFFICLAYER;
-						break;
-		case "CRIMELAYER":
-						this.mode.CRIMELAYER = !this.mode.CRIMELAYER;
-						break;
-		case "PLACESOFINTEREST":
-						this.mode.PLACESOFINTEREST = !this.mode.PLACESOFINTEREST;
-						break;
-		case "DIVVYBIKES":
-						this.mode.DIVVYBIKES = !this.mode.DIVVYBIKES;
-						break;
-		case "ABANDONEDVEHICLES":
-						this.mode.ABANDONEDVEHICLES = !this.mode.ABANDONEDVEHICLES;
-						break;
-		case "STREETLIGHTSOUT":
-						this.mode.STREETLIGHTSOUT = !this.mode.STREETLIGHTSOUT;
-						break;
-		case "CURRENTWEATHER":
-						this.mode.CURRENTWEATHER = !this.mode.CURRENTWEATHER;
-						break;
-		case "POTHOLES":
-						this.mode.POTHOLES = !this.mode.POTHOLES;
-						break;
-		default:
-				break;
+	for(var key in this.array) {
+		(this.mode[layerName] ?
+				this.map.addLayer(this.array[key]) :
+				this.map.removeLayer(this.array[key])
+		);
 	}
 };
 
-
-
-
-Controller.prototype.getMode = function(mode) {
-	if (mode in this.mode)
-		return this.mode[mode];
-	return null;
+Controller.prototype.setSelection = function(b) {
+	this.mode.SELECTION = b;
 };
 
+Controller.prototype.setWeather = function(b) {
+	this.mode.CURRENTWEATHER = b;
+};
+
+Controller.prototype.getMode = function(modeName) {
+	if (modeName in this.mode) {
+		return this.mode[modeName];
+	}
+	return null;
+}

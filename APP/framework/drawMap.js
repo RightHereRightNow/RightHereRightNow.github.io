@@ -28,13 +28,6 @@ drawMap =  function() {
 	// an empty popup object
 	var popup = L.popup();
 
-	var placesOfInterest = L.layerGroup([
-		L.marker(LatLon.EVL).bindPopup("Electronic Visualization Lab"),
-		L.marker(LatLon.Field).bindPopup("The Field Museum of Natural History"),
-		L.marker(LatLon.Shedd).bindPopup("The Shedd Aquarium"),
-		L.marker(LatLon.Alder).bindPopup("The Alder Planetarium")
-	]);
-
 
 	var baseMaps = {
 		"Aerial": aerialLayer,

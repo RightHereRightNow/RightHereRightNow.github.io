@@ -269,6 +269,12 @@ returns
 	- longitude
 */
 
+/*
+Query without parameter in filtering.
+from -> website where to get the data
+dataType -> type of data that is returning : json, jsonP etc etc
+*/
+
 Database.prototype.crimes = function(weekOrMonth, fromLat,fromLong, toLat, toLong, callback, iden){
 	var date;
 
@@ -276,11 +282,11 @@ Database.prototype.crimes = function(weekOrMonth, fromLat,fromLong, toLat, toLon
 
 	switch(weekOrMonth){
 		case 'week2': date = this.currentDate('twoWeeksAgo');
-						break;
+			break;
 		case 'month': date = this.currentDate('oneMonthAgo');
-						break;
+			break;
 		default: console.log("errore db");
-					break;
+			break;
 	}
 	if(fromLong == 0 && fromLat == 0 && toLong == 0 && toLat == 0 ){
 		this.genericQuery("case_number,date,primary_type, description, latitude, longitude", "date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
@@ -290,12 +296,6 @@ Database.prototype.crimes = function(weekOrMonth, fromLat,fromLong, toLat, toLon
 
 
 };
-
-/*
-Query without parameter in filtering.
-from -> website where to get the data
-dataType -> type of data that is returning : json, jsonP etc etc
-*/
 Database.prototype.queryNoParam = function(from,dataType, callback, iden){
 		$.ajax({
 			url: from,
@@ -606,20 +606,78 @@ function getVehicles (route,fromLat, fromLong, toLat, toLong, callback, iden){
 	});
 }
 
+///*
+//Returns all data regarding divvy bikes
+// */
+//Database.prototype.divvyBikes = function(callback,iden){
+//	var site = "http://www.divvybikes.com/stations/json/";
+//	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="' + site + '"') + '&format=xml&callback=?';
+//	$.getJSON(yql, function(data){
+//		var x2js = new X2JS();
+//		var json = x2js.xml_str2json(data.results);
+//		callback(json.json,iden);
+//	});
+//};
+
+
+
 /*
-Returns all data regarding divvy bikes
- */
-Database.prototype.divvyBikes = function(callback,iden){
+Returns all data regarding filtered divvy bikes
+*/
+Database.prototype.divvyBikes = function(fromLat, fromLong, toLat, toLong, callback,iden){
+	var filtered_divvy = [];
+	var fromLo,toLo,fromLa,toLa;
+	if(fromLat < toLat){
+		fromLa = fromLat;
+		toLa = toLat;
+	}else{
+		fromLa = toLat;
+		toLa = fromLat;
+	}
+
+	if(fromLong < toLong){
+		fromLo = fromLong;
+		toLo = toLong;
+	}else{
+		fromLo = toLong;
+		toLo = fromLong;
+	}
+
+
+
 	var site = "http://www.divvybikes.com/stations/json/";
 	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="' + site + '"') + '&format=xml&callback=?';
 	$.getJSON(yql, function(data){
 		var x2js = new X2JS();
 		var json = x2js.xml_str2json(data.results);
-		callback(json.json,iden);
+		/*FILTERING*/
+		var divvy = json.json.stationBeanList;
+		for(var i = 0; i< divvy.length; i++){
+
+			if(divvy[i].latitude >= fromLa && divvy[i].latitude <= toLa && divvy[i].longitude >= fromLo && divvy[i].longitude <= toLo){
+				var divvy_element = {
+					availableBikes : divvy[i].availableBikes,
+					availableDocks : divvy[i].availableDocks,
+					id : divvy[i].id,
+					lastCommunicationTime : divvy[i].lastCommunicationTime,
+					latitude : divvy[i].latitude,
+					longitude : divvy[i].longitude,
+					location : divvy[i].location,
+					stAddress1: divvy[i].stAddress1,
+					stationName : divvy[i].stationName,
+					statusKey : divvy[i].statusKey,
+					statusValue : divvy[i].statusValue,
+					testStation : divvy[i].testStation,
+					totalDocks : divvy[i].totalDocks
+				}
+				filtered_divvy.push(divvy_element);
+			}
+		}
+		/**/
+		//callback(json.json,iden);
+		callback(filtered_divvy,iden);
 	});
 };
-
-
 
 
 
