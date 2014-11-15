@@ -135,10 +135,10 @@ Controller.prototype.getData = function() {
 			this.dataManager.lightOut1NotCompleted("week",north,west,south,east,dataCallback, "lightOutOne" );	
 		}
 		if (this.mode.DIVVYBIKES) {
-			//var getStationBeanArray = function (data, iden){
-			//	this.filterByPerimeter(data.stationBeanList,iden);
-			//};
-			this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divyStations" );
+			/* var getStationBeanArray = function (data, iden){
+				this.filterByPerimeter(data.stationBeanList,iden);
+			}; */
+			this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 		}
 
 	}
@@ -294,13 +294,13 @@ Controller.prototype.drawPath = function(points){
     	this.map.addLayer(this.pathLine,false);
     	this.pathLine.bringToFront();
     }
-    console.log(points);
+    // console.log(points);
     for(var i=0;i<points.length/2;i++){
     	this.pathLine.addLatLng(new L.LatLng(points[2*i],points[2*i+1]));
     }
     this.pathLineConstructed = true;
     this.pathLine.redraw();
-    console.log(this.pathLine.getBounds());
+    // console.log(this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
     
     //this.getPerimeterAroundPath(30);
@@ -369,11 +369,11 @@ Controller.prototype.setLayer = function(layerName,array,b) {
 	
 	this.mode[layerName] = b;
 
-	for(var key in this.array) {
-		(this.mode[layerName] ?
-				this.map.addLayer(this.array[key]) :
-				this.map.removeLayer(this.array[key])
-		);
+	for(var key in array) {
+		(b ?
+			this.map.addLayer(array[key]) :
+			this.map.removeLayer(array[key])
+		)
 	}
 };
 
