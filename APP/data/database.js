@@ -2,6 +2,10 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
  	<script type="text/javascript" src="xml2json.js"></script>
+
+	 <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha1.js"></script>
+	 <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js"></script>
+	 <script src="oauth-1.0a.js"></script>
 	*/
 
 /*
@@ -680,6 +684,35 @@ Database.prototype.divvyBikes = function(fromLat, fromLong, toLat, toLong, callb
 };
 
 
+/*
+ * *****************************************
+ *  				YELP
+ * *****************************************
+ */
+
+/*
+ YELP : http://api.yelp.com/v2/search?term=food&location=San+Francisco&oauth_consumer_key=vQDt1XRP96cp8PKpSoTjng&oauth_token=zUTnrBovkPeORRyRWdDcrjY7jS_L2h29&oauth_signature_method=HMAC-SHA1&oauth_signature=A5L5DIi0t6B_AJEi16jcxUUCheE&oauth_timestamp=1415487690&oauth_nonce=1234
+ */
+/*
+Function to query on yelp API
+term: the term to search.. Ex. Hamburger, food...
+location: (ONLY IF CLL AND BOUNDS == '') city to query on Ex. Chicago, IL
+sort : how we want the results sorted (maybe useless) 0=Best Matched, 1=Distance, 2=Highest Rated
+radius_filter : radius filter to query on. max 4000(m) (25miles)
+cll : (ONLY IF LOCATION AND BOUNDS == '') latitude and longitude
+bounds : geographical bounding box, format -> sw_latitude,sw_longitude|ne_latitude,ne_longitude
+ */
+Database.prototype.yelp = function(term, location, sort, radius_filter, cllLat,cllLong, sw_lat,sw_long, ne_lat,ne_long, callback, iden){
+
+	$.ajax({
+		url: 'apiYelp.php',
+		data:"term="+term+ "&location="+location+"&sort="+sort+"&radius="+radius_filter+"&cllLat="+cllLat+"&cllLong="+cllLong+"&swlat="+sw_lat+"&swlong="+sw_long+"&nelat="+ne_lat+"&nelong="+ne_long,
+		dataType: "json",
+		success: function(data){
+			callback(data,iden);
+		}
+	})
+};
 
 /************** SUPPORT FUNCTIONS *************************/
 // var x2js = new X2JS();
@@ -737,6 +770,4 @@ function xmlToJson(xml) {
 	}
 	return obj;
 };
- /*
- YELP : http://api.yelp.com/v2/search?term=food&location=San+Francisco&oauth_consumer_key=vQDt1XRP96cp8PKpSoTjng&oauth_token=zUTnrBovkPeORRyRWdDcrjY7jS_L2h29&oauth_signature_method=HMAC-SHA1&oauth_signature=A5L5DIi0t6B_AJEi16jcxUUCheE&oauth_timestamp=1415487690&oauth_nonce=1234
-  */
+
