@@ -135,10 +135,10 @@ Controller.prototype.getData = function() {
 			this.dataManager.lightOut1NotCompleted("week",north,west,south,east,dataCallback, "lightOutOne" );	
 		}
 		if (this.mode.DIVVYBIKES) {
-			//var getStationBeanArray = function (data, iden){
-			//	this.filterByPerimeter(data.stationBeanList,iden);
-			//};
-			this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divyStations" );
+			/* var getStationBeanArray = function (data, iden){
+				this.filterByPerimeter(data.stationBeanList,iden);
+			}; */
+			this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 		}
 	}
 
@@ -295,7 +295,7 @@ Controller.prototype.drawPath = function(points){
     }
     this.pathLineConstructed = true;
     this.pathLine.redraw();
-    console.log(this.pathLine.getBounds());
+    // console.log(this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
     
     //this.getPerimeterAroundPath(30);
