@@ -101,7 +101,7 @@ Controller.prototype.getData = function() {
 	}	
 
 	// TODO: remove - only for testing
-	this.dataManager.potHoles("week",41.9,-87.7,41.8,-87.6,this.filterByPerimeter.bind(this), "potHoles" );
+	//this.dataManager.potHoles("week",41.9,-87.7,41.8,-87.6,this.filterByPerimeter.bind(this), "potHoles" );
 
 
 	//
@@ -134,8 +134,6 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 
 	var filteredData = [];
 
-	// TODO: not filtering for path yet - only for debugging
-/*
 	var points = this.pathLine.getLatLngs();
 	var radiusInLng = this.perimeterRadiusInMiles/53.00;
 	var radiusInLat = this.perimeterRadiusInMiles/68.90;
@@ -159,8 +157,8 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		}
 	}
 	
-*/
-	filteredData = data; // TODO: remove
+
+	/*filteredData = data; // TODO: remove
 	
 	
 	// TODO: add more cases....
@@ -172,7 +170,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			console.log('Invalid string');
 			break;
 	}
-
+*/
 	console.log(identifierStr,data);
 	console.log(filteredData);
 };
