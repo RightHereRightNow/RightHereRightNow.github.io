@@ -289,7 +289,7 @@ Controller.prototype.drawPath = function(points){
     	this.map.addLayer(this.pathLine,false);
     	this.pathLine.bringToFront();
     }
-    console.log(points);
+    // console.log(points);
     for(var i=0;i<points.length/2;i++){
     	this.pathLine.addLatLng(new L.LatLng(points[2*i],points[2*i+1]));
     }
