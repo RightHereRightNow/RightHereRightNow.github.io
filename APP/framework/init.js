@@ -30,7 +30,7 @@ function init() {
 	context.map.on("click", context.onMapClick.bind(context));
 
 	// Initialize controller in selection mode
-	context.setSelection(true);
+	context.setSelectionMode();
 
 	context.ui.draw();
 

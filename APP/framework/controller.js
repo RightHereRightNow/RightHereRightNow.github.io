@@ -12,8 +12,8 @@ function Controller() {
 
 	this.weatherBox = null;
 
-	this.perimeterRadiusInMiles = 0.25;
-
+	this.perimeterRadiusInKm = 0.4;
+	this.showDataAlongPathOnly = true; // Need a button to turn this on and off
 	this.routePoints = null;
 	// Possible modes of our application
 
@@ -89,6 +89,19 @@ Controller.prototype.weatherFun =  function (data, iden){
 	this.weatherBox.create('#weather', "100%","100%", '0.7', data);
 }
 
+function getNewPointInLatLng(lat,lng,distance,angle){
+	var dByR = toRad(distance/6378.0);
+	angle = toRad(angle);
+	lat = toRad(lat);
+	lng = toRad(lng);
+	var lat2 = Math.asin( Math.sin(lat)*Math.cos(dByR) +
+            Math.cos(lat)*Math.sin(dByR)*Math.cos(angle) );
+	var lng2 = lng + Math.atan2(Math.sin(angle)*Math.sin(dByR)*Math.cos(lat),
+                 Math.cos(dByR)-Math.sin(lat)*Math.sin(lat2));
+	return {lat:lat2*180.0/Math.PI,lng:lng2*180.0/Math.PI};
+}
+
+
 // Queries Data from Database and writes to Marker Objects
 // Function calls itself in regular intervals of length "refreshrate"
 
@@ -108,10 +121,14 @@ Controller.prototype.getData = function() {
 		this.updateCounter++;
 		
 		var bounds = this.pathLine.getBounds();
-		var north = bounds.getNorth();
-		var west = bounds.getWest();
-		var south = bounds.getSouth();
-		var east = bounds.getEast();
+		
+		var northWest = getNewPointInLatLng(bounds.getNorth(),bounds.getWest(),this.perimeterRadiusInKm,-45); //Increase the bounding box by radius
+		var southEast = getNewPointInLatLng(bounds.getSouth(),bounds.getEast(),this.perimeterRadiusInKm,135);
+		var north = northWest.lat;
+		var west = northWest.lng;
+		var south = southEast.lat;
+		var east = southEast.lng;
+
 
 		var dataCallback = this.filterByPerimeter.bind(this);
 
@@ -163,34 +180,53 @@ Controller.prototype.onMapClick = function(e){
 
 Controller.prototype.normalModeClick = function(e){};
 
+var toRad = function(val){
+	return val*Math.PI/180.0;
+}
+function distance (lat1,lng1,lat2,lng2) {
+	var R = 6378; // km
+	var phi1 = toRad(lat1);
+	var phi2 = toRad(lat2);
+	var deltaPhi = toRad(lat2-lat1);
+	var deltaLambda = toRad(lng2-lng1);
+
+	var a = Math.sin(deltaPhi/2) * Math.sin(deltaPhi/2) +
+	        Math.cos(phi1) * Math.cos(phi2) *
+	        Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+	return R * c;
+}
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 
-	var filteredData = [];
-
-
-	// TODO: not filtering for path yet - only for debugging
-	var points = this.pathLine.getLatLngs();
-	var radiusInLng = this.perimeterRadiusInMiles/53.00;
-	var radiusInLat = this.perimeterRadiusInMiles/68.90;
-	var radius = Math.sqrt(radiusInLng*radiusInLng + radiusInLat * radiusInLat);
-	function distance (x1,y1,x2,y2) {
-		return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
-	}
-
-	for (var d=0;d<data.length;d++){
-		var dist = 100; // Too far away!
-		for(var i=0;i<points.length;i++){
-			var tempDist = distance(points[i].lat,points[i].lng,data[d].latitude,data[d].longitude);
-			if (tempDist <= radius){
-				filteredData.push(data[d]);
-				break;
+	if (this.showDataAlongPathOnly == true){
+		var filteredData = [];
+		var points = this.pathLine.getLatLngs();
+		for (var d=0;d<data.length;d++){
+			var dist = 100; // Too far away!
+			var dataPoint = data[d];
+			var dataRange = false;
+			for(var i=0;i<points.length;i++){
+				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude,dataPoint.longitude);
+				
+				if (tempDist <= this.perimeterRadiusInKm){
+					console.log(tempDist,this.perimeterRadiusInKm);
+					filteredData.push(dataPoint);
+					break;
+				}
+				else if (tempDist < 2*this.perimeterRadiusInKm && dataRange === false)
+					dataRange = true;
+				else if (dataRange=== true && tempDist > 2*this.perimeterRadiusInKm)
+					break;
 			}
-			else if (tempDist < dist)
-				dist = tempDist;
-			else
-				break;
 		}
+		data = filteredData;
 	}
+	
+
+	console.log(identifierStr,data);
+	console.log(filteredData);
+	
 
 	switch(identifierStr) {
 		case 'crimes':
@@ -219,8 +255,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			console.log('Invalid string');
 			break;
 	}
-	console.log(identifierStr,data);
-	console.log(filteredData);
+	
 
 };
 
@@ -377,10 +412,12 @@ Controller.prototype.setLayer = function(layerName,array,b) {
 	}
 };
 
-Controller.prototype.setSelection = function(b) {
-	this.mode.SELECTION = b;
+Controller.prototype.toggleSelectionMode = function() {
+	this.mode.SELECTION = !this.mode.SELECTION;
 };
-
+Controller.prototype.setSelectionMode = function() {
+	this.mode.SELECTION = true;
+};
 Controller.prototype.setWeather = function(b) {
 	this.mode.CURRENTWEATHER = b;
 };

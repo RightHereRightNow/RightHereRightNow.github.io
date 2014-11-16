@@ -134,7 +134,7 @@ ui.prototype.draw = function() {
 
 	function clickHomepage() { console.log("TODO: link to homepage");
 		window.location.href = "../"; }
-	function clickSelection() { context.toggleLayer("SELECTION"); }
+	function clickSelection() { context.toggleSelectionMode(); }
 	
 	var clickLayer = function() {
 		if(layersActive) {
