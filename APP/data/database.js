@@ -699,7 +699,7 @@ term: the term to search.. Ex. Hamburger, food...
 location: (ONLY IF CLL AND BOUNDS == '') city to query on Ex. Chicago, IL
 sort : how we want the results sorted (maybe useless) 0=Best Matched, 1=Distance, 2=Highest Rated
 radius_filter : radius filter to query on. max 4000(m) (25miles)
-cll : (ONLY IF LOCATION AND BOUNDS == '') latitude and longitude
+cll : (ONLY IF LOCATION is SET AND BOUNDS == '') latitude and longitude
 bounds : geographical bounding box, format -> sw_latitude,sw_longitude|ne_latitude,ne_longitude
  */
 Database.prototype.yelp = function(term, location, sort, radius_filter, cllLat,cllLong, sw_lat,sw_long, ne_lat,ne_long, callback, iden){
@@ -712,6 +712,74 @@ Database.prototype.yelp = function(term, location, sort, radius_filter, cllLat,c
 			callback(data,iden);
 		}
 	})
+};
+
+/*
+ * *****************************************
+ *  				UBER
+ * *****************************************
+ */
+
+
+//Uber API allow us only to query on products, estimate time and estimate price
+
+/*
+ The Products endpoint returns information about the Uber products offered at a given location.
+ The response includes the display name and other details about each product, and lists the products in the proper display order.
+ */
+Database.prototype.uberProducts= function(lat, long, callback, iden){
+	$.ajax({
+		url: 'apiUber.php',
+		data:"filter=products&latitude="+lat+"&longitude="+long,
+		dataType: "json",
+		success: function(data){
+			callback(data,iden);
+		}
+	});
+};
+
+/*
+ The Time Estimates endpoint returns ETAs for all products offered at a given location, with the responses expressed as integers in seconds.
+ We recommend that this endpoint be called every minute to provide the most accurate, up-to-date ETAs.
+
+ start_latitude	float	Latitude component of start location.
+ start_longitude	float	Longitude component of start location.
+ */
+Database.prototype.uberEstTime = function(start_latitude,start_longitude,callback,iden){
+	$.ajax({
+		url: 'apiUber.php',
+		data:"filter=time&start_latitude="+start_latitude+"&start_longitude="+start_longitude,
+		dataType: "json",
+		success: function(data){
+			callback(data,iden);
+		}
+	});
+};
+
+/*
+
+ The Price Estimates endpoint returns an estimated price range for each product offered at a given location.
+ The price estimate is provided as a formatted string with the full price range and the localized currency symbol.
+
+ The response also includes low and high estimates, and the ISO 4217 currency code for situations requiring currency conversion.
+ When surge is active for a particular product, its surge_multiplier will be greater than 1, but the price estimate already factors in this multiplier.
+
+
+ start_latitude	float	Latitude component of start location.
+ start_longitude	float	Longitude component of start location.
+ end_latitude	float	Latitude component of end location.
+ end_longitude	float	Longitude component of end location.
+ */
+Database.prototype.uberEstPrice = function(start_latitude,start_longitude, end_latitude,end_longitude,callback,iden){
+	console.log("filter=time&start_latitude="+start_latitude+"&start_longitude="+start_longitude+"&end_latitude="+end_latitude+"&end_longitude="+end_longitude);
+	$.ajax({
+		url: 'apiUber.php',
+		data:"filter=price&start_latitude="+start_latitude+"&start_longitude="+start_longitude+"&end_latitude="+end_latitude+"&end_longitude="+end_longitude,
+		dataType: "json",
+		success: function(data){
+			callback(data,iden);
+		}
+	});
 };
 
 /************** SUPPORT FUNCTIONS *************************/
