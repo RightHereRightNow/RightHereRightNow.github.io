@@ -65,12 +65,11 @@ Controller.prototype.getUpdates = function(){
 	this.getData();
 	this.updateWeather();
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
-}
+};
 
 Controller.prototype.stopUpdates = function(){
 	clearInterval(this.updateId);
 };
-
 
 Controller.prototype.updateWeather = function(){
 	// if(this.weatherBox != null){
@@ -87,7 +86,7 @@ Controller.prototype.weatherFun =  function (data, iden){
 	//}
 	this.weatherBox = new Weather();
 	this.weatherBox.create('#weather', "100%","100%", '0.7', data);
-}
+};
 
 function getNewPointInLatLng(lat,lng,distance,angle){
 	var dByR = toRad(distance/6378.0);
@@ -112,13 +111,13 @@ Controller.prototype.getData = function() {
 	if (this.updateCounter > 4) { 
 		this.stopUpdates();
 	}
-	
-	console.log("\tCONTROLLER - getData");
+
+	console.log("\tCONTROLLER - getData -- WOOT", this.updateCounter++);
 	// console.log("Path line constructed:\t" + this.pathLineConstructed);
 	
 	if (this.pathLineConstructed){
 		
-		this.updateCounter++;
+		this.updateCounter+=1;
 		
 		var bounds = this.pathLine.getBounds();
 		
@@ -152,17 +151,17 @@ Controller.prototype.getData = function() {
 			this.dataManager.lightOut1NotCompleted("week",north,west,south,east,dataCallback, "lightOutOne" );	
 		}
 		if (this.mode.DIVVYBIKES) {
-			/* var getStationBeanArray = function (data, iden){
-				this.filterByPerimeter(data.stationBeanList,iden);
-			}; */
 			this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 		}
-
+		if (this.mode.TRAFFICLAYER) {
+			this.dataManager.getCTAData2(north,west,south,east,dataCallback, "cta" );
+			//this.dataManager.getVehiclesPublic()
+		}
 	}
 
 	this.firstload = false;
 
-}
+};
 
 Controller.prototype.onMapClick = function(e){
 	if (this.mode.SELECTION === true){
@@ -176,13 +175,13 @@ Controller.prototype.onMapClick = function(e){
 	else{
 		//Do stuff like clicking on marker and popups
 	}
-}
+};
 
 Controller.prototype.normalModeClick = function(e){};
 
 var toRad = function(val){
 	return val*Math.PI/180.0;
-}
+};
 function distance (lat1,lng1,lat2,lng2) {
 	var R = 6378; // km
 	var phi1 = toRad(lat1);
@@ -249,7 +248,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
 		case 'cta':
-			this.updateMarkers(data,this.ctaArray,'service_request_number',CTAMarker);
+			this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
 			break;
 		default:
 			console.log('Invalid string');
@@ -266,18 +265,30 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 // 'array' is the array that will hold the markers, e.g. potholesArray
 // 'idstr' is the name of the field of the object that is used to uniquely identify the marker as a string
 // 'marker' is the class name of the marker object to be created, e.g. PotholeMarker, ect.
-Controller.prototype.updateMarkers = function(data,array,idstr,marker) {
-	for(var i = 0; i< data.length; i++){
-		var key = data[i][idstr];
-		if(!array[key]) {
-			array[key] = new marker(data[i]);
-			(this.firstload ? array[key].viewOldIcon() : array[key].viewNewIcon);
-			array[key].addTo(this.map);
-		} else {
-			array[key].viewOldIcon()
+Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker) {
+	console.log(data);
+	if (data.length != 0) {
+		for(var i = 0; i< data.length; i++){
+			var key = data[i][idstr];
+			if(!markerCollection[key] && data[i] != null) {
+				if(marker instanceof CTAMarker){
+					console.log("would have a CTA data", data)
+				} else {
+					markerCollection[key] = new marker(data[i]);
+					(this.firstload ? markerCollection[key].viewOldIcon() : markerCollection[key].viewNewIcon);
+					markerCollection[key].addTo(this.map);
+
+				}
+			} else {
+				if (marker instanceof CTAMarker){
+					console.log(" updateMarkers",idstr, data[i][idstr], data[i], markerCollection[key] );
+					//markerCollection[key].updateLine(data[i]);
+				} else
+					markerCollection[key].viewOldIcon()
+			}
 		}
 	}
-}
+};
 
 
 Controller.prototype.getRoute = function(locations){
@@ -285,7 +296,7 @@ Controller.prototype.getRoute = function(locations){
 	var locJsonStr = JSON.stringify(locations);
 	var url = "http://www.mapquestapi.com/directions/v2/route?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&options={outShapeFormat:cmp}&generalize=250&json=" + locJsonStr + "&narrativeType=none";
 	this.httpGet(url, this.getRouteShape);
-}
+};
 
 Controller.prototype.getRouteShape = function(routeObject){
 	// console.log(routeObject);
@@ -294,19 +305,19 @@ Controller.prototype.getRouteShape = function(routeObject){
 		var url = "http://www.mapquestapi.com/directions/v2/routeShape?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&options={outShapeFormat:cmp}&fullShape=true&sessionId=" + routeObject.route.sessionId ; //"&narrativeType=none";
 		this.httpGet(url,this.getRouteShapePoints);
 	}
-}
+};
 
 Controller.prototype.getRouteShapePoints = function(shapeResponse){
 	if (shapeResponse===null) return;
 	if (shapeResponse.info.statuscode === 0){
 		this.drawPath(shapeResponse.route.shape.shapePoints);
 	}
-}
+};
 
 Controller.prototype.startNewPath = function(){
 	this.map.removeLayer(this.pathLine);
 	this.pathLine = null;
-}
+};
 
 Controller.prototype.httpGet = function (sURL, fCallback)
 {
@@ -339,7 +350,7 @@ Controller.prototype.drawPath = function(points){
     this.map.fitBounds(this.pathLine.getBounds());
     
     //this.getPerimeterAroundPath(30);
-}
+};
 			
 Controller.prototype.init = function(){
 	this.map.init(this.mapCenter, 11);
@@ -350,9 +361,20 @@ Controller.prototype.init = function(){
 	this.pointsOfInterestArray[3] = new SimpleMarker({latitude: 41.86635, longitude: -87.60659, description: "The Alder Planetarium"});
 	this.pointsOfInterestArray[4] = new CrimeMarker({case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.873519, longitude: -87.720375 });
 
+	//var points = { destination: "Belmont/Halsted", headdirect: "81", latitude: "41.87791534208915", longitude: "-87.63376499229753", pdist: "4227", pid: "6425", route: "156", timestamp: "20141117 13:51", vehicleid: "4198" };
+	//this.pointsOfInterestArray[5] = new CTAMarker(points);
+	console.log(this.pointsOfInterestArray[5]);
 	for( var key in this.pointsOfInterestArray){
 		this.pointsOfInterestArray[key].addTo(this.map);
 	}
+
+	//var points = [ [ 41.869912359714654, -87.64772415161133], [41.86624, -87.61702], [41.86761, -87.61365], [41.86635, -87.60659] ];
+	//routes = L.polyline(points);
+
+
+	console.log("animating marker!");
+	//map.addLayer(cta);
+	//cta.beingAnimation();
 
 };
 

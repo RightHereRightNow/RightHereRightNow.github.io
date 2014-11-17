@@ -520,11 +520,7 @@ Database.prototype.getCTAData2 = function (fromLat,fromLong, toLat, toLong, call
 			getVehicles(route.rt, fromLat,fromLong,toLat,toLong,callback,iden);
 
 			busRoute.push(route);
-
-
 		});
-
-
 	});
 };
 

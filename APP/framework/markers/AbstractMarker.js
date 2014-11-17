@@ -33,8 +33,10 @@ AbstractMarker.prototype = {
         this.iconNew = newIcon;  //
     },
 
+
+
     init: function() {
-        this.marker = L.marker(this.LatLng, {icon: this.iconNew})
+        this.marker = L.marker(this.LatLng, {icon: this.iconNew});
         if (this.popupString) {
             // console.log(this.popupString);
             this.bindPopup();
