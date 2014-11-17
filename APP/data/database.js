@@ -771,10 +771,42 @@ Database.prototype.uberEstTime = function(start_latitude,start_longitude,callbac
  end_longitude	float	Longitude component of end location.
  */
 Database.prototype.uberEstPrice = function(start_latitude,start_longitude, end_latitude,end_longitude,callback,iden){
-	console.log("filter=time&start_latitude="+start_latitude+"&start_longitude="+start_longitude+"&end_latitude="+end_latitude+"&end_longitude="+end_longitude);
 	$.ajax({
 		url: 'apiUber.php',
 		data:"filter=price&start_latitude="+start_latitude+"&start_longitude="+start_longitude+"&end_latitude="+end_latitude+"&end_longitude="+end_longitude,
+		dataType: "json",
+		success: function(data){
+			callback(data,iden);
+		}
+	});
+};
+
+/*
+ * *****************************************
+ *  				TWITTER
+ * *****************************************
+ */
+
+/*
+paramQuery = must be an ARRAY of elements (keywords) that you want to search.
+			an example could be 'chicaho' or 'redLightDistrict'.
+			if you want to search for an hashtag (#chicago) type %23chicago
+latitude = latitude of the center of the area where to search the tweets
+longitude = longitude of the center of the area where to search the tweets
+radius = radius of the circle
+
+return a json with all the data regarding the tweets
+ */
+
+Database.prototype.twitter = function(paramQuery,latitude,longitude,radius,callback,iden){
+	var address = "";
+	for(var i = 0; i<array.length; i++){
+		address += "&qparam[]="+ "" +array[i];
+	}
+
+	$.ajax({
+		url: 'apiTwitter.php',
+		data: 'latitude='+latitude+"&longitude="+longitude+"&radius="+radius+address,
 		dataType: "json",
 		success: function(data){
 			callback(data,iden);
