@@ -11,6 +11,7 @@ function AbstractMarker() {
     this.ID = null;  // This will be the markers ID in order to keep track of it and its data
     this.type = null;  // String to identify what type of marker it is.
     this.popupString = null;  // Info to be placed in the popup
+
 }
 
 // top level method which allows the setting of a markers latitude/longitude

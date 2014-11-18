@@ -19,7 +19,8 @@ function CrimeMarker(data) {
     var popupstr = "<p><b>Type:</b> " + this.primary_type +
                   "</br><b>Case #:</b> "+ this.case_number +
                   "</br><b>Date:</b> " + this.date +
-                  "</br><b>Details:</b> " + this.description + "</p>"
+                  "</br><b>Details:</b> " + this.description +
+                  "</br><img src='http://s3-media2.fl.yelpcdn.com/assets/2/www/img/a5221e66bc70/ico/stars/v1/stars_small_4_half.png'/></p>"
 
     var latlng = L.latLng(data.latitude, data.longitude);
 

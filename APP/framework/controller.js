@@ -248,7 +248,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
 		case 'cta':
-			this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
+			//this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
 			break;
 		default:
 			console.log('Invalid string');
@@ -363,7 +363,7 @@ Controller.prototype.init = function(){
 
 	//var points = { destination: "Belmont/Halsted", headdirect: "81", latitude: "41.87791534208915", longitude: "-87.63376499229753", pdist: "4227", pid: "6425", route: "156", timestamp: "20141117 13:51", vehicleid: "4198" };
 	//this.pointsOfInterestArray[5] = new CTAMarker(points);
-	console.log(this.pointsOfInterestArray[5]);
+	//console.log(this.pointsOfInterestArray[5]);
 	for( var key in this.pointsOfInterestArray){
 		this.pointsOfInterestArray[key].addTo(this.map);
 	}
