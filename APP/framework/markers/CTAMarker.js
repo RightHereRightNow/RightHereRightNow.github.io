@@ -77,7 +77,6 @@ var CTAMarker = function(data) {
         this.marker.setLine(routes.getLatLngs());
 
     };
-
     // Overloaded init() function for CTA markers since they use L.AnimatedMarkers
     this.init = function() {
         var points = [];

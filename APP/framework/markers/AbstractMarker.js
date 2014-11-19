@@ -39,12 +39,13 @@ AbstractMarker.prototype = {
 
     init: function() {
         this.marker = L.marker(this.LatLng, {icon: this.iconNew});
-        this.ID = setInterval(this.pulse.bind(this), 100);
+        this.ID = setInterval(this.pulse.bind(this), 200);
         if (this.popupString) {
-            // console.log(this.popupString);
             this.bindPopup();
         }
+        this.setZIndexOffset(1000) && this.update();
         this.pulse();
+        this.setZIndexOffset(0) && this.update();
     },
 
     viewOldIcon: function() {
@@ -84,8 +85,12 @@ AbstractMarker.prototype = {
         this.marker.setOpacity(inc);
     },
 
+    setZIndexOffset: function(z){
+      this.marker.setZIndexOffset(z);
+    },
+
     pulse: function() {
-        console.log("calling Pulse", this.ID, this.opacity, this._counter);
+        //console.log("calling Pulse", this.ID, this.opacity, this._counter);
         this._counter+=1;
 
         if((this._counter / 2) % 2 > 0)
@@ -95,8 +100,8 @@ AbstractMarker.prototype = {
 
         this.setOpacity(this.opacity);
 
-        if (this._counter == 20){
-            console.log("clear interval");
+        if (this._counter == 60){
+            //console.log("clear interval");
             clearInterval(this.ID);
         }
     }

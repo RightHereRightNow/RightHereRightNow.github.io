@@ -14,7 +14,7 @@ iden is an id used to recognize what data we are handling
 */
 function Database(){
 	var this_db = this;
-
+	this.busRoute = null;
 }
 
 var keyCTA1 = 'nBy7EWCMF5qH2bJ3x5NyXpL6N';
@@ -500,7 +500,7 @@ Should be called at the beginning of the program, take all the routes and then c
  */
 Database.prototype.getCTAData2 = function (fromLat,fromLong, toLat, toLong, callback,iden){
 	drawn = [];
-	var busRoute = [];
+	this.busRoute = [];
 
 	//first get all the routes..
 	var baseSite = "http://www.ctabustracker.com/bustime/api/v1/";
@@ -519,7 +519,7 @@ Database.prototype.getCTAData2 = function (fromLat,fromLong, toLat, toLong, call
 			};
 			getVehicles(route.rt, fromLat,fromLong,toLat,toLong,callback,iden);
 
-			busRoute.push(route);
+			this.busRoute.push(route);
 		});
 	});
 };

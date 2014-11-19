@@ -155,7 +155,11 @@ Controller.prototype.getData = function() {
 		}
 		if (this.mode.TRAFFICLAYER) {
 			this.dataManager.getCTAData2(north,west,south,east,dataCallback, "cta" );
-			//this.dataManager.getVehiclesPublic()
+
+			this.dataManager.busRoute.forEach(function(route){
+				this.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
+			})
+
 		}
 	}
 
@@ -254,8 +258,6 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			console.log('Invalid string');
 			break;
 	}
-	
-
 };
 
 
@@ -268,25 +270,30 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker) {
 	console.log(data);
 	if (data.length != 0) {
+		var iKey = data.map(function(d){console.log(idstr, d,d[idstr]); return d[idstr]})
+		var toRemove = [];
+		console.log(iKey.length, iKey);
 		for(var i = 0; i< data.length; i++){
 			var key = data[i][idstr];
-			if(!markerCollection[key] && data[i] != null) {
-				if(marker instanceof CTAMarker){
-					console.log("would have a CTA data", data)
-				} else {
-					markerCollection[key] = new marker(data[i]);
-					(this.firstload ? markerCollection[key].viewOldIcon() : markerCollection[key].viewNewIcon);
-					markerCollection[key].addTo(this.map);
-
-				}
-			} else {
+			// A - B: Add new marker
+			if(!markerCollection[key]) {
+				markerCollection[key] = new marker(data[i]);
+				markerCollection[key].viewNewIcon();
+				markerCollection[key].addTo(this.map);
+			// B in A: update!
+			} else if(markerCollection[key]){
 				if (marker instanceof CTAMarker){
 					console.log(" updateMarkers",idstr, data[i][idstr], data[i], markerCollection[key] );
 					//markerCollection[key].updateLine(data[i]);
 				} //else
-
-					//markerCollection[key].viewOldIcon()
+			// Remove B!
+			} else {
+				toRemove.push(key);
 			}
+		}
+		for ( k in toRemove){
+			map.removeLayer(markerCollection[k]);
+			delete markerCollection[k]; // Remove the object 'property' from the collection so we dont have any accidents
 		}
 	}
 };
