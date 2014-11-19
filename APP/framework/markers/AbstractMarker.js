@@ -11,7 +11,8 @@ function AbstractMarker() {
     this.ID = null;  // This will be the markers ID in order to keep track of it and its data
     this.type = null;  // String to identify what type of marker it is.
     this.popupString = null;  // Info to be placed in the popup
-
+    this.opacity = 0.0;
+    this._counter = 0;
 }
 
 // top level method which allows the setting of a markers latitude/longitude
@@ -38,12 +39,14 @@ AbstractMarker.prototype = {
 
     init: function() {
         this.marker = L.marker(this.LatLng, {icon: this.iconNew});
+        this.ID = setInterval(this.pulse.bind(this), 100);
         if (this.popupString) {
             // console.log(this.popupString);
             this.bindPopup();
         }
-
+        this.pulse();
     },
+
     viewOldIcon: function() {
         this.marker.setIcon(this.iconOld );
         this.update();
@@ -75,7 +78,29 @@ AbstractMarker.prototype = {
 
     bindPopup: function(){
         this.marker.bindPopup(this.popupString);
+    },
+
+    setOpacity: function(inc){
+        this.marker.setOpacity(inc);
+    },
+
+    pulse: function() {
+        console.log("calling Pulse", this.ID, this.opacity, this._counter);
+        this._counter+=1;
+
+        if((this._counter / 2) % 2 > 0)
+            this.opacity -= 0.25;
+        else
+            this.opacity = 1.0;
+
+        this.setOpacity(this.opacity);
+
+        if (this._counter == 20){
+            console.log("clear interval");
+            clearInterval(this.ID);
+        }
     }
+
 
 };
 

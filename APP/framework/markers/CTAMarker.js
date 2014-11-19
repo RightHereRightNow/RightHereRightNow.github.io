@@ -107,5 +107,6 @@ var CTAMarker = function(data) {
     this.setIconDirection();
     this.setIconOld(iconOld);
     this.init();
+
     //this.setLatLng(latlng);
 };

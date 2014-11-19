@@ -283,8 +283,9 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 				if (marker instanceof CTAMarker){
 					console.log(" updateMarkers",idstr, data[i][idstr], data[i], markerCollection[key] );
 					//markerCollection[key].updateLine(data[i]);
-				} else
-					markerCollection[key].viewOldIcon()
+				} //else
+
+					//markerCollection[key].viewOldIcon()
 			}
 		}
 	}

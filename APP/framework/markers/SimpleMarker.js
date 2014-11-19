@@ -10,7 +10,6 @@
  description,
  */
 var SimpleMarker = function(data) {
-
     this.description = data.description;
 
     var popupstr = this.description;

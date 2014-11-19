@@ -43,6 +43,7 @@ function CrimeMarker(data) {
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
     this.init();
+
 }
 
 
