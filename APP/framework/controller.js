@@ -13,7 +13,7 @@ function Controller() {
 	this.weatherBox = null;
 
 	this.perimeterRadiusInKm = 0.4;
-	this.showDataAlongPathOnly = true; // Need a button to turn this on and off
+	this.showDataAlongPathOnly = false; // Need a button to turn this on and off
 	this.routePoints = null;
 	// Possible modes of our application
 
@@ -108,7 +108,7 @@ Controller.prototype.getData = function() {
 
 	// REDUCES NUMBER OF UPDATES - REMOVE IN FINAL VERSION
 	// IMPORTANT: don't remove while debugging, or we will make too many queries!!
-	if (this.updateCounter > 4) { 
+	if (this.updateCounter > 10) {
 		this.stopUpdates();
 	}
 
@@ -270,30 +270,39 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker) {
 	console.log(data);
 	if (data.length != 0) {
-		var iKey = data.map(function(d){console.log(idstr, d,d[idstr]); return d[idstr]})
-		var toRemove = [];
-		console.log(iKey.length, iKey);
+		var iKey = {};
+		data.forEach(
+			function(d){
+				console.log(idstr, d,d[idstr]);
+				iKey[d[idstr]] = d[idstr]
+			}
+		);
+
+		//console.log(iKey.length, iKey);
 		for(var i = 0; i< data.length; i++){
 			var key = data[i][idstr];
 			// A - B: Add new marker
 			if(!markerCollection[key]) {
+				console.log("Add new Marker!!");
 				markerCollection[key] = new marker(data[i]);
 				markerCollection[key].viewNewIcon();
 				markerCollection[key].addTo(this.map);
 			// B in A: update!
-			} else if(markerCollection[key]){
+			} else { //if(markerCollection[key]){
+				console.log("Marker is in the collection!!");
 				if (marker instanceof CTAMarker){
 					console.log(" updateMarkers",idstr, data[i][idstr], data[i], markerCollection[key] );
 					//markerCollection[key].updateLine(data[i]);
 				} //else
 			// Remove B!
-			} else {
-				toRemove.push(key);
 			}
 		}
-		for ( k in toRemove){
-			map.removeLayer(markerCollection[k]);
-			delete markerCollection[k]; // Remove the object 'property' from the collection so we dont have any accidents
+		for ( k in markerCollection){
+			if (!iKey[k]){
+				console.log("Kill the Marker!!");
+				map.removeLayer(markerCollection[k]);
+				delete markerCollection[k]; // Remove the object 'property' from the collection so we dont have any accidents
+			}
 		}
 	}
 };
@@ -367,7 +376,7 @@ Controller.prototype.init = function(){
 	this.pointsOfInterestArray[1] = new SimpleMarker({latitude: 41.86624, longitude: -87.61702, description: "The Field Museum of Natural History"});
 	this.pointsOfInterestArray[2] = new SimpleMarker({latitude: 41.86761, longitude: -87.61365, description: "The Shedd Aquarium"});
 	this.pointsOfInterestArray[3] = new SimpleMarker({latitude: 41.86635, longitude: -87.60659, description: "The Alder Planetarium"});
-	this.pointsOfInterestArray[4] = new CrimeMarker({case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.873519, longitude: -87.720375 });
+	//this.pointsOfInterestArray[4] = new CrimeMarker({case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.873519, longitude: -87.720375 });
 
 	//var points = { destination: "Belmont/Halsted", headdirect: "81", latitude: "41.87791534208915", longitude: "-87.63376499229753", pdist: "4227", pid: "6425", route: "156", timestamp: "20141117 13:51", vehicleid: "4198" };
 	//this.pointsOfInterestArray[5] = new CTAMarker(points);
