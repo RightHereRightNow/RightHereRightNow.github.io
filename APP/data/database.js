@@ -606,6 +606,110 @@ function getVehicles (route,fromLat, fromLong, toLat, toLong, callback, iden){
 	});
 }
 
+
+/*
+get the prediction of a set of stopids
+
+stopIds is a comma delimited stopids string
+
+returning:
+	-tmstmp : date and time when the prediction was generated
+	-typ :	A = arrival
+			D = departure prediction
+	-stpnm: name of the dtop for wich the prediction was generated
+	-stpid: unique id!! of the stop
+	-vid:
+ */
+
+Database.prototype.getPredictionsFromStopids = function(stopIds, callback, iden){
+	var predictions = [];
+
+	var baseSite = "http://www.ctabustracker.com/bustime/api/v1/";
+	var routes = baseSite + "getpredictions?key="+key+"&stpid="+stopIds;
+
+	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + routes + '"') + '&format=xml&callback=?';
+	$.getJSON(yql, function(data){
+
+		var xml = data.results[0];
+		$(xml).find('prd').each(function(){
+			var tmstmp = $(this).find('tmstmp').text();
+			var typ = $(this).find('typ').text();
+			var stpnm = $(this).find('stpnm').text();
+			var stpid = $(this).find('stpid').text();
+			var vid = $(this).find('vid').text();
+			var dstp= $(this).find('dstp').text();
+			var rt = $(this).find('rt').text();
+			var rtdir = $(this).find('rtdir').text();
+			var des = $(this).find('des').text();
+			var prdtm = $(this).find('prdtm').text();
+			var tablockid = $(this).find('tablockid').text();
+			var tatripid = $(this).find('tatripid').text();
+
+			var prediction = {
+				tmstmp: tmstmp,
+				typ : typ,
+				stpnm : stpnm,
+				stpid :stpid,
+				vid: vid,
+				dstp: dstp,
+				rt: rt,
+				rtdir: rtdir,
+				des: des,
+				prdtm: prdtm,
+				tablockid: tablockid,
+				tatripid: tatripid
+			};
+
+			predictions.push(prediction);
+
+
+		});
+
+		callback(predictions, iden);
+	});
+};
+
+/*
+ ustime-response
+ Root element of the response document.
+ error
+ Child element of the root element. Message if the processing of the request resulted in an error.
+ prd
+ Child element of the root element. Encapsulates a predicted arrival or
+ ￼￼￼￼￼transitchicago.com v1.1 / rev. 2011-06-16 / p.22
+ ￼￼￼￼￼￼￼￼￼￼
+ departure time for the specified set of stops or vehicles.
+ tmstmp
+ Child element of the prd element. Date and time (local) the prediction was generated. Date and time is represented in the following format: YYYYMMDD HH:MM. Month is represented as two digits where January is equal to “01” and December is equal to “12”. Time is represented using a 24-hour clock.
+ typ
+ Child element of the prd element. Type of prediction. ‘A’ for an arrival prediction (prediction of when the vehicle will arrive at this stop). ‘D’ for a departure prediction (prediction of when the vehicle will depart this stop, if applicable). Predictions made for first stops of a route or layovers are examples of departure predictions.
+ stpid
+ Child element of the prd element. Unique identifier representing the stop for which this prediction was generated.
+ ￼
+ stpnm
+ Child element of the prd element. Display name of the stop for which this prediction was generated.
+ vid
+ ￼
+ Child element of the prd element. Unique ID of the vehicle for which this prediction was generated.
+ dstp
+ ￼
+ Child element of the prd element. Linear distance (feet) left to be traveled by the vehicle before it reaches the stop associated with this prediction.
+ ￼
+ rt
+ Child element of the prd element. Alphanumeric designator of the route (ex. “20” or “X20”) for which this prediction was generated.
+ rtdir
+ ￼
+ Child element of the prd element. Direction of travel of the route associated with this prediction (ex. “East Bound”).
+ des
+ ￼
+ Child element of the prd element. Final destination of the vehicle associated with this prediction.
+ prdtm
+ Child element of the prd element. Predicted date and time (local) of a vehicle’s arrival or departure to the stop associated with this prediction. Date and time is represented in the following format: YYYYMMDD HH:MM. Month is represented as two digits where January is equal to “01” and December is equal to “12”. Time is represented using a 24-hour clock.
+ dly
+ Child element of the prd element. “true” if the vehicle is delayed. The dly element is only present if the vehicle that generated this prediction is delayed.
+ */
+
+
 ///*
 //Returns all data regarding divvy bikes
 // */
@@ -701,7 +805,7 @@ bounds : geographical bounding box, format -> sw_latitude,sw_longitude|ne_latitu
 Database.prototype.yelp = function(term, location, sort, radius_filter, cllLat,cllLong, sw_lat,sw_long, ne_lat,ne_long, callback, iden){
 
 	$.ajax({
-		url: 'apiYelp.php',
+		url: 'data/apiYelp.php',
 		data:"term="+term+ "&location="+location+"&sort="+sort+"&radius="+radius_filter+"&cllLat="+cllLat+"&cllLong="+cllLong+"&swlat="+sw_lat+"&swlong="+sw_long+"&nelat="+ne_lat+"&nelong="+ne_long,
 		dataType: "json",
 		success: function(data){
@@ -725,7 +829,7 @@ Database.prototype.yelp = function(term, location, sort, radius_filter, cllLat,c
  */
 Database.prototype.uberProducts= function(lat, long, callback, iden){
 	$.ajax({
-		url: 'apiUber.php',
+		url: 'data/apiUber.php',
 		data:"filter=products&latitude="+lat+"&longitude="+long,
 		dataType: "json",
 		success: function(data){
@@ -743,7 +847,7 @@ Database.prototype.uberProducts= function(lat, long, callback, iden){
  */
 Database.prototype.uberEstTime = function(start_latitude,start_longitude,callback,iden){
 	$.ajax({
-		url: 'apiUber.php',
+		url: 'data/apiUber.php',
 		data:"filter=time&start_latitude="+start_latitude+"&start_longitude="+start_longitude,
 		dataType: "json",
 		success: function(data){
@@ -768,7 +872,7 @@ Database.prototype.uberEstTime = function(start_latitude,start_longitude,callbac
  */
 Database.prototype.uberEstPrice = function(start_latitude,start_longitude, end_latitude,end_longitude,callback,iden){
 	$.ajax({
-		url: 'apiUber.php',
+		url: 'data/apiUber.php',
 		data:"filter=price&start_latitude="+start_latitude+"&start_longitude="+start_longitude+"&end_latitude="+end_latitude+"&end_longitude="+end_longitude,
 		dataType: "json",
 		success: function(data){
@@ -801,7 +905,7 @@ Database.prototype.twitter = function(paramQuery,latitude,longitude,radius,callb
 	}
 
 	$.ajax({
-		url: 'apiTwitter.php',
+		url: 'data/apiTwitter.php',
 		data: 'latitude='+latitude+"&longitude="+longitude+"&radius="+radius+address,
 		dataType: "json",
 		success: function(data){
