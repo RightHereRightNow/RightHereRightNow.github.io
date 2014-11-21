@@ -150,7 +150,7 @@ ui.prototype.draw = function() {
 
 
 	function clickTrafficLayer() { context.setLayer("TRAFFICLAYER",context.ctaArray,!context.getMode("TRAFFICLAYER")); context.getData(); }
-	function clickCrimeLayer() { context.setLayer("CRIMELAYER",context.crimeArray,!context.getMode("CRIMELAYER")); context.getData(); }
+	function clickCrimeLayer() { context.setLayer("CRIMELAYER",context.crimeContainer,!context.getMode("CRIMELAYER")); context.getData(); }
 	function clickPlacesOfInterestLayer() { context.setLayer("PLACESOFINTEREST",context.pointsOfInterestArray,!context.getMode("PLACESOFINTEREST")); context.getData(); }
 	function clickDivvyBikes() { context.setLayer("DIVVYBIKES",context.divvyArray,!context.getMode("DIVVYBIKES")); context.getData();}
 	function clickAbandonedVehicles() { context.setLayer("ABANDONEDVEHICLES",context.carsArray,!context.getMode("ABANDONEDVEHICLES")); context.getData(); }

@@ -699,9 +699,9 @@ cll : (ONLY IF LOCATION is SET AND BOUNDS == '') latitude and longitude
 bounds : geographical bounding box, format -> sw_latitude,sw_longitude|ne_latitude,ne_longitude
  */
 Database.prototype.yelp = function(term, location, sort, radius_filter, cllLat,cllLong, sw_lat,sw_long, ne_lat,ne_long, callback, iden){
-
+	console.log("calling yelp data", callback);
 	$.ajax({
-		url: 'apiYelp.php',
+		url: 'data/apiYelp.php',
 		data:"term="+term+ "&location="+location+"&sort="+sort+"&radius="+radius_filter+"&cllLat="+cllLat+"&cllLong="+cllLong+"&swlat="+sw_lat+"&swlong="+sw_long+"&nelat="+ne_lat+"&nelong="+ne_long,
 		dataType: "json",
 		success: function(data){

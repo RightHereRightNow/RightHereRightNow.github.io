@@ -38,9 +38,9 @@ var SimpleMarker = function(data) {
 
 
 
-
-
-
-
-
-
+function SimpleContainer() {
+    this.add = function (key, data) {
+        this.container[key] = new SimpleMarker(data);
+        this.container[key] = new SimpleMarker(data);
+    }
+};

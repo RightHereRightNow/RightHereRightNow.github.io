@@ -49,6 +49,17 @@ function CrimeMarker(data) {
 
 
 
+function CrimeContainer() {
+    this.crimeTypeCount = {};
+
+    this.add = function(key, data){
+        this.container[key] = new CrimeMarker(data);
+    }
+}
+
+
+
+
 
 
 

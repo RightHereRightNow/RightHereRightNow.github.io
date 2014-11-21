@@ -14,3 +14,15 @@ extend(CrimeMarker, AbstractMarker);
 extend(PotholeMarker, AbstractMarker);
 extend(CTAMarker, AbstractMarker);
 extend(LightsOutMarker, AbstractMarker);
+
+
+
+//extend(SimpleContainer, AbstractMarkerContainer);
+//extend(CrimeContainer, AbstractMarkerContainer);
+
+//extend(DivvyContainer, AbstractMarkerContainer);
+//extend(AbandonedVehicleContainer, AbstractMarkerContainer);
+//
+//extend(PotholeContainer, AbstractMarkerContainer);
+//extend(CTAContainer, AbstractMarkerContainer);
+//extend(LightsOutContainer, AbstractMarkerContainer);

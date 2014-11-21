@@ -26,7 +26,8 @@ function Controller() {
 		ABANDONEDVEHICLES: false,
 		STREETLIGHTSOUT: false,
 		CURRENTWEATHER:false,
-		POTHOLES: false
+		POTHOLES: false,
+		YELP: false
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -42,20 +43,23 @@ function Controller() {
 	this.pathLineConstructed = false;
 
 	this.firstload = true;
-	
+
 	this.updateCounter = 0; // counts number of updates - only for debugging
-	
+
 	this.cycles = -1;  // Keeps track of the number of update cycles, mostly important for the initial cycle
 
+	//
 	this.pointsOfInterestArray = {};
 	this.potholesArray = {};
-	this.crimeArray = {};
+	this.crimeContainer = {}; //new CrimeContainer();
 	this.divvyArray = {};
 	this.carsArray = {};
 	this.lightsAllArray = {};
 	this.lights1Array = {};
 	this.ctaArray = {};
-	
+	this.yelpContainer = {};
+
+
 	this.getUpdates();
 
 }
@@ -69,6 +73,17 @@ Controller.prototype.getUpdates = function(){
 
 Controller.prototype.stopUpdates = function(){
 	clearInterval(this.updateId);
+};
+
+
+Controller.prototype.getCTAUpdates = function() {
+  var refreshrate = 1000;
+  this.getDataCTA();
+  this.updateCTAId = setInterval(this.getDataCTA().bind(this), refreshrate)
+};
+
+Controller.prototype.stopCTAUpdates = function() {
+    clearInterval(this.updateCTAId);
 };
 
 Controller.prototype.updateWeather = function(){
@@ -103,7 +118,6 @@ function getNewPointInLatLng(lat,lng,distance,angle){
 
 // Queries Data from Database and writes to Marker Objects
 // Function calls itself in regular intervals of length "refreshrate"
-
 Controller.prototype.getData = function() {
 
 	// REDUCES NUMBER OF UPDATES - REMOVE IN FINAL VERSION
@@ -114,13 +128,13 @@ Controller.prototype.getData = function() {
 
 	console.log("\tCONTROLLER - getData -- WOOT", this.updateCounter++);
 	// console.log("Path line constructed:\t" + this.pathLineConstructed);
-	
+
 	if (this.pathLineConstructed){
-		
+
 		this.updateCounter+=1;
-		
+
 		var bounds = this.pathLine.getBounds();
-		
+
 		var northWest = getNewPointInLatLng(bounds.getNorth(),bounds.getWest(),this.perimeterRadiusInKm,-45); //Increase the bounding box by radius
 		var southEast = getNewPointInLatLng(bounds.getSouth(),bounds.getEast(),this.perimeterRadiusInKm,135);
 		var north = northWest.lat;
@@ -128,44 +142,49 @@ Controller.prototype.getData = function() {
 		var south = southEast.lat;
 		var east = southEast.lng;
 
-
 		var dataCallback = this.filterByPerimeter.bind(this);
 
 		console.log("fetching data");
-		
+
 		// Sending requests to database
 		if(this.mode.CURRENTWEATHER) {
-			// this.updateWeather();	
+			// this.updateWeather();
 		}
-		if (this.mode.CRIMELAYER) {
-			this.dataManager.crimes("week2",north,west,south,east,dataCallback, "crimes" );
-		}
-		if (this.mode.POTHOLES) {
-			this.dataManager.potHoles("week",north,west,south,east,dataCallback, "potHoles" );
-		}
-		if (this.mode.ABANDONEDVEHICLES) {
-			this.dataManager.abandonedVehicle("week",north,west,south,east,dataCallback, "abandonedVehicles" );
-		}
+		if (this.mode.CRIMELAYER) this.dataManager.crimes("week2",north,west,south,east,dataCallback, "crimes" );
+
+		if (this.mode.POTHOLES) this.dataManager.potHoles("week",north,west,south,east,dataCallback, "potHoles" );
+
+		if (this.mode.ABANDONEDVEHICLES) this.dataManager.abandonedVehicle("week",north,west,south,east,dataCallback, "abandonedVehicles" );
+
 		if (this.mode.STREETLIGHTSOUT) {
 			this.dataManager.lightOutAllNotCompleted("week",north,west,south,east,dataCallback, "lightOutAll" );
-			this.dataManager.lightOut1NotCompleted("week",north,west,south,east,dataCallback, "lightOutOne" );	
+			this.dataManager.lightOut1NotCompleted("week",north,west,south,east,dataCallback, "lightOutOne" );
 		}
-		if (this.mode.DIVVYBIKES) {
-			this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
-		}
-		if (this.mode.TRAFFICLAYER) {
-			this.dataManager.getCTAData2(north,west,south,east,dataCallback, "cta" );
+		if (this.mode.DIVVYBIKES) this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 
-			this.dataManager.busRoute.forEach(function(route){
-				this.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
-			})
+		if (this.mode.YELP) this.dataManager.yelp('food', 'Chicago', 0, '4000','','', north,west,south,east,penguin, 'yelp-data-lat-lon-chicago');
 
-		}
+		//if (this.mode.TRAFFICLAYER) {
+		//	this.dataManager.getCTAData2(north,west,south,east,dataCallback, "cta" );
+        //
+		//	this.dataManager.busRoute.forEach(function(route){
+		//		this.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
+		//	})
+		//}
 	}
-
 	this.firstload = false;
+};
+
+
+function penguin(data, iden){
+	console.log(iden);
+	console.log(data);
+}
+
+Controller.prototype.getDataCTA = function() {
 
 };
+
 
 Controller.prototype.onMapClick = function(e){
 	if (this.mode.SELECTION === true){
@@ -201,6 +220,7 @@ function distance (lat1,lng1,lat2,lng2) {
 	return R * c;
 }
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
+	console.log("filterByPerimeter", data,identifierStr,data);
 
 	if (this.showDataAlongPathOnly == true){
 		var filteredData = [];
@@ -211,7 +231,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			var dataRange = false;
 			for(var i=0;i<points.length;i++){
 				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude,dataPoint.longitude);
-				
+
 				if (tempDist <= this.perimeterRadiusInKm){
 					console.log(tempDist,this.perimeterRadiusInKm);
 					filteredData.push(dataPoint);
@@ -225,15 +245,15 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		}
 		data = filteredData;
 	}
-	
+
 
 	console.log(identifierStr,data);
 	console.log(filteredData);
-	
+
 
 	switch(identifierStr) {
 		case 'crimes':
-			this.updateMarkers(data,this.crimeArray,'case_number',CrimeMarker);
+			this.updateMarkers(data,this.crimeContainer,'case_number',CrimeMarker);
 			break;
 		case 'divvyStations':
 			this.updateMarkers(data,this.divvyArray,'id',DivvyMarker);
@@ -250,6 +270,9 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			break;
 		case 'lightOutOne':
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
+			break;
+		case 'yelp':
+			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
 			break;
 		case 'cta':
 			//this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
@@ -291,7 +314,7 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 			} else { //if(markerCollection[key]){
 				console.log("Marker is in the collection!!");
 				if (marker instanceof CTAMarker){
-					console.log(" updateMarkers",idstr, data[i][idstr], data[i], markerCollection[key] );
+					console.log(" updateMarkers",idstr, data[i][idstr], data[i], markerCollection.get(key) );
 					//markerCollection[key].updateLine(data[i]);
 				} //else
 			// Remove B!
@@ -300,8 +323,8 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 		for ( k in markerCollection){
 			if (!iKey[k]){
 				console.log("Kill the Marker!!");
-				map.removeLayer(markerCollection[k]);
-				delete markerCollection[k]; // Remove the object 'property' from the collection so we dont have any accidents
+				map.removeLayer(markerCollection[k]); // markerCollection.remove(k) acts like pop or slice. It returns the marker, then deletes it from the collection
+				delete markerCollection[k];
 			}
 		}
 	}
@@ -365,10 +388,12 @@ Controller.prototype.drawPath = function(points){
     this.pathLine.redraw();
     // console.log(this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
-    
+
     //this.getPerimeterAroundPath(30);
 };
-			
+
+
+
 Controller.prototype.init = function(){
 	this.map.init(this.mapCenter, 11);
 
@@ -376,23 +401,17 @@ Controller.prototype.init = function(){
 	this.pointsOfInterestArray[1] = new SimpleMarker({latitude: 41.86624, longitude: -87.61702, description: "The Field Museum of Natural History"});
 	this.pointsOfInterestArray[2] = new SimpleMarker({latitude: 41.86761, longitude: -87.61365, description: "The Shedd Aquarium"});
 	this.pointsOfInterestArray[3] = new SimpleMarker({latitude: 41.86635, longitude: -87.60659, description: "The Alder Planetarium"});
-	//this.pointsOfInterestArray[4] = new CrimeMarker({case_number: 56789, date: "11-9-2014", primary_type: "Assault with a deadly weapon", description: "Victim got punched by Chuck Norris", latitude: 41.873519, longitude: -87.720375 });
 
-	//var points = { destination: "Belmont/Halsted", headdirect: "81", latitude: "41.87791534208915", longitude: "-87.63376499229753", pdist: "4227", pid: "6425", route: "156", timestamp: "20141117 13:51", vehicleid: "4198" };
-	//this.pointsOfInterestArray[5] = new CTAMarker(points);
+	//database.yelp('food','London',0,'4000','','','','','','',fringuello, 'yelpdata-city');
+	//database.yelp('food', '', 0, '4000','','', '41.8747107','-87.0','41.8710629','-87.9',fringuello, 'yelp-data-square');
+
+
 	//console.log(this.pointsOfInterestArray[5]);
 	for( var key in this.pointsOfInterestArray){
 		this.pointsOfInterestArray[key].addTo(this.map);
 	}
 
-	//var points = [ [ 41.869912359714654, -87.64772415161133], [41.86624, -87.61702], [41.86761, -87.61365], [41.86635, -87.60659] ];
-	//routes = L.polyline(points);
-
-
 	console.log("animating marker!");
-	//map.addLayer(cta);
-	//cta.beingAnimation();
-
 };
 
 Controller.prototype.getPerimeterAroundPath = function(radius){
@@ -435,12 +454,12 @@ Controller.prototype.addRouteLayer = function(){};
 
 Controller.prototype.setLayer = function(layerName,array,b) {
 	// 'layerName' is the name of the layer to be set, e.g. DIVVYBIKES, PLACESOFINTEREST, CRIMELAYER, etc.
-	// 'array' is the array that holds the markers for the associated object, e.g. divvyArray, pointsOfInterestArray, crimeArray
+	// 'array' is the array that holds the markers for the associated object, e.g. divvyArray, pointsOfInterestArray, crimeContainer
 	// 'b' is the Boolean value to which the layer is set (true or false)
-	
+
 	console.log("MODENAME = " + layerName + ":\t" + this.mode[layerName] + " --> " + b);
 	console.log( (b ? "SHOW " : "HIDE ") + layerName );
-	
+
 	this.mode[layerName] = b;
 
 	for(var key in array) {
