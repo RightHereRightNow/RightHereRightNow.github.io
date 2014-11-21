@@ -162,7 +162,7 @@ Controller.prototype.getData = function() {
 		}
 		if (this.mode.DIVVYBIKES) this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 
-		if (this.mode.YELP) this.dataManager.yelp('food', 'Chicago', 0, '4000','','', north,west,south,east,penguin, 'yelp-data-lat-lon-chicago');
+		if (this.mode.YELP) this.dataManager.yelp('food', 'Chicago', 0, '4000','','', north,west,south,east,dataCallback, 'yelp-data-lat-lon-chicago');
 
 		//if (this.mode.TRAFFICLAYER) {
 		//	this.dataManager.getCTAData2(north,west,south,east,dataCallback, "cta" );
@@ -175,11 +175,6 @@ Controller.prototype.getData = function() {
 	this.firstload = false;
 };
 
-
-function penguin(data, iden){
-	console.log(iden);
-	console.log(data);
-}
 
 Controller.prototype.getDataCTA = function() {
 
