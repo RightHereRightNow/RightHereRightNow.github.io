@@ -13,6 +13,7 @@ extend(SimpleMarker, AbstractMarker);
 extend(CrimeMarker, AbstractMarker);
 extend(PotholeMarker, AbstractMarker);
 extend(CTAMarker, AbstractMarker);
+extend(YelpMarker, AbstractMarker);
 extend(LightsOutMarker, AbstractMarker);
 
 
