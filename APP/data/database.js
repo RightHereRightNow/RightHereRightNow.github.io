@@ -811,7 +811,7 @@ Database.prototype.yelp = function(term, location, sort, radius_filter, cllLat,c
 		data:"term="+term+ "&location="+location+"&sort="+sort+"&radius="+radius_filter+"&cllLat="+cllLat+"&cllLong="+cllLong+"&swlat="+sw_lat+"&swlong="+sw_long+"&nelat="+ne_lat+"&nelong="+ne_long,
 		dataType: "json",
 		success: function(data){
-			callback(data,iden);
+			callback(data.businesses,iden);
 		}
 	})
 };
