@@ -30,64 +30,15 @@ var ui = function(menutag,mapcontroltag) {
 
 	this.textColor = "black"; // "#ccc";
 
-	this.buttonList = [];
+	this.buttonOneList = [];
+	this.buttonAllList = [];
 
+	this.dt = 1000; // Transition duration
 }
-
-/*
-ui.prototype.createLevel2Button = function(svg,yOffset,str,iconname,fOnClick) {
-
-	var g = svg.append("svg:g")
-		.attr("class","level2button")
-		.attr("transform","translate(0," + yOffset + ")")
-		.attr('opacity',0)
-		.on("click", function() { 
-			fOnClick();	
-		});
-
-	g.append("rect")
-		.attr("x",this.button2dx).attr("y",this.button2dy)
-		.attr("width",this.button2width).attr("height",this.button2height);
-
-	g.append("svg:text")
-		.attr("class","buttontext")
-		.attr("transform","translate(" + (this.button2dx+this.textpadding) + "," + (this.font1size+this.button2dy+(this.button2height-this.font1size)/2) + ")")
-		.text(str)
-		.attr("fill","#ccc")
-		.attr("text-anchor","bottom")
-		.attr("font-size", this.font1size)
-		.attr("font-family", "Roboto")
-		.attr("font-variant", "small-caps")
-		.attr("cursor","default");
-
-	g.append("svg:image")
-		.attr("xlink:href", "img/" + iconname + ".svg")
-		.attr("x",this.button2dx+.1*this.button2height)
-		.attr("y",this.button2dy+.1*this.button2height)
-		.attr("width", .8*this.button2height)
-		.attr("height", .8*this.button2height)
-
-}
-
-ui.prototype.fadeOutLevel2Buttons = function() {
-	d3.select(this.menutag).selectAll(".level2button")
-		.transition()
-		.duration(1000)
-		.attr('opacity', 0)
-		// .attr("transform","translate(" + 100 + "," + 200 + ")");
-}
-
-ui.prototype.fadeInLevel2Buttons = function() {
-	d3.select(this.menutag).selectAll(".level2button")
-		.transition()
-		.duration(1000)
-		.attr('opacity', 1);
-}
-*/
 
 ui.prototype.update = function() {
-	for (b in this.buttonList) {
-		this.buttonList[b].update();
+	for (b in this.buttonAllList) {
+		this.buttonAllList[b].update();
 	}
 }
 
@@ -130,24 +81,20 @@ ui.prototype.draw = function() {
 
 
 	this.buttonSelection = new level1Button(this,"Selection",ystart,yend,"distance1",emptyCallback,"SELECTION",emptyArray);
-	this.buttonSelection.create(svgmenu,(this.button1height+3*this.button1dy));
 	this.buttonSelection.setPreviousButton(null);
+	this.buttonOneList.push(this.buttonSelection);
 
 	ystart = yend + this.button1dy; yend = ystart + this.button1height;
 	
 	this.buttonLayers = new level1Button(this,"Layers",ystart,yend,"stack9",emptyCallback,"LAYERS",emptyArray);
-	this.buttonLayers.create(svgmenu,(2*this.button1height+4*this.button1dy));
 	this.buttonLayers.setPreviousButton(this.buttonSelection);
+	this.buttonOneList.push(this.buttonLayers);
 	
 	ystart = yend + this.button1dy; yend = ystart + this.button1height;
 	
 	this.buttonGraphs = new level1Button(this,"Graphs",ystart,yend,"stack9",clickGraphs,"GRAPHS",emptyArray);
-	this.buttonGraphs.create(svgmenu,(2*this.button1height+4*this.button1dy));
 	this.buttonGraphs.setPreviousButton(this.buttonLayers);
-
-	this.buttonList.push(this.buttonSelection);
-	this.buttonList.push(this.buttonLayers);
-	this.buttonList.push(this.buttonGraphs);
+	this.buttonOneList.push(this.buttonGraphs);
 
 	/*
 	function clickTrafficLayer() { context.setLayer("TRAFFICLAYER",context.ctaArray,!context.getMode("TRAFFICLAYER")); context.getData(); }
@@ -159,16 +106,65 @@ ui.prototype.draw = function() {
 	function clickPotholes() {context.setLayer("POTHOLES",context.potholesArray,!context.getMode("POTHOLES")); context.getData();}
 	function clickCurrentWeather() {context.setWeather(!context.getMode("CURRENTWEATHER")); }
 	*/
+
+	this.buttonAllList = this.buttonOneList.slice(0);
+
+	var ystart = 0; var yend = this.button2height;
+	
+	this.buttonTraffic = new level2Button(this.buttonLayers,"Traffic",ystart,yend,"stack9",emptyCallback,"TRAFFICLAYER",emptyArray);
+	this.buttonTraffic.setPreviousButton(null);
+	this.buttonAllList.push(this.buttonTraffic);
+
+	ystart = yend + this.button2dy; yend = ystart + this.button2height;
+
+	this.buttonCrime = new level2Button(this.buttonLayers,"Crimes",ystart,yend,"crime1",emptyCallback,"CRIMELAYER",emptyArray);
+	this.buttonCrime.setPreviousButton(this.buttonTraffic);
+	this.buttonAllList.push(this.buttonCrime);
+
+	ystart = yend + this.button2dy; yend = ystart + this.button2height;
+	
+	this.buttonPlacesOfInterest = new level2Button(this.buttonLayers,"Places of Interest",ystart,yend,"information38",emptyCallback,"PLACESOFINTEREST",emptyArray);
+	this.buttonPlacesOfInterest.setPreviousButton(this.buttonCrime);
+	this.buttonAllList.push(this.buttonPlacesOfInterest);
+
+	ystart = yend + this.button2dy; yend = ystart + this.button2height;
+	
 	/*
-	this.createLevel2Button(svgmenu,(3*this.button1height+6*this.button1dy),"Traffic Layer","front1",clickTrafficLayer)
-	this.createLevel2Button(svgmenu,(4*this.button1height+7*this.button1dy),"Crime Layer","crime1",clickCrimeLayer)
-	this.createLevel2Button(svgmenu,(5*this.button1height+8*this.button1dy),"Places of Interest","information38",clickPlacesOfInterestLayer)
 	this.createLevel2Button(svgmenu,(6*this.button1height+9*this.button1dy), "Divvy Bikes", "regular2", clickDivvyBikes);
 	this.createLevel2Button(svgmenu,(7*this.button1height+10*this.button1dy), "Abandoned Vehicles", "criminal20", clickAbandonedVehicles);
 	this.createLevel2Button(svgmenu,(8*this.button1height+11*this.button1dy), "Street Lights Out", "street9", clickStreetLightsOut);
 	this.createLevel2Button(svgmenu,(9*this.button1height+12*this.button1dy), "Potholes" ,"road22", clickPotholes);
 	this.createLevel2Button(svgmenu,(10*this.button1height+15*this.button1dy), "Current Weather", "cold5", clickCurrentWeather);
-*/
+	*/
+
+	// Drawing buttons
+	this.buttonTraffic.create(svgmenu);
+	this.buttonCrime.create(svgmenu);
+	this.buttonPlacesOfInterest.create(svgmenu);
+	
+	// Draw level1buttons last, so they are on top
+	this.buttonSelection.create(svgmenu);
+	this.buttonLayers.create(svgmenu);
+	this.buttonGraphs.create(svgmenu);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	/*

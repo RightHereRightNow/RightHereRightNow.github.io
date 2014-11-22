@@ -24,8 +24,6 @@ var level1Button = function(parentUI,text,ystart,yend,iconname,onClick,s,markers
 	this.colorActive = "#ccc";
 	this.colorInactive = "#888";
 
-	this.dt = 1000; // Transition duration
-
 	this.markerArray = markers;
 
 }
@@ -71,20 +69,35 @@ level1Button.prototype.create = function(svg) {
 
 level1Button.prototype.onClick = function() {
 	console.log("CLICKED:\t" + this.textStr);
-	this.active = !this.active;
-
-	context.setLayer(this.contextSwitchStr,this.markerArray,this.active);
-
-	if(this.active) {
-		this.yEnd = this.yStart + this.ui.button1height + this.childButtons.length;
-	} else {
-		this.yEnd = this.yStart + this.ui.button1height;
-	}
-	
+	(this.active ? this.setInactive() : this.setActive());
 	// this.clickCallback();
-	
 	this.ui.update();
+}
 
+level1Button.prototype.setActive = function() {
+	this.active = true;
+	context.setLayer(this.contextSwitchStr,this.markerArray,this.active);
+	this.yEnd = this.yStart + this.ui.button1height + this.childButtons.length*(this.ui.button2height+this.ui.button2dy);
+	var prev = this;
+	for (c in this.childButtons) {
+		this.childButtons[c].previousButton = prev;
+		prev = this.childButtons[c];
+	}
+	for (b in this.ui.buttonOneList) {
+		var button = this.ui.buttonOneList[b];
+		if(button != this) {
+			this.ui.buttonOneList[b].setInactive();
+		}
+	}
+}
+
+level1Button.prototype.setInactive = function() {
+	this.active = false;
+	context.setLayer(this.contextSwitchStr,this.markerArray,this.active);
+	this.yEnd = this.yStart + this.ui.button1height;
+	for (c in this.childButtons) {
+		this.childButtons[c].previousButton = this.previousButton;
+	}
 }
 
 level1Button.prototype.setPreviousButton = function(prevButton) {
@@ -109,7 +122,7 @@ level1Button.prototype.update = function() {
 	var opac = 1; // (this.active ? 1 : .4);
 	
 	this.g.transition()
-		.duration(this.dt)
+		.duration(this.ui.dt)
 		.attr("transform","translate(0," + this.yStart + ")")
 		.attr("fill", color)
 		.attr("opacity", opac);

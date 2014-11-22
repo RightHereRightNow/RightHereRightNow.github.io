@@ -1,18 +1,22 @@
 var level2Button = function(parentButton,text,ystart,yend,iconname,onClick,s,markers) {
 
+	this.parentButton = parentButton;
+	this.previousButton = null;
+	this.childButtons = [];
+
+	parentButton.addChildButton(this);
+
 	this.contextSwitchStr = s;
 	this.textStr = text;
 	this.iconStr = iconname;
 
 	// Dynamic Menu Parameters
-	/*const*/ this.yStartInitial = ystart;
-	this.yStart = ystart;
-	/*const*/ this.yEndInitial = yend;
-	this.yEnd = yend;
-
-	this.parentButton = parentButton;
-	this.previousButton = null;
-	this.childButtons = [];
+	/*const*/ this.yStartInitial = this.parentButton.yStart + ystart;
+	this.yStart = this.yStartInitial;
+	/*const*/ this.yEndInitial = this.parentButton.yStart + yend;
+	this.yEnd = this.yEndInitial;
+	
+	this.ui = this.parentButton.ui;
 
 	this.g;
 	this.active = context.getMode(this.contextSwitchStr);
@@ -21,8 +25,6 @@ var level2Button = function(parentButton,text,ystart,yend,iconname,onClick,s,mar
 
 	this.colorActive = "#ccc";
 	this.colorInactive = "#888";
-
-	this.dt = 1000; // Transition duration
 
 	this.markerArray = markers;
 
@@ -98,18 +100,36 @@ level2Button.prototype.update = function() {
 	if(this.previousButton === null) {
 		this.yStart = 0;
 	} else {
-		this.yStart = this.previousButton.yEnd + this.ui.button2dy;
+		this.yStart = this.previousButton.yEndInitial + this.ui.button1dy + this.ui.button1height + this.ui.button2dy;
 	};
 
 	var thisButton = this;
 
 	var color = (this.active ? this.colorActive : this.colorInactive);
 	var opac = 1; // (this.active ? 1 : .4);
-	
+
+	console.log("PREVBUTTON = " + this.previousButton.textStr);
+	console.log("YSTART = " + this.yStart);
+
+	var thisButton = this;
+
+
+	// TODO: there is a problem with this.g
 	this.g.transition()
-		.duration(this.dt)
+		.duration(this.ui.dt)
 		.attr("transform","translate(0," + this.yStart + ")")
-		.attr("fill", color)
+		.attr("fill", "blue")
 		.attr("opacity", opac);
-	
+/*
+	this.g.transition()
+		.duration(this.ui.dt)
+		.attr("transform","translate(0," + this.yStart + ")")
+		.attr("fill", "blue")
+		.attr("opacity", opac)
+		.each("end",function(){
+			// d3.select(this).attr("fill","green");
+			console.log("Transition Complete");
+		});
+		// .attr("display","none");
+*/	
 }
