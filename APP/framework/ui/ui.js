@@ -1,4 +1,4 @@
-function ui(menutag,mapcontroltag) {
+var ui = function(menutag,mapcontroltag) {
 
 	this.menutag = menutag;
 	this.mapcontroltag = mapcontroltag;
@@ -13,6 +13,7 @@ function ui(menutag,mapcontroltag) {
 
 	this.textpadding = 180;
 	this.font1size = 60;
+	this.font2size = 50;
 
 	this.linewidth = 10;
 	this.linepadding = 40;
@@ -27,44 +28,13 @@ function ui(menutag,mapcontroltag) {
 	this.button2dx = 2*this.button1dx;
 	this.button2dy = this.button1dy;
 
-}
+	this.textColor = "black"; // "#ccc";
 
-
-ui.prototype.createLevel1Button = function(svg,yOffset,str,iconname,fOnClick) {
-
-	var g = svg.append("svg:g")
-		.attr("fill","#444")
-		.attr("class","level1button")
-		.attr("transform","translate(0," + yOffset + ")")
-		.on("click", function() { 
-			fOnClick();	
-		});
-
-	g.append("rect")
-		.attr("x",this.button1dx).attr("y",this.button1dy)
-		.attr("width",this.button1width).attr("height",this.button1height);
-
-	g.append("svg:text")
-		.attr("fill","#ccc")
-		// .attr("class","buttontext")
-		.attr("transform","translate(" + (this.button1dx+this.textpadding) + "," + (this.font1size+this.button1dy+(this.button1height-this.font1size)/2) + ")")
-		.text(str)
-		.attr("text-anchor","bottom")
-		.attr("font-size", this.font1size)
-		.attr("font-variant", "small-caps")
-		.attr("font-family", "Roboto")
-		.attr("cursor","default");
-
-	g.append("svg:image")
-		.attr("xlink:href", "img/" + iconname + ".svg")
-		.attr("x",this.button1dx+.1*this.button1height)
-		.attr("y",this.button1dy+.1*this.button1height)
-		.attr("width", .8*this.button1height)
-		.attr("height", .8*this.button1height)
+	this.buttonList = [];
 
 }
 
-
+/*
 ui.prototype.createLevel2Button = function(svg,yOffset,str,iconname,fOnClick) {
 
 	var g = svg.append("svg:g")
@@ -113,6 +83,13 @@ ui.prototype.fadeInLevel2Buttons = function() {
 		.duration(1000)
 		.attr('opacity', 1);
 }
+*/
+
+ui.prototype.update = function() {
+	for (b in this.buttonList) {
+		this.buttonList[b].update();
+	}
+}
 
 
 ui.prototype.draw = function() {
@@ -130,25 +107,49 @@ ui.prototype.draw = function() {
 
 	// Selection Button
 
-	var layersActive = false;
-
+		/*
 	function clickHomepage() { console.log("TODO: link to homepage");
 		window.location.href = "../"; }
 	function clickSelection() { context.toggleSelectionMode(); }
+*/
+	var emptyCallback = function() {};
+
+	var clickGraphs = function() { console.log("TODO: implement"); };
+	clickGraphs = clickGraphs.bind(this);
 	
-	var clickLayer = function() {
-		if(layersActive) {
-			this.fadeOutLevel2Buttons();
-			layersActive = false;
-		} else {
-			this.fadeInLevel2Buttons();
-			layersActive = true;
-		}
-	}
 
-	clickLayer = clickLayer.bind(this);
+	var ystart = 0; var yend = this.button1height;
+	var emptyArray = {};
+
+/*
+	this.buttonHome = new level1Button(this,"Project Homepage",ystart,yend,"house28",clickHomepage);
+	this.buttonHome.create(svgmenu,0);
+
+	ystart = yend + this.button1dy; yend = ystart + this.button1height;
+	*/
 
 
+	this.buttonSelection = new level1Button(this,"Selection",ystart,yend,"distance1",emptyCallback,"SELECTION",emptyArray);
+	this.buttonSelection.create(svgmenu,(this.button1height+3*this.button1dy));
+	this.buttonSelection.setPreviousButton(null);
+
+	ystart = yend + this.button1dy; yend = ystart + this.button1height;
+	
+	this.buttonLayers = new level1Button(this,"Layers",ystart,yend,"stack9",emptyCallback,"LAYERS",emptyArray);
+	this.buttonLayers.create(svgmenu,(2*this.button1height+4*this.button1dy));
+	this.buttonLayers.setPreviousButton(this.buttonSelection);
+	
+	ystart = yend + this.button1dy; yend = ystart + this.button1height;
+	
+	this.buttonGraphs = new level1Button(this,"Graphs",ystart,yend,"stack9",clickGraphs,"GRAPHS",emptyArray);
+	this.buttonGraphs.create(svgmenu,(2*this.button1height+4*this.button1dy));
+	this.buttonGraphs.setPreviousButton(this.buttonLayers);
+
+	this.buttonList.push(this.buttonSelection);
+	this.buttonList.push(this.buttonLayers);
+	this.buttonList.push(this.buttonGraphs);
+
+	/*
 	function clickTrafficLayer() { context.setLayer("TRAFFICLAYER",context.ctaArray,!context.getMode("TRAFFICLAYER")); context.getData(); }
 	function clickCrimeLayer() { context.setLayer("CRIMELAYER",context.crimeContainer,!context.getMode("CRIMELAYER")); context.getData(); }
 	function clickPlacesOfInterestLayer() { context.setLayer("PLACESOFINTEREST",context.pointsOfInterestArray,!context.getMode("PLACESOFINTEREST")); context.getData(); }
@@ -157,11 +158,8 @@ ui.prototype.draw = function() {
 	function clickStreetLightsOut() {context.setLayer("STREETLIGHTSOUT",context.lights1Array,!context.getMode("STREETLIGHTSOUT")); context.getData(); }
 	function clickPotholes() {context.setLayer("POTHOLES",context.potholesArray,!context.getMode("POTHOLES")); context.getData();}
 	function clickCurrentWeather() {context.setWeather(!context.getMode("CURRENTWEATHER")); }
-
-	this.createLevel1Button(svgmenu,0,"Project Homepage","house28",clickHomepage)
-	this.createLevel1Button(svgmenu,(this.button1height+3*this.button1dy),"Selection Mode","distance1",clickSelection)
-	this.createLevel1Button(svgmenu,(2*this.button1height+4*this.button1dy),"Layers","stack9",clickLayer)
-
+	*/
+	/*
 	this.createLevel2Button(svgmenu,(3*this.button1height+6*this.button1dy),"Traffic Layer","front1",clickTrafficLayer)
 	this.createLevel2Button(svgmenu,(4*this.button1height+7*this.button1dy),"Crime Layer","crime1",clickCrimeLayer)
 	this.createLevel2Button(svgmenu,(5*this.button1height+8*this.button1dy),"Places of Interest","information38",clickPlacesOfInterestLayer)
@@ -170,9 +168,10 @@ ui.prototype.draw = function() {
 	this.createLevel2Button(svgmenu,(8*this.button1height+11*this.button1dy), "Street Lights Out", "street9", clickStreetLightsOut);
 	this.createLevel2Button(svgmenu,(9*this.button1height+12*this.button1dy), "Potholes" ,"road22", clickPotholes);
 	this.createLevel2Button(svgmenu,(10*this.button1height+15*this.button1dy), "Current Weather", "cold5", clickCurrentWeather);
+*/
 
 
-
+	/*
 	// MAPCONTROL
 	
 	var svgmapcontrol = d3.select(this.mapcontroltag).append("svg:svg")
@@ -318,4 +317,6 @@ ui.prototype.draw = function() {
 	appendSatelliteRect = appendSatelliteRect.bind(this);
 
 	appendSatelliteRect();
+
+	*/
 }

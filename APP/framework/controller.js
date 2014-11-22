@@ -19,6 +19,7 @@ function Controller() {
 
 	this.mode = {
 		SELECTION: false,
+		LAYERS: false,
 		TRAFFICLAYER: false,
 		CRIMELAYER:	false,
 		PLACESOFINTEREST: true,
@@ -27,7 +28,8 @@ function Controller() {
 		STREETLIGHTSOUT: false,
 		CURRENTWEATHER:false,
 		POTHOLES: false,
-		YELP: false
+		YELP: false,
+		GRAPHS: false
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -446,6 +448,7 @@ Controller.prototype.getPerimeterAroundPath = function(radius){
 };
 
 Controller.prototype.addRouteLayer = function(){};
+
 
 Controller.prototype.setLayer = function(layerName,array,b) {
 	// 'layerName' is the name of the layer to be set, e.g. DIVVYBIKES, PLACESOFINTEREST, CRIMELAYER, etc.

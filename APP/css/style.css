@@ -39,9 +39,19 @@ div {
 	width:				12vw;
 }
 
-#divmenu {
+#divdivvy {
 	position:			absolute;
 	top:				0vw;
+	height:				20vh;
+	left:				0%;
+	width:				100%;
+	background-color:	#333;
+	padding-top:		2vh;
+}
+
+#divmenu {
+	position:			absolute;
+	top:				20vh;
 	bottom:				4vw;
 	left:				0%;
 	width:				100%;
@@ -55,7 +65,7 @@ div {
 	height:				4vw;
 	left:				0%;
 	width:				100%;
-	background-color:	#222;
+	background-color:	#333;
 }
 
 #divmap {
