@@ -7,7 +7,7 @@ function Controller() {
 
 	this.map = new MapManager();
 	this.dataManager = new Database();
-	this.ui = new ui("#divmenu","#divmapcontrol");
+	this.ui = new ui("#divmenu","#divmapcontrol","#divradiuscontrol");
 	this.modes = null;
 
 	this.weatherBox = null;

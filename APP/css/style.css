@@ -76,7 +76,7 @@ div {
 
 #divhome {
 	position:			absolute;
-	top:				0%;
+	top:				0vh;
 	height:				20vh;
 	left:				80%;
 	width:				20%;
@@ -89,13 +89,21 @@ div {
 	padding-right:		10%;
 }
 
+#divradiuscontrol {
+	position:			absolute;
+	top:				30vh;
+	bottom:				30vh;
+	left:				80%;
+	width:				20%;
+	padding-right:		2%;
+}
+
 #divmapcontrol {
 	position:			absolute;
 	bottom:				0%;
-	height:				8.4vw;
+	height:				30vh;
 	left:				80%;
 	width:				20%;
-	background-color:	#444;
 	padding-right:		2%;
 }
 

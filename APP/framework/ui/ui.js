@@ -1,7 +1,8 @@
-var ui = function(menutag,mapcontroltag) {
+var ui = function(menutag,mapcontroltag,radiuscontroltag) {
 
 	this.menutag = menutag;
 	this.mapcontroltag = mapcontroltag;
+	this.radiuscontroltag = radiuscontroltag;
 
 	// Defining parameters for drawing
 	this.viewBoxWidth = 1000;
@@ -31,6 +32,7 @@ var ui = function(menutag,mapcontroltag) {
 	this.button2dy = .5*this.button1dy;
 
 	this.textColor = "black"; // "#ccc";
+	divvyBlue = "#3db7e4";
 
 	this.buttonOneList = [];
 	this.buttonAllList = [];
@@ -155,7 +157,8 @@ ui.prototype.draw = function() {
 
 	// TODO: Submenu buttons should be managed by main buttons
 	// TODO: remove ystart yend completely from constructor
-	
+	// TODO: level1buttons are mutually exclusive, level2buttons are not
+	// TODO: level2buttons have layers, arrays, etc., level1buttons dont - modify in controller
 	
 	
 	// SUBMENU GRAPHS
@@ -199,7 +202,103 @@ ui.prototype.draw = function() {
 
 
 
+	// RADIUSCONTROL
 
+	var svgmapcontrol = d3.select(this.radiuscontroltag).append("svg:svg")
+		.attr("id","radiuscontrol")
+		.attr("class","uisvgelement")
+		.attr("viewBox", "0 0 " + this.viewBoxWidth + " " + (5*this.zoomButtonSize + 4*this.zoomButtonMargin))
+		.attr("preserveAspectRatio", "xMinYMin meet")
+
+
+	// Radius "+" Button
+	var gZoomIn = svgmapcontrol.append("svg:g")
+		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (this.zoomButtonMargin) + ")")
+		.style("fill","transparent")
+		.on("click", function() { 
+			console.log("TODO: increase radius");
+		})
+		.on("mouseover", function() {
+			d3.select(this).style("fill",divvyBlue)
+		})
+		.on("mouseout", function() {
+			d3.select(this).style("fill","transparent");
+		});
+
+	gZoomIn.append("circle")
+		.attr("transform","translate(" + (this.zoomButtonSize/2) + "," + (this.zoomButtonSize/2) + ")")
+		.attr("r",this.zoomButtonSize/2)
+		.attr("stroke",this.buttonStrokeColor)
+		.attr("stroke-width",this.linewidth)
+	
+	gZoomIn.append("line")
+		.attr("x1",this.zoomButtonSize/2).attr("y1",this.linepadding)
+		.attr("x2",this.zoomButtonSize/2).attr("y2",this.zoomButtonSize-this.linepadding)
+		.attr("stroke",this.buttonStrokeColor)
+		.attr("stroke-width",this.linewidth)
+	
+	gZoomIn.append("line")
+		.attr("x1",this.linepadding).attr("y1",this.zoomButtonSize/2)
+		.attr("x2",this.zoomButtonSize-this.linepadding).attr("y2",this.zoomButtonSize/2)
+		.attr("stroke",this.buttonStrokeColor)
+		.attr("stroke-width",this.linewidth)
+
+	
+		
+
+
+	// Radius "-" Button
+	var gZoomOut = svgmapcontrol.append("svg:g")
+		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (4*this.zoomButtonSize + 3*this.zoomButtonMargin) + ")")
+		.attr("fill","transparent")
+		.on("click", function() { 
+			console.log("TODO: Implement decrease radius");
+		})
+		.on("mouseover", function() {
+			d3.select(this).style("fill",divvyBlue);
+		})
+		.on("mouseout", function() {
+			d3.select(this).style("fill","transparent");
+		});
+
+	gZoomOut.append("circle")
+		.attr("transform","translate(" + (this.zoomButtonSize/2) + "," + (this.zoomButtonSize/2) + ")")
+		.attr("x",0).attr("y",0)
+		.attr("r",this.zoomButtonSize/2)
+		.attr("stroke",this.buttonStrokeColor)
+		.attr("stroke-width",this.linewidth)
+
+	gZoomOut.append("line")
+		.attr("x1",this.linepadding).attr("y1",this.zoomButtonSize/2)
+		.attr("x2",this.zoomButtonSize-this.linepadding).attr("y2",this.zoomButtonSize/2)
+		.attr("stroke",this.buttonStrokeColor)
+		.attr("stroke-width",this.linewidth)
+
+
+	// Radius Status bar	
+	var gRadius = svgmapcontrol.append("svg:g")
+		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (this.zoomButtonSize + 2*this.zoomButtonMargin) + ")")
+		.style("fill","transparent")
+
+	gRadius.append("rect")
+		.attr("x",this.zoomButtonSize/2-.2*this.zoomButtonSize).attr("y",this.linepadding)
+		.attr("width",.4*this.zoomButtonSize).attr("height",3*this.zoomButtonSize-2*this.linepadding)
+		.attr("rx",.2*this.zoomButtonSize).attr("ry",.2*this.zoomButtonSize)
+		.attr("fill",this.buttonStrokeColor)
+
+	gRadius.append("rect")
+		.attr("x",this.zoomButtonSize/2-.2*this.zoomButtonSize)
+		.attr("y",function() {
+			return 20;
+			// (1- radiusPercentage) * (3*this.zoomButtonSize-2*this.linepadding) + this.linepadding;
+		})
+		.attr("width",.4*this.zoomButtonSize)
+		.attr("height",function() {
+			return 500;
+			// radiusPercentage * (3*this.zoomButtonSize-2*this.linepadding);
+		})
+		.attr("rx",.2*this.zoomButtonSize).attr("ry",.2*this.zoomButtonSize)
+		.attr("fill",divvyBlue)
 
 
 
@@ -217,10 +316,8 @@ ui.prototype.draw = function() {
 	var svgmapcontrol = d3.select(this.mapcontroltag).append("svg:svg")
 		.attr("id","mapcontrol")
 		.attr("class","uisvgelement")
-		.attr("viewBox", "0 0 " + this.viewBoxWidth + " " + (this.zoomButtonSize + 5*this.zoomButtonMargin))
+		.attr("viewBox", "0 0 " + this.viewBoxWidth + " " + (3*this.zoomButtonSize + 5*this.zoomButtonMargin))
 		.attr("preserveAspectRatio", "xMinYMin meet")
-		.attr("width",this.viewBoxWidth).attr("height",this.viewBoxMapControlHeight)
-		.attr("background-color","blue")
 
 
 	// ZoomIn Button
@@ -232,7 +329,7 @@ ui.prototype.draw = function() {
 			context.map.zoomIn(1);
 		})
 		.on("mouseover", function() {
-			d3.select(this).style("fill","#3db7e4")
+			d3.select(this).style("fill",divvyBlue)
 				// .attr("stroke-width",2*this.linewidth) // TODO: implement
 		})
 		.on("mouseout", function() {
@@ -258,6 +355,7 @@ ui.prototype.draw = function() {
 		.attr("stroke-width",this.linewidth)
 
 
+
 	// ZoomOut Button
 	var gZoomOut = svgmapcontrol.append("svg:g")
 		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (1*this.zoomButtonSize + 2*this.zoomButtonMargin) + ")")
@@ -267,7 +365,7 @@ ui.prototype.draw = function() {
 			context.map.zoomOut(1);
 		})
 		.on("mouseover", function() {
-			d3.select(this).style("fill","#3db7e4");
+			d3.select(this).style("fill",divvyBlue);
 		})
 		.on("mouseout", function() {
 			d3.select(this).style("fill","transparent");
@@ -308,7 +406,7 @@ ui.prototype.draw = function() {
 			console.log("Clicked!");
 		})
 		.on("mouseover", function() {
-			d3.select(this).style("stroke","#3db7e4")
+			d3.select(this).style("stroke",divvyBlue)
 		})
 		.on("mouseout", function() {
 			d3.select(this).style("stroke","none")
