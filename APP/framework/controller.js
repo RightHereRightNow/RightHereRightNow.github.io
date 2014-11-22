@@ -55,9 +55,31 @@ function Controller() {
 	this.lightsAllArray = {};
 	this.lights1Array = {};
 	this.ctaArray = {};
-	
+	this.ctaStopsArray = {};
+	this.ctaStopsData = [];
+	this.ctaStopsDataLoaded = false;
 	this.getUpdates();
 
+}
+
+Controller.prototype.getBusStopDataFromFile = function(){
+	d3.json("data/busstops.json",function(data){
+		var reg = new RegExp ("<td>STOP ID<\/td>[^\/]*");//*<\/td>");
+		var numExp = /\d+/;
+		var features = data.features;
+		for (var i=0;i<features.length;i++){
+			var temp = features[i].properties.Description.match(reg);
+			if (temp){
+				var ID = (temp[0]).match(numExp)[0];
+				var loc = new L.LatLng(features[i].geometry.coordinates[1],features[i].geometry.coordinates[0]);
+				this.ctaStopsData.push({stopID:ID,latlng:loc});
+			}
+
+		}
+		this.ctaStopsDataLoaded = true;
+		console.log(this.ctaStopsData);
+		//console.log(data);
+	}.bind(this));
 }
 
 Controller.prototype.getUpdates = function(){

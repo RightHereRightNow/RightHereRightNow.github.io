@@ -33,5 +33,6 @@ function init() {
 	context.setSelectionMode();
 
 	context.ui.draw();
+	context.getBusStopDataFromFile();
 
 }
