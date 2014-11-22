@@ -66,6 +66,24 @@ div {
 	right:				0vw;
 	background-color:	black;
 }
+
+#divgraphs1 {
+	position:			absolute;
+	top:				0%;
+	height:				100vw!important;
+	right:				0vh;
+	width:				40vh!important;
+	background-color:	black;
+}
+
+#divgraphs2 {
+	position:			absolute;
+	top:				0%;
+	height:				100vw!important;
+	right:				50vh;
+	width:				40vh!important;
+	background-color:	black;
+}
 	
 .route{
 	position: absolute;

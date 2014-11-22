@@ -132,8 +132,52 @@ ui.prototype.draw = function() {
 
 	var layersActive = false;
 
-	function clickHomepage() { console.log("TODO: link to homepage");
-		window.location.href = "../"; }
+	var graphsActive = false;
+
+
+	var addGraph = function(drawTo,idStr) {
+
+			var svg = d3.select(drawTo).append("svg:svg")
+				.attr("id",idStr)
+				.attr("class","graphs")
+				.attr("viewBox", "0 0 1600 900")
+				.attr("preserveAspectRatio", "xMinYMin meet")
+
+			var g = svg.append("svg:g")
+				// .attr("transform","translate(0 10)")
+
+			g.append("circle")
+				.attr("transform","translate(100,100)")
+				.attr("r",1000)
+				.attr("stroke","yellow")
+				.attr("stroke-width",40)
+				.attr("fill","blue");
+	
+	}
+
+	function clickHomepage() {
+
+		/* window.location.href = "../"; */
+	
+		if(graphsActive) {
+			graphsActive = false;
+			d3.select("#divgraphs1").selectAll(".graphs").remove();
+			d3.select("#divgraphs2").selectAll(".graphs").remove();
+
+		} else {
+			graphsActive = true;
+			addGraph("#divgraphs1","graphCrime");
+			addGraph("#divgraphs1","graphPotholes");
+			addGraph("#divgraphs1","graphAbandonedVehicles");
+			addGraph("#divgraphs1","graphStreetLights");
+
+			addGraph("#divgraphs2","graphWeather");
+			addGraph("#divgraphs2","graphTwitter");
+			addGraph("#divgraphs2","graphUber");
+			addGraph("#divgraphs2","graphOther");
+		}
+
+	}
 	function clickSelection() { context.toggleSelectionMode(); }
 	
 	var clickLayer = function() {

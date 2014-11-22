@@ -14,11 +14,12 @@ iden is an id used to recognize what data we are handling
 */
 function Database(){
 	var this_db = this;
+	this.busRoute = null;
 }
 
 var keyCTA1 = 'nBy7EWCMF5qH2bJ3x5NyXpL6N';
 var keyCTA2 = 'jgfD8euazQYDTiGeQhP6NKPYj';
-var key = keyCTA2;
+var key = keyCTA1;
 var CtaData;
 var drawn = [];
 var _busRoute = [];
@@ -70,17 +71,17 @@ Database.prototype.currentDate = function(filter){
 
 	switch(filter){
 		case 'now': today = new Date();
-					break;
+			break;
 		case 'oneWeekAgo': today = new Date();
-							today.setTime(timestampFromWeek);
-							break;
+			today.setTime(timestampFromWeek);
+			break;
 		case 'twoWeeksAgo': today = new Date();
-							today.setTime(timestampFrom2Weeks);
-							break;
+			today.setTime(timestampFrom2Weeks);
+			break;
 		case 'oneMonthAgo': today = new Date(timestampFromMonth);
-							break;
+			break;
 		default: console.log("DB error");
-				break;
+			break;
 
 	}
 
@@ -119,11 +120,11 @@ Database.prototype.potHoles = function(weekOrMonth,fromLat, fromLong, toLat, toL
 
 	switch(weekOrMonth){
 		case 'week': date = this.currentDate('oneWeekAgo');
-						break;
+			break;
 		case 'month': date = this.currentDate('oneMonthAgo');
-						break;
+			break;
 		default: console.log("errore db");
-					break;
+			break;
 	}
 
 	this.genericQuery("service_request_number,creation_date, status, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/7as2-ds3y.json", callback,iden );
@@ -138,11 +139,11 @@ Database.prototype.abandonedVehicle = function(weekOrMonth,fromLat, fromLong, to
 
 	switch(weekOrMonth){
 		case 'week': date = this.currentDate('oneWeekAgo');
-						break;
+			break;
 		case 'month': date = this.currentDate('oneMonthAgo');
-						break;
+			break;
 		default: console.log("errore db");
-					break;
+			break;
 	}
 	this.genericQuery("service_request_number,creation_date,vehicle_make_model,vehicle_color, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/3c9v-pnva.json", callback,iden );
 };
@@ -804,14 +805,13 @@ cll : (ONLY IF LOCATION is SET AND BOUNDS == '') latitude and longitude
 bounds : geographical bounding box, format -> sw_latitude,sw_longitude|ne_latitude,ne_longitude
  */
 Database.prototype.yelp = function(term, location, sort, radius_filter, cllLat,cllLong, sw_lat,sw_long, ne_lat,ne_long, callback, iden){
+	console.log("calling yelp data", callback);
 	$.ajax({
 		url: 'data/apiYelp.php',
 		data:"term="+term+ "&location="+location+"&sort="+sort+"&radius="+radius_filter+"&cllLat="+cllLat+"&cllLong="+cllLong+"&swlat="+sw_lat+"&swlong="+sw_long+"&nelat="+ne_lat+"&nelong="+ne_long,
 		dataType: "json",
 		success: function(data){
-			console.log("Calling the callback!");
-
-			callback(data.businesses,iden);
+			callback(data,iden);
 		}
 	})
 };
