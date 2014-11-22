@@ -14,14 +14,14 @@ iden is an id used to recognize what data we are handling
 */
 function Database(){
 	var this_db = this;
-	this.busRoute = null;
 }
 
 var keyCTA1 = 'nBy7EWCMF5qH2bJ3x5NyXpL6N';
 var keyCTA2 = 'jgfD8euazQYDTiGeQhP6NKPYj';
-var key = keyCTA1;
+var key = keyCTA2;
 var CtaData;
 var drawn = [];
+var _busRoute = [];
 
 
 /*
@@ -498,10 +498,10 @@ function checkCTAReturn(busData,callback,iden,fromLat,fromLong, toLat, toLong){
 /*
 Should be called at the beginning of the program, take all the routes and then call getVehicles per each route.
  */
-Database.prototype.getCTAData2 = function (fromLat,fromLong, toLat, toLong, callback,iden){
+Database.prototype.getCTAData2 = function (busRoute,fromLat,fromLong, toLat, toLong, callback,iden){
 	drawn = [];
-	this.busRoute = [];
-
+	_busRoute = [];
+	var self = this;
 	//first get all the routes..
 	var baseSite = "http://www.ctabustracker.com/bustime/api/v1/";
 	var routes = baseSite + "getroutes?key="+key;
@@ -519,9 +519,10 @@ Database.prototype.getCTAData2 = function (fromLat,fromLong, toLat, toLong, call
 			};
 			getVehicles(route.rt, fromLat,fromLong,toLat,toLong,callback,iden);
 
-			this.busRoute.push(route);
+			_busRoute.push(route);
 		});
 	});
+	busRoute = _busRoute;
 };
 
 /*
@@ -803,13 +804,14 @@ cll : (ONLY IF LOCATION is SET AND BOUNDS == '') latitude and longitude
 bounds : geographical bounding box, format -> sw_latitude,sw_longitude|ne_latitude,ne_longitude
  */
 Database.prototype.yelp = function(term, location, sort, radius_filter, cllLat,cllLong, sw_lat,sw_long, ne_lat,ne_long, callback, iden){
-	console.log("calling yelp data", callback);
 	$.ajax({
 		url: 'data/apiYelp.php',
 		data:"term="+term+ "&location="+location+"&sort="+sort+"&radius="+radius_filter+"&cllLat="+cllLat+"&cllLong="+cllLong+"&swlat="+sw_lat+"&swlong="+sw_long+"&nelat="+ne_lat+"&nelong="+ne_long,
 		dataType: "json",
 		success: function(data){
-			callback(data,iden);
+			console.log("Calling the callback!");
+
+			callback(data.businesses,iden);
 		}
 	})
 };

@@ -1,7 +1,7 @@
 function Controller() {
 
 	console.log("CONTROLLER initialized");
-
+	var self = this;
 	// this.mapId = null;
 	this.base = 1;
 
@@ -10,10 +10,12 @@ function Controller() {
 	this.ui = new ui("#divmenu","#divmapcontrol");
 	this.modes = null;
 
+	this.busRoutes = [];
+
 	this.weatherBox = null;
 
 	this.perimeterRadiusInKm = 0.4;
-	this.showDataAlongPathOnly = false; // Need a button to turn this on and off
+	this.showDataAlongPathOnly = true; // Need a button to turn this on and off
 	this.routePoints = null;
 	// Possible modes of our application
 
@@ -59,13 +61,14 @@ function Controller() {
 	this.ctaArray = {};
 	this.yelpContainer = {};
 
+	this.busRoutes = [];
 
 	this.getUpdates();
 
 }
 
 Controller.prototype.getUpdates = function(){
-	var refreshrate = 5000; // Rate at which new data is queried
+	var refreshrate = 30000; // Rate at which new data is queried
 	this.getData();
 	this.updateWeather();
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
@@ -77,7 +80,7 @@ Controller.prototype.stopUpdates = function(){
 
 
 Controller.prototype.getCTAUpdates = function() {
-  var refreshrate = 1000;
+  var refreshrate = 30000; // 30 seconds
   this.getDataCTA();
   this.updateCTAId = setInterval(this.getDataCTA().bind(this), refreshrate)
 };
@@ -91,7 +94,7 @@ Controller.prototype.updateWeather = function(){
 	// 	this.weatherBox.remove()
 	// }
 	this.dataManager.currentWeather(this.weatherFun,'weather');
-}
+};
 
 Controller.prototype.weatherFun =  function (data, iden){
 	//console.log(this.weatherBox);
@@ -114,6 +117,7 @@ function getNewPointInLatLng(lat,lng,distance,angle){
                  Math.cos(dByR)-Math.sin(lat)*Math.sin(lat2));
 	return {lat:lat2*180.0/Math.PI,lng:lng2*180.0/Math.PI};
 }
+
 
 
 // Queries Data from Database and writes to Marker Objects
@@ -162,15 +166,26 @@ Controller.prototype.getData = function() {
 		}
 		if (this.mode.DIVVYBIKES) this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 
-		if (this.mode.YELP) this.dataManager.yelp('food', 'Chicago', 0, '4000','','', north,west,south,east,dataCallback, 'yelp-data-lat-lon-chicago');
+		if (this.mode.YELP) this.dataManager.yelp('food', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelp');
 
-		//if (this.mode.TRAFFICLAYER) {
-		//	this.dataManager.getCTAData2(north,west,south,east,dataCallback, "cta" );
-        //
-		//	this.dataManager.busRoute.forEach(function(route){
-		//		this.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
-		//	})
-		//}
+		var self = this;
+		if (this.mode.TRAFFICLAYER) {
+			//if(this.updateCounter >= 8) {
+				//var data = {destination: "Congress Plaza", headdirect: "87",latitude: 41.86635, longitude: -87.60659,pdist: "37681",pid: "4506",route: "126",timestamp: "20141121 22:48",vehicleid: "1701"};
+				//this.ctaArray["1701"].updateMarkerData(data);
+			//}
+			if(this.busRoutes.length == 0) {
+				this.dataManager.getCTAData2(this.busRoutes, north, west, south, east, dataCallback, "cta");
+			}else{
+				for(var i = 0; i< this.busRoutes.length; i++){
+					this.dataManager.getVehiclesPublic(this.busRoutes[i], north,west,south,east,dataCallback,"cta");
+				}
+			}
+
+			//this.dataManager.busRoute.forEach(function(route){
+			//	self.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
+			//})
+		}
 	}
 	this.firstload = false;
 };
@@ -214,6 +229,8 @@ function distance (lat1,lng1,lat2,lng2) {
 
 	return R * c;
 }
+
+
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	console.log("filterByPerimeter", data,identifierStr,data);
 
@@ -223,9 +240,21 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		for (var d=0;d<data.length;d++){
 			var dist = 100; // Too far away!
 			var dataPoint = data[d];
+			console.log(dataPoint);
 			var dataRange = false;
 			for(var i=0;i<points.length;i++){
-				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude,dataPoint.longitude);
+
+				var lat,lng;
+				if(dataPoint.location) {
+					console.log("dataPoint.location", dataPoint);
+					lat = dataPoint.location.coordinate.latitude;
+					lng = dataPoint.location.coordinate.longitude;
+				} else {
+					lat = dataPoint.latitude;
+					lng = dataPoint.longitude;
+				}
+
+				var tempDist = distance(points[i].lat,points[i].lng,lat,lng);
 
 				if (tempDist <= this.perimeterRadiusInKm){
 					console.log(tempDist,this.perimeterRadiusInKm);
@@ -270,7 +299,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
 			break;
 		case 'cta':
-			//this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
+			this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
 			break;
 		default:
 			console.log('Invalid string');
@@ -286,8 +315,8 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 // 'idstr' is the name of the field of the object that is used to uniquely identify the marker as a string
 // 'marker' is the class name of the marker object to be created, e.g. PotholeMarker, ect.
 Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker) {
-	console.log(data);
-	if (data.length != 0) {
+	console.log("update markers, data length is ",data.length);
+	if (data.length > 0) {
 		var iKey = {};
 		data.forEach(
 			function(d){
@@ -297,32 +326,39 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 		);
 
 		//console.log(iKey.length, iKey);
+
 		for(var i = 0; i< data.length; i++){
+			console.log("doing shit", data[i])
 			var key = data[i][idstr];
 			// A - B: Add new marker
 			if(!markerCollection[key]) {
-				console.log("Add new Marker!!");
 				markerCollection[key] = new marker(data[i]);
 				markerCollection[key].viewNewIcon();
+				console.log("Add new Marker!!", markerCollection[key]);
 				markerCollection[key].addTo(this.map);
 			// B in A: update!
-			} else { //if(markerCollection[key]){
-				console.log("Marker is in the collection!!");
-				if (marker instanceof CTAMarker){
-					console.log(" updateMarkers",idstr, data[i][idstr], data[i], markerCollection.get(key) );
-					//markerCollection[key].updateLine(data[i]);
+			} else if(markerCollection[key]){
+				console.log("Marker is in the collection!!", data[i]);
+				if (markerCollection[key] instanceof CTAMarker){
+					console.log(" updateMarkers");//,idstr, data[i][idstr], data[i], key, markerCollection[key] );
+					markerCollection[key].updateMarkerData(data[i]);
 				} //else
 			// Remove B!
 			}
 		}
 		for ( k in markerCollection){
 			if (!iKey[k]){
-				console.log("Kill the Marker!!");
-				map.removeLayer(markerCollection[k]); // markerCollection.remove(k) acts like pop or slice. It returns the marker, then deletes it from the collection
-				delete markerCollection[k];
+				if (!marker instanceof CTAMarker) {
+					console.log("Kill the Marker!!");
+					map.removeLayer(markerCollection[k]); // markerCollection.remove(k) acts like pop or slice. It returns the marker, then deletes it from the collection
+					delete markerCollection[k];
+				}
+					console.log(markerCollection[k]);
 			}
 		}
-	}
+	} else
+		console.log("data is zero!")
+
 };
 
 
@@ -400,7 +436,8 @@ Controller.prototype.init = function(){
 	//database.yelp('food','London',0,'4000','','','','','','',fringuello, 'yelpdata-city');
 	//database.yelp('food', '', 0, '4000','','', '41.8747107','-87.0','41.8710629','-87.9',fringuello, 'yelp-data-square');
 
-
+	var data = {destination: "Congress Plaza", headdirect: "87",latitude: 41.8779182434082,longitude: -87.64629666310437,pdist: "37681",pid: "4506",route: "126",timestamp: "20141121 22:48",vehicleid: "1701"};
+	this.ctaArray["1701"] = new CTAMarker(data);
 	//console.log(this.pointsOfInterestArray[5]);
 	for( var key in this.pointsOfInterestArray){
 		this.pointsOfInterestArray[key].addTo(this.map);
