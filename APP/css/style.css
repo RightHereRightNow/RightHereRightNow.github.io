@@ -24,7 +24,7 @@ html, body {
 	margin-right:		auto;
 	position:			relative;
 	height:				100%;
-	background-color:	#222;
+	background-color:	#444;
 }
 
 div {
@@ -36,47 +36,70 @@ div {
 	top:				0%;
 	height:				100%;
 	left:				0vw;
-	width:				12vw;
-}
-
-#divdivvy {
-	position:			absolute;
-	top:				0vw;
-	height:				20vh;
-	left:				0%;
-	width:				100%;
-	background-color:	#333;
-	padding-top:		2vh;
-}
-
-#divmenu {
-	position:			absolute;
-	top:				20vh;
-	bottom:				4vw;
-	left:				0%;
-	width:				100%;
-	background-color:	#222;
-	padding-top:		2vh;
-}
-
-#divmapcontrol {
-	position:			absolute;
-	bottom:				0%;
-	height:				4vw;
-	left:				0%;
-	width:				100%;
-	background-color:	#333;
+	width:				16vw;
 }
 
 #divmap {
 	position:			absolute;
 	top:				0%;
 	height:				100%;
-	left:				12vw;
+	left:				16vw;
 	right:				0vw;
 	background-color:	black;
 }
 	
+#divdivvy {
+	position:			absolute;
+	top:				0%;
+	height:				20vh;
+	left:				0%;
+	width:				80%;
+	padding-top:		2vh;
+}
+
+#logo {
+	width:				80%;
+	padding-top:		4%;
+	padding-left:		10%;
+	padding-right:		10%;
+}
+
+#divmenu {
+	position:			absolute;
+	top:				20%;
+	bottom:				0%;
+	left:				0%;
+	width:				80%;
+	background-color:	#444;
+	padding-top:		2vh;
+}
+
+#divhome {
+	position:			absolute;
+	top:				0%;
+	height:				20vh;
+	left:				80%;
+	width:				20%;
+	padding-top:		2vh;
+}
+
+#home {
+	width:				80%;
+	padding-top:		4vh;
+	padding-right:		10%;
+}
+
+#divmapcontrol {
+	position:			absolute;
+	bottom:				0%;
+	height:				8.4vw;
+	left:				80%;
+	width:				20%;
+	background-color:	#444;
+	padding-right:		2%;
+}
+
+
 .route{
 	position: absolute;
 	color: rgba(200,50,50,0.8);
@@ -91,3 +114,4 @@ div {
 .leaflet-popup-content{
 	font-size: 150%;
 }
+

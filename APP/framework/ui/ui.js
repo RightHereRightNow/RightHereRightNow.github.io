@@ -8,25 +8,27 @@ var ui = function(menutag,mapcontroltag) {
 	this.viewBoxMenuHeight = 1000;
 	this.viewBoxMapControlHeight = 240;
 
-	this.zoomButtonSize = 200;
-	this.zoomButtonMargin = 20;
+	this.zoomButtonSize = 800;
+	this.zoomButtonMargin = 100;
+
+	this.buttonStrokeColor = "#222";
 
 	this.textpadding = 180;
 	this.font1size = 60;
 	this.font2size = 50;
 
-	this.linewidth = 10;
-	this.linepadding = 40;
+	this.linewidth = 32;
+	this.linepadding = 150;
 
 	this.button1height = 120;
 	this.button1width = 900;
 	this.button1dx = 50;
 	this.button1dy = 20;
 
-	this.button2height = this.button1height;
+	this.button2height = .8*this.button1height;
 	this.button2width = this.button1width - this.button1dx;
 	this.button2dx = 2*this.button1dx;
-	this.button2dy = this.button1dy;
+	this.button2dy = .5*this.button1dy;
 
 	this.textColor = "black"; // "#ccc";
 
@@ -92,21 +94,19 @@ ui.prototype.draw = function() {
 	
 	ystart = yend + this.button1dy; yend = ystart + this.button1height;
 	
+	this.buttonYelp = new level1Button(this,"Yelp",ystart,yend,"distance1",emptyCallback,"YELP",emptyArray);
+	this.buttonYelp.setPreviousButton(this.buttonLayers);
+	this.buttonOneList.push(this.buttonYelp);
+	
+	ystart = yend + this.button1dy; yend = ystart + this.button1height;
+	
 	this.buttonGraphs = new level1Button(this,"Graphs",ystart,yend,"stack9",clickGraphs,"GRAPHS",emptyArray);
-	this.buttonGraphs.setPreviousButton(this.buttonLayers);
+	this.buttonGraphs.setPreviousButton(this.buttonYelp);
 	this.buttonOneList.push(this.buttonGraphs);
 
-	/*
-	function clickTrafficLayer() { context.setLayer("TRAFFICLAYER",context.ctaArray,!context.getMode("TRAFFICLAYER")); context.getData(); }
-	function clickCrimeLayer() { context.setLayer("CRIMELAYER",context.crimeContainer,!context.getMode("CRIMELAYER")); context.getData(); }
-	function clickPlacesOfInterestLayer() { context.setLayer("PLACESOFINTEREST",context.pointsOfInterestArray,!context.getMode("PLACESOFINTEREST")); context.getData(); }
-	function clickDivvyBikes() { context.setLayer("DIVVYBIKES",context.divvyArray,!context.getMode("DIVVYBIKES")); context.getData();}
-	function clickAbandonedVehicles() { context.setLayer("ABANDONEDVEHICLES",context.carsArray,!context.getMode("ABANDONEDVEHICLES")); context.getData(); }
-	function clickStreetLightsOut() {context.setLayer("STREETLIGHTSOUT",context.lights1Array,!context.getMode("STREETLIGHTSOUT")); context.getData(); }
-	function clickPotholes() {context.setLayer("POTHOLES",context.potholesArray,!context.getMode("POTHOLES")); context.getData();}
-	function clickCurrentWeather() {context.setWeather(!context.getMode("CURRENTWEATHER")); }
-	*/
 
+	// SUBMENU LAYERS
+	
 	this.buttonAllList = this.buttonOneList.slice(0);
 
 	var ystart = 0; var yend = this.button2height;
@@ -129,22 +129,67 @@ ui.prototype.draw = function() {
 
 	ystart = yend + this.button2dy; yend = ystart + this.button2height;
 	
-	/*
-	this.createLevel2Button(svgmenu,(6*this.button1height+9*this.button1dy), "Divvy Bikes", "regular2", clickDivvyBikes);
-	this.createLevel2Button(svgmenu,(7*this.button1height+10*this.button1dy), "Abandoned Vehicles", "criminal20", clickAbandonedVehicles);
-	this.createLevel2Button(svgmenu,(8*this.button1height+11*this.button1dy), "Street Lights Out", "street9", clickStreetLightsOut);
-	this.createLevel2Button(svgmenu,(9*this.button1height+12*this.button1dy), "Potholes" ,"road22", clickPotholes);
-	this.createLevel2Button(svgmenu,(10*this.button1height+15*this.button1dy), "Current Weather", "cold5", clickCurrentWeather);
-	*/
+	this.buttonDivvyBikes = new level2Button(this.buttonLayers,"Divvy Bike Stations",ystart,yend,"regular2",emptyCallback,"DIVVYBIKES",emptyArray);
+	this.buttonDivvyBikes.setPreviousButton(this.buttonPlacesOfInterest);
+	this.buttonAllList.push(this.buttonDivvyBikes);
 
+	ystart = yend + this.button2dy; yend = ystart + this.button2height;
+	
+	this.buttonAbandonedVehicles = new level2Button(this.buttonLayers,"Abandoned Vehicles",ystart,yend,"criminal20",emptyCallback,"ABANDONEDVEHICLES",emptyArray);
+	this.buttonAbandonedVehicles.setPreviousButton(this.buttonDivvyBikes);
+	this.buttonAllList.push(this.buttonAbandonedVehicles);
+
+	ystart = yend + this.button2dy; yend = ystart + this.button2height;
+	
+	this.buttonStreetLightsOut = new level2Button(this.buttonLayers,"Streetlights Out",ystart,yend,"street9",emptyCallback,"STREETLIGHTSOUT",emptyArray);
+	this.buttonAbandonedVehicles.setPreviousButton(this.buttonAbandonedVehicles);
+	this.buttonAllList.push(this.buttonStreetLightsOut);
+
+	ystart = yend + this.button2dy; yend = ystart + this.button2height;
+	
+	this.buttonPotholes = new level2Button(this.buttonLayers,"Streetlights Out",ystart,yend,"road22",emptyCallback,"POTHOLES",emptyArray);
+	this.buttonAbandonedVehicles.setPreviousButton(this.buttonStreetLightsOut);
+	this.buttonAllList.push(this.buttonPotholes);
+
+	ystart = yend + this.button2dy; yend = ystart + this.button2height;
+
+	// TODO: Submenu buttons should be managed by main buttons
+	// TODO: remove ystart yend completely from constructor
+	
+	
+	
+	// SUBMENU GRAPHS
+	
+	var ystart = 0; var yend = this.button2height;
+	
+	this.buttonWeatherGraph = new level2Button(this.buttonGraphs,"Weather",ystart,yend,"cold5",emptyCallback,"CURRENTWEATHER",emptyArray);
+	this.buttonWeatherGraph.setPreviousButton(null);
+	this.buttonAllList.push(this.buttonWeatherGraph);
+
+	ystart = yend + this.button2dy; yend = ystart + this.button2height;
+
+	this.buttonPotholeGraph = new level2Button(this.buttonLayers,"Crimes",ystart,yend,"crime1",emptyCallback,"CRIMELAYER",emptyArray);
+	this.buttonCrime.setPreviousButton(this.buttonWeatherGraph);
+	this.buttonAllList.push(this.buttonPotholeGraph);
+	
+	
 	// Drawing buttons
 	this.buttonTraffic.create(svgmenu);
 	this.buttonCrime.create(svgmenu);
 	this.buttonPlacesOfInterest.create(svgmenu);
+	this.buttonDivvyBikes.create(svgmenu);
+	this.buttonAbandonedVehicles.create(svgmenu);
+	this.buttonStreetLightsOut.create(svgmenu);
+	this.buttonPotholes.create(svgmenu);
+	
+	this.buttonWeatherGraph.create(svgmenu);
+	this.buttonPotholeGraph.create(svgmenu);
+	
 	
 	// Draw level1buttons last, so they are on top
 	this.buttonSelection.create(svgmenu);
 	this.buttonLayers.create(svgmenu);
+	this.buttonYelp.create(svgmenu);
 	this.buttonGraphs.create(svgmenu);
 
 
@@ -167,13 +212,12 @@ ui.prototype.draw = function() {
 
 
 
-	/*
 	// MAPCONTROL
-	
+
 	var svgmapcontrol = d3.select(this.mapcontroltag).append("svg:svg")
 		.attr("id","mapcontrol")
 		.attr("class","uisvgelement")
-		.attr("viewBox", "0 0 " + this.viewBoxWidth + " " + this.viewBoxMapControlHeight)
+		.attr("viewBox", "0 0 " + this.viewBoxWidth + " " + (this.zoomButtonSize + 5*this.zoomButtonMargin))
 		.attr("preserveAspectRatio", "xMinYMin meet")
 		.attr("width",this.viewBoxWidth).attr("height",this.viewBoxMapControlHeight)
 		.attr("background-color","blue")
@@ -181,7 +225,7 @@ ui.prototype.draw = function() {
 
 	// ZoomIn Button
 	var gZoomIn = svgmapcontrol.append("svg:g")
-		.attr("transform","translate(" + (.75*this.viewBoxWidth+this.zoomButtonMargin) + "," + (this.zoomButtonMargin) + ")")
+		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (this.zoomButtonMargin) + ")")
 		.style("fill","transparent")
 		// .attr("class","level1button")
 		.on("click", function() { 
@@ -189,7 +233,7 @@ ui.prototype.draw = function() {
 		})
 		.on("mouseover", function() {
 			d3.select(this).style("fill","#3db7e4")
-				.attr("stroke-width",2*this.linewidth) // TODO: implement
+				// .attr("stroke-width",2*this.linewidth) // TODO: implement
 		})
 		.on("mouseout", function() {
 			d3.select(this).style("fill","transparent");
@@ -198,25 +242,25 @@ ui.prototype.draw = function() {
 	gZoomIn.append("circle")
 		.attr("transform","translate(" + (this.zoomButtonSize/2) + "," + (this.zoomButtonSize/2) + ")")
 		.attr("r",this.zoomButtonSize/2)
-		.attr("stroke","#444")
+		.attr("stroke",this.buttonStrokeColor)
 		.attr("stroke-width",this.linewidth)
 	
 	gZoomIn.append("line")
 		.attr("x1",this.zoomButtonSize/2).attr("y1",this.linepadding)
 		.attr("x2",this.zoomButtonSize/2).attr("y2",this.zoomButtonSize-this.linepadding)
-		.attr("stroke","#444")
+		.attr("stroke",this.buttonStrokeColor)
 		.attr("stroke-width",this.linewidth)
 	
 	gZoomIn.append("line")
 		.attr("x1",this.linepadding).attr("y1",this.zoomButtonSize/2)
 		.attr("x2",this.zoomButtonSize-this.linepadding).attr("y2",this.zoomButtonSize/2)
-		.attr("stroke","#444")
+		.attr("stroke",this.buttonStrokeColor)
 		.attr("stroke-width",this.linewidth)
 
 
 	// ZoomOut Button
 	var gZoomOut = svgmapcontrol.append("svg:g")
-		.attr("transform","translate(" + (.75*this.viewBoxWidth-this.zoomButtonSize-this.zoomButtonMargin) + "," + (this.zoomButtonMargin) + ")")
+		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (1*this.zoomButtonSize + 2*this.zoomButtonMargin) + ")")
 		.attr("fill","transparent")
 		// .attr("class","level1button")
 		.on("click", function() { 
@@ -233,20 +277,21 @@ ui.prototype.draw = function() {
 		.attr("transform","translate(" + (this.zoomButtonSize/2) + "," + (this.zoomButtonSize/2) + ")")
 		.attr("x",0).attr("y",0)
 		.attr("r",this.zoomButtonSize/2)
-		.attr("stroke","#444")
+		.attr("stroke",this.buttonStrokeColor)
 		.attr("stroke-width",this.linewidth)
 
 	gZoomOut.append("line")
 		.attr("x1",this.linepadding).attr("y1",this.zoomButtonSize/2)
 		.attr("x2",this.zoomButtonSize-this.linepadding).attr("y2",this.zoomButtonSize/2)
-		.attr("stroke","#444")
+		.attr("stroke",this.buttonStrokeColor)
 		.attr("stroke-width",this.linewidth)
 
 	
 	// Toggle SatelliteView Button
 	var gSatelliteView = svgmapcontrol.append("svg:g")
-		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (this.zoomButtonMargin) + ")")
-		.style("stroke-width","10")
+		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (2*this.zoomButtonSize + 3*this.zoomButtonMargin) + ")")
+		.style("stroke",this.buttonStrokeColor)
+		.style("stroke-width","2")
 		// .attr("class","level1button")
 		.on("click", function() { 
 			console.log(context.base);
@@ -273,25 +318,23 @@ ui.prototype.draw = function() {
 	  .append('pattern')
 		.attr('id', 'imgsatellite')
 		.attr('patternUnits', 'userSpaceOnUse')
-		.attr('width', this.viewBoxWidth/2)
-		.attr('height', this.viewBoxWidth/2)
+		.attr('width', this.zoomButtonSize)
+		.attr('height', this.zoomButtonSize)
 		.append("svg:image")
 			.attr("xlink:href", "img/chicagosatellite.png")
-			.attr("width", this.viewBoxWidth/2)
-			.attr("height", this.viewBoxWidth/2)
-			.attr("transform","translate(0," + (-.25*this.viewBoxWidth) + ")")
+			.attr("width", this.zoomButtonSize)
+			.attr("height", this.zoomButtonSize)
 	
 	gSatelliteView.append('defs')
 	  .append('pattern')
 		.attr('id', 'imgmap')
 		.attr('patternUnits', 'userSpaceOnUse')
-		.attr('width', this.viewBoxWidth/2)
-		.attr('height', this.viewBoxWidth/2)
+		.attr('width', this.zoomButtonSize)
+		.attr('height', this.zoomButtonSize)
 		.append("svg:image")
 			.attr("xlink:href", "img/chicagomap.png")
-			.attr("width", this.viewBoxWidth/2)
-			.attr("height", this.viewBoxWidth/2)
-			.attr("transform","translate(0," + (-.25*this.viewBoxWidth) + ")")
+			.attr("width", this.zoomButtonSize)
+			.attr("height", this.zoomButtonSize)
 
 	function appendSatelliteRect() {
 	
@@ -299,7 +342,9 @@ ui.prototype.draw = function() {
 		
 		gSatelliteView.append("rect")
 			.attr("x",0).attr("y",0)
-			.attr("width", this.viewBoxWidth/2 - 2*this.zoomButtonMargin).attr("height",this.zoomButtonSize)
+			.attr("width", this.zoomButtonSize).attr("height",this.zoomButtonSize)
+			.style("stroke",this.buttonStrokeColor)
+			.style("stroke-width","8")
 			.attr("fill", function() {
 				if(context.base === 0) {
 					return 'url(#imgmap)';
@@ -314,5 +359,4 @@ ui.prototype.draw = function() {
 
 	appendSatelliteRect();
 
-	*/
 }
