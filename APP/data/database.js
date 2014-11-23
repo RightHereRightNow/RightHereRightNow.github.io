@@ -902,13 +902,17 @@ return a json with all the data regarding the tweets
 
 Database.prototype.twitter = function(paramQuery,latitude,longitude,radius,callback,iden){
 	var address = "";
-	for(var i = 0; i<array.length; i++){
-		address += "&qparam[]="+ "" +array[i];
+	for(var i = 0; i<paramQuery.length; i++){
+		if(i!=0){
+			address += '&';
+		}
+		address += "qparam[]="+ "" +paramQuery[i];
 	}
 
 	$.ajax({
 		url: 'data/apiTwitter.php',
-		data: 'latitude='+latitude+"&longitude="+longitude+"&radius="+radius+address,
+		//data: 'latitude='+latitude+"&longitude="+longitude+"&radius="+radius+address,
+		data: address,
 		dataType: "json",
 		success: function(data){
 			callback(data,iden);
