@@ -15,6 +15,7 @@ function Controller() {
 
 
 	this.weatherBox = null;
+	this.twitterBox = null;
 
 	this.perimeterRadiusInKm = 0.4;
 	this.showDataAlongPathOnly = true; // Need a button to turn this on and off
@@ -115,6 +116,7 @@ Controller.prototype.getBusStopDataFromFile = function(){
 var indexTwitter = 0;
 var numOfShowTwitter = 2;
 var tweetData = null;
+var twitterBox = null;
 
 Controller.prototype.getUpdates = function(){
 	var refreshrate = 30000; // Rate at which new data is queried
@@ -278,7 +280,7 @@ Controller.prototype.twitterCallBack = function(data,iden){
 	indexTwitter = 0;
 	numOfShowTwitter = 2;
 	tweetData = data;
-
+	twitterBox = new Twitter();
 	switchTweet();
 	setInterval(switchTweet, 2000);
 };
@@ -292,13 +294,16 @@ function switchTweet() {
 		if(tweetData.statuses.length <= (indexTwitter)){
 			indexTwitter = 0;
 		}
-		//if(twitterBox.flag != 0){
-		//	twitterBox.deleteText();
-		//}
-		//twitterBox.showTweets();
+		if(twitterBox.flag != 0){
+			console.log("is not zero!");
+			twitterBox.deleteText();
+		}
+
+		twitterBox.showTweets(tweetData.statuses[indexTwitter]);
 		console.log(tweetData.statuses[indexTwitter].user.created_at);
 		console.log(tweetData.statuses[indexTwitter].user.screen_name);
 		console.log(tweetData.statuses[indexTwitter].text);
+
 
 		indexTwitter ++;
 	}

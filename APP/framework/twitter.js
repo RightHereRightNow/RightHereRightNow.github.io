@@ -8,16 +8,16 @@ Twitter.prototype.showTweets = function(tweets){
 
     this.svg
         .append("text")
-        .text("Current Temperature:")
+        .text(""+tweets.text)
         .attr("transform", "translate(" + (100/2) + " , " + 2*100 + " )")
-        .attr("class", "curr-temp")
+        .attr("class", "tweet-text")
         .attr("fill", "white")
-        .attr("font-size", "200%");
+        .attr("font-size", "100%");
 
     this.flag = 1;
 };
 
 Twitter.prototype.deleteText = function(){
-    this.svg.select('.curr-temp').exit();
+    this.svg.select('.tweet-text').remove();
     this.flag = 0;
 };
