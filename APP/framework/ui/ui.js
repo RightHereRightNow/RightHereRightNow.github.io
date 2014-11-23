@@ -71,15 +71,15 @@ ui.prototype.draw = function() {
 	this.buttonLayers.setPreviousButton(this.buttonSelection);
 	this.button1List.push(this.buttonLayers);
 	
-	this.buttonYelp = new level1Button(this,"Yelp","distance1",emptyCallback,"YELPLAYER");
+	this.buttonYelp = new level1Button(this,"Yelp","yelp",emptyCallback,"YELPLAYER");
 	this.buttonYelp.setPreviousButton(this.buttonLayers);
 	this.button1List.push(this.buttonYelp);
 	
-	this.buttonGraphs = new level1Button(this,"Graphs","stack9",emptyCallback,"GRAPHSLAYER");
+	this.buttonGraphs = new level1Button(this,"Graphs","inconsistent",emptyCallback,"GRAPHSLAYER");
 	this.buttonGraphs.setPreviousButton(this.buttonYelp);
 	this.button1List.push(this.buttonGraphs);
 	
-	this.buttonOther = new level1Button(this,"Other","stack9",emptyCallback,"OTHER");
+	this.buttonOther = new level1Button(this,"Other","bulb14",emptyCallback,"OTHER");
 	this.buttonOther.setPreviousButton(this.buttonGraphs);
 	this.button1List.push(this.buttonOther);
 	
