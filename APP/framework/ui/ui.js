@@ -223,14 +223,13 @@ ui.prototype.draw = function() {
 		.attr("preserveAspectRatio", "xMinYMin meet")
 
 	var gWeek = svgtimerange.append("svg:g")
-		.attr("fill","#888")
+		.attr("fill","#aaa")
 		.attr("class","level1button")
 		.attr("transform","translate(0,0)")
-		.on("click", function() { 
-			week = true;
+		.on("click", function() {
+			context.queryDuration = "week";
 			gWeek/*.transition().duration(this.dt)*/.attr("fill","#aaa");
 			gMonth/*.transition().duration(this.dt)*/.attr("fill","#888");
-			console.log("TODO: Implement week");
 		});
 
 	gWeek.append("rect")
@@ -256,10 +255,9 @@ ui.prototype.draw = function() {
 		.attr("class","level1button")
 		.attr("transform","translate(" + this.button1width/2 + ",0)")
 		.on("click", function() { 
-			week = false;
+			context.queryDuration = "month";
 			gWeek/*.transition().duration(this.dt)*/.attr("fill","#888");
 			gMonth/*.transition().duration(this.dt)*/.attr("fill","#aaa");
-			console.log("TODO: Implement month");
 		});
 
 	gMonth.append("rect")
