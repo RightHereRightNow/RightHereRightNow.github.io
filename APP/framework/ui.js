@@ -152,7 +152,7 @@ ui.prototype.draw = function() {
 				.attr("stroke","yellow")
 				.attr("stroke-width",40)
 				.attr("fill","blue");
-	
+		return svg;
 	}
 
 	function clickHomepage() {
@@ -166,15 +166,15 @@ ui.prototype.draw = function() {
 
 		} else {
 			graphsActive = true;
-			addGraph("#divgraphs1","graphCrime");
-			addGraph("#divgraphs1","graphPotholes");
-			addGraph("#divgraphs1","graphAbandonedVehicles");
-			addGraph("#divgraphs1","graphStreetLights");
+			context.crimeGraph = addGraph("#divgraphs1","graphCrime");
+			context.potHoleGraph = addGraph("#divgraphs1","graphPotholes");
+			context.abandonedVehicleGraph = addGraph("#divgraphs1","graphAbandonedVehicles");
+			context.streetLightGraph = addGraph("#divgraphs1","graphStreetLights");
 
-			addGraph("#divgraphs2","graphWeather");
-			addGraph("#divgraphs2","graphTwitter");
-			addGraph("#divgraphs2","graphUber");
-			addGraph("#divgraphs2","graphOther");
+			context.weatherBox = addGraph("#divgraphs2","weatherBox");
+			context.twitterBox = addGraph("#divgraphs2","twitterBox");
+			context.uberBox = addGraph("#divgraphs2","uberBox");
+			context.miscBox = addGraph("#divgraphs2","miscBox");
 		}
 
 	}
@@ -193,14 +193,14 @@ ui.prototype.draw = function() {
 	clickLayer = clickLayer.bind(this);
 
 
-	function clickTrafficLayer() { context.setLayer("TRAFFICLAYER",context.ctaArray,!context.getMode("TRAFFICLAYER")); context.getData(); }
-	function clickCrimeLayer() { context.setLayer("CRIMELAYER",context.crimeContainer,!context.getMode("CRIMELAYER")); context.getData(); }
-	function clickPlacesOfInterestLayer() { context.setLayer("PLACESOFINTEREST",context.pointsOfInterestArray,!context.getMode("PLACESOFINTEREST")); context.getData(); }
-	function clickDivvyBikes() { context.setLayer("DIVVYBIKES",context.divvyArray,!context.getMode("DIVVYBIKES")); context.getData();}
-	function clickAbandonedVehicles() { context.setLayer("ABANDONEDVEHICLES",context.carsArray,!context.getMode("ABANDONEDVEHICLES")); context.getData(); }
-	function clickStreetLightsOut() {context.setLayer("STREETLIGHTSOUT",context.lights1Array,!context.getMode("STREETLIGHTSOUT")); context.getData(); }
-	function clickPotholes() {context.setLayer("POTHOLES",context.potholesArray,!context.getMode("POTHOLES")); context.getData();}
-	function clickCurrentWeather() {context.setWeather(!context.getMode("CURRENTWEATHER")); }
+	function clickTrafficLayer() { context.setLayer("TRAFFICLAYER",context.ctaArray,!context.getLayerFlag("TRAFFICLAYER")); context.getData(); }
+	function clickCrimeLayer() { context.setLayer("CRIMELAYER",context.crimeContainer,!context.getLayerFlag("CRIMELAYER")); context.getData(); }
+	function clickPlacesOfInterestLayer() { context.setLayer("PLACESOFINTEREST",context.pointsOfInterestArray,!context.getLayerFlag("PLACESOFINTEREST")); context.getData(); }
+	function clickDivvyBikes() { context.setLayer("DIVVYBIKES",context.divvyArray,!context.getLayerFlag("DIVVYBIKES")); context.getData();}
+	function clickAbandonedVehicles() { context.setLayer("ABANDONEDVEHICLES",context.carsArray,!context.getLayerFlag("ABANDONEDVEHICLES")); context.getData(); }
+	function clickStreetLightsOut() {context.setLayer("STREETLIGHTSOUT",context.lights1Array,!context.getLayerFlag("STREETLIGHTSOUT")); context.getData(); }
+	function clickPotholes() {context.setLayer("POTHOLES",context.potholesArray,!context.getLayerFlag("POTHOLES")); context.getData();}
+	function clickCurrentWeather() {context.setWeather(!context.getLayerFlag("CURRENTWEATHER")); }
 
 	this.createLevel1Button(svgmenu,0,"Project Homepage","house28",clickHomepage)
 	this.createLevel1Button(svgmenu,(this.button1height+3*this.button1dy),"Selection Mode","distance1",clickSelection)
