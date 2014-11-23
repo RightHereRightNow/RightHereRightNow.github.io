@@ -102,13 +102,13 @@ ui.prototype.draw = function() {
 	this.buttonYelp.addChildButton("Traffic","stack9",emptyCallback,"TRAFFICLAYER",emptyArray,"#fc6");
 	this.buttonYelp.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",emptyArray,"#fc6");
 	this.buttonYelp.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",emptyArray,"#fc6");
-	this.buttonYelp.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLES",emptyArray,"#fc6");
+	this.buttonYelp.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLESLAYER",emptyArray,"#fc6");
 
 	// SUBMENU GRAPHS
 	this.buttonGraphs.addChildButton("Traffic","stack9",emptyCallback,"TRAFFICLAYER",emptyArray,"#fc6");
 	this.buttonGraphs.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",emptyArray,"#fc6");
 	this.buttonGraphs.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",emptyArray,"#fc6");
-	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLES",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLESLAYER",emptyArray,"#fc6");
 
 	// SUBMENU OTHER
 	this.buttonOther.addChildButton("Weather","stack9",emptyCallback,"WEATHERLAYER",emptyArray,"#fc6");
@@ -299,19 +299,20 @@ ui.prototype.draw = function() {
 	// Radius Up Button
 	var gRadiusUp = svgmapcontrol.append("svg:g")
 		.attr("transform","translate(" + this.zoomButtonMargin + ",0)")
-		.style("fill","transparent")
+		.style("fill","#222")
 		.on("click", function() { 
 			console.log("TODO: increase radius");
+			radiusText.text("UP Blocks");
 		})
 		.on("mouseover", function() {
 			d3.select(this).style("fill",divvyBlue)
 		})
 		.on("mouseout", function() {
-			d3.select(this).style("fill","transparent");
+			d3.select(this).style("fill","#222");
 		});
 
 	gRadiusUp.append("polygon")
-		.attr("points","0," + .5*this.zoomButtonSize + " " + this.zoomButtonSize + "," + .5*this.zoomButtonSize + " " + .5*this.zoomButtonSize + ",0")
+		.attr("points",.2*this.zoomButtonSize + "," + .5*this.zoomButtonSize + " " + .8*this.zoomButtonSize + "," + .5*this.zoomButtonSize + " " + .5*this.zoomButtonSize + ",0")
 		// .attr("transform","translate(" + (this.zoomButtonSize/2) + "," + (this.zoomButtonSize/2) + ")")
 		.attr("r",this.zoomButtonSize/2)
 		.attr("stroke",this.buttonStrokeColor)
@@ -322,19 +323,20 @@ ui.prototype.draw = function() {
 	// Radius Down Button
 	var gRadiusDown = svgmapcontrol.append("svg:g")
 		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (3.5*this.zoomButtonSize - this.zoomButtonMargin) + ")")
-		.style("fill","transparent")
+		.style("fill","#222")
 		.on("click", function() { 
 			console.log("TODO: increase radius");
+			radiusText.text("DOWN Blocks");
 		})
 		.on("mouseover", function() {
 			d3.select(this).style("fill",divvyBlue)
 		})
 		.on("mouseout", function() {
-			d3.select(this).style("fill","transparent");
+			d3.select(this).style("fill","#222");
 		});
 
 	gRadiusDown.append("polygon")
-		.attr("points","0,0 " + this.zoomButtonSize + ",0 " + .5*this.zoomButtonSize + "," + .5*this.zoomButtonSize)
+		.attr("points", .2*this.zoomButtonSize + ",0 " + .8*this.zoomButtonSize + ",0 " + .5*this.zoomButtonSize + "," + .5*this.zoomButtonSize)
 		.attr("r",this.zoomButtonSize/2)
 		.attr("stroke",this.buttonStrokeColor)
 		.attr("stroke-width",this.linewidth)
@@ -364,6 +366,26 @@ ui.prototype.draw = function() {
 		})
 		.attr("rx",.2*this.zoomButtonSize).attr("ry",.2*this.zoomButtonSize)
 		.attr("fill",divvyBlue)
+	
+	gRadius.append("svg:text")
+		.attr("fill","#fc6")
+		.attr("class","buttontext")
+		.attr("transform","translate(" + .2*this.zoomButtonSize + "," + (2.5*this.zoomButtonSize - this.zoomButtonMargin) + ")rotate(270)")
+		.text("Radius:")
+		.attr("font-size", 4*this.font1size)
+		.attr("font-variant", "small-caps")
+		.attr("font-family", "Roboto")
+		.attr("cursor","default");
+	
+	var radiusText = gRadius.append("svg:text")
+		.attr("fill","#fc6")
+		.attr("class","buttontext")
+		.attr("transform","translate(" + .2*this.zoomButtonSize + "," + (1.4*this.zoomButtonSize - this.zoomButtonMargin) + ")rotate(270)")
+		.text("X Blocks")
+		.attr("font-size", 4*this.font1size)
+		.attr("font-variant", "small-caps")
+		.attr("font-family", "Roboto")
+		.attr("cursor","default");
 
 
 
