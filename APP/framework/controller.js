@@ -7,7 +7,7 @@ function Controller() {
 
 	this.map = new MapManager();
 	this.dataManager = new Database();
-	this.ui = new ui("#divmenu","#divmapcontrol");
+	this.ui = new ui("#divmenu","#divmapcontrol","#divradiuscontrol","#divtimerange");
 	this.modes = null;
 
 	this.busRoutes = [];
@@ -22,19 +22,24 @@ function Controller() {
 
 	this.mode = {
 		SELECTION: false,
-		RECTANGLE:false
+		PATHSELECTION: false,
+		BOUNDINGBOXSELECTION: false,
+		RECTANGLESELECTION: false,
+		LAYERS: false,
+		OTHER: false
 	};
 	this.layersFlags = {
 		TRAFFICLAYER: false,
 		CRIMELAYER:	false,
-		PLACESOFINTEREST: true,
-		DIVVYBIKES: false,
-		ABANDONEDVEHICLES: false,
-		STREETLIGHTSOUT: false,
-		CURRENTWEATHER:false,
-		POTHOLES: false,
-		YELP: false
-
+		PLACESOFINTERESTLAYER: true,
+		DIVVYLAYER: false,
+		ABANDONEDVEHICLESLAYER: false,
+		STREETLIGHTSOUTLAYER: false,
+		POTHOLELAYER: false,
+		YELPLAYER: false,
+		WEATHERLAYER: false,
+		GRAPHSLAYER: false,
+		UBERLAYER: false
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -79,11 +84,13 @@ function Controller() {
 	//svg handles for graphs and other data
 
 	this.crimeGraph = null;
+	this.crimeGraphSVG = null;
 	this.potHoleGraph = null;
 	this.potHoleGraphSVG = null;
 	this.abandonedVehicleGraph = null;
 	this.abandonedVehicleGraphSVG = null;
 	this.streetLightGraph = null;
+	this.streetLightGraphSVG = null;
 
 	this.weatherBox = null;
 	this.twitterBox = null;
@@ -132,7 +139,7 @@ Controller.prototype.getBusStopDataFromFile = function(){
 
 		}
 		this.ctaStopsDataLoaded = true;
-		console.log(this.ctaStopsData);
+		//console.log(this.ctaStopsData);
 		//console.log(data);
 	}.bind(this));
 }
@@ -239,22 +246,22 @@ Controller.prototype.getData = function() {
 		console.log("fetching data");
 
 		// Sending requests to database
-		if(this.layersFlags.CURRENTWEATHER) {
+		if(this.layersFlags.WEATHERLAYER) {
 			// this.updateWeather();
 		}
 		if (this.layersFlags.CRIMELAYER) this.dataManager.crimes((this.queryDuration==="week" ? "week2" : this.queryDuration),north,west,south,east,dataCallback, "crimes" );
 
-		if (this.layersFlags.POTHOLES) this.dataManager.potHoles(this.queryDuration,north,west,south,east,dataCallback, "potHoles" );
+		if (this.layersFlags.POTHOLELAYER) this.dataManager.potHoles(this.queryDuration,north,west,south,east,dataCallback, "potHoles" );
 
-		if (this.layersFlags.ABANDONEDVEHICLES) this.dataManager.abandonedVehicle(this.queryDuration,north,west,south,east,dataCallback, "abandonedVehicles" );
+		if (this.layersFlags.ABANDONEDVEHICLESLAYER) this.dataManager.abandonedVehicle(this.queryDuration,north,west,south,east,dataCallback, "abandonedVehicles" );
 
-		if (this.layersFlags.STREETLIGHTSOUT) {
+		if (this.layersFlags.STREETLIGHTSOUTLAYER) {
 			this.dataManager.lightOutAllNotCompleted(this.queryDuration,north,west,south,east,dataCallback, "lightOutAll" );
 			this.dataManager.lightOut1NotCompleted(this.queryDuration,north,west,south,east,dataCallback, "lightOutOne" );
 		}
-		if (this.layersFlags.DIVVYBIKES) this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
+		if (this.layersFlags.DIVVYLAYER) this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 
-		if (this.layersFlags.YELP) this.dataManager.yelp('food', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelp');
+		if (this.layersFlags.YELPLAYER) this.dataManager.yelp('food', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelp');
 
 		var self = this;
 		if (this.layersFlags.TRAFFICLAYER) {
@@ -778,8 +785,9 @@ Controller.prototype.getPerimeterAroundPath = function(radius){
 
 Controller.prototype.addRouteLayer = function(){};
 
+
 Controller.prototype.setLayer = function(layerName,array,b) {
-	// 'layerName' is the name of the layer to be set, e.g. DIVVYBIKES, PLACESOFINTEREST, CRIMELAYER, etc.
+	// 'layerName' is the name of the layer to be set, e.g. DIVVYLAYER, PLACESOFINTERESTLAYER, CRIMELAYER, etc.
 	// 'array' is the array that holds the markers for the associated object, e.g. divvyArray, pointsOfInterestArray, crimeContainer
 	// 'b' is the Boolean value to which the layer is set (true or false)
 
@@ -804,14 +812,18 @@ Controller.prototype.setSelectionMode = function() {
 	this.mode.SELECTION = true;
 };
 Controller.prototype.setWeather = function(b) {
-	this.layersFlags.CURRENTWEATHER = b;
+	this.layersFlags.WEATHERLAYER = b;
 };
 
 Controller.prototype.getMode = function(modeName) {
 	if (modeName in this.mode) {
 		return this.mode[modeName];
+	} else if (modeName in this.layersFlags) {
+		return this.layersFlags[modeName];
+	} else {
+		console.log("Mode " + modeName + " not defined");
+		return null;
 	}
-	return null;
 }
 
 Controller.prototype.getLayerFlag = function(layerName) {
@@ -828,7 +840,7 @@ Controller.prototype.makePotholeGraph = function(data){
 			this.potHoleGraph = new PieChart(this.potHoleGraphSVG);
 			console.log("Creating Pie");
 		}
-		if (this.layersFlags.POTHOLES === true && (this.pathLineConstructed || this.rectangleConstructed)){
+		if (this.layersFlags.POTHOLELAYER === true && (this.pathLineConstructed || this.rectangleConstructed)){
 			var data ;
 			console.log("Creating Pie");
 			if (this.queryDuration==="week"){
@@ -859,7 +871,7 @@ Controller.prototype.makeAbandonedVehicleGraph = function(){
 			this.abandonedVehicleGraph = new PieChart(this.abandonedVehicleGraphSVG);
 			console.log("Creating Pie");
 		}
-		if (this.layersFlags.ABANDONEDVEHICLES === true && (this.pathLineConstructed || this.rectangleConstructed)){
+		if (this.layersFlags.ABANDONEDVEHICLESLAYER === true && (this.pathLineConstructed || this.rectangleConstructed)){
 			var data ;
 			console.log("Creating Pie");
 			if (this.queryDuration==="week"){
@@ -890,7 +902,7 @@ Controller.prototype.makeStreetlightGraph = function(){
 			this.abandonedVehicleGraph = new PieChart(this.abandonedVehicleGraphSVG);
 			console.log("Creating Pie");
 		}
-		if (this.layersFlags.ABANDONEDVEHICLES === true && (this.pathLineConstructed || this.rectangleConstructed)){
+		if (this.layersFlags.ABANDONEDVEHICLESLAYER === true && (this.pathLineConstructed || this.rectangleConstructed)){
 			var data ;
 			console.log("Creating Pie");
 			if (this.queryDuration==="week"){
@@ -915,8 +927,41 @@ Controller.prototype.makeStreetlightGraph = function(){
 	}
 }
 
-Controller.prototype.makeCrimeGraph = function(data){
-	if (this.crimeGraph){
-
+Controller.prototype.makeCrimeGraph = function(){
+	if (this.crimeGraphSVG){
+		if (this.crimeGraph === null){
+			this.crimeGraph = new BarChart(this.crimeGraphSVG);
+			console.log("Creating Pie");
+		}
+		if (this.layersFlags.CRIMELAYER === true && (this.pathLineConstructed || this.rectangleConstructed)){
+			var data ;
+			var dataChicago;
+			console.log("Creating Pie");
+			if (this.queryDuration==="week"){
+				data = this.selectionData.abandonedVehiclesWeek;
+				chicagoData = this.chicagoData.abandonedVehiclesWeek;
+			}
+			else{
+				data = this.selectionData.abandonedVehiclesMonth;
+				chicagoData = this.chicagoData.abandonedVehiclesMonth;
+			}
+			data = getCrimeTypeCount(data);
+			chicagoData = getCrimeTypeCount(chicagoData);
+			console.log(data);
+			/*this.crimeGraph.setData(chicagoData, data, "crime");
+			this.crimeGraph.setTitle("Crimes");
+			this.crimeGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.crimeGraph.draw();	*/
+		}
+		
 	}
+}
+
+
+function getCrimeTypeCount(data){
+	var nested_data = d3.nest()
+		.key(function(d) { return d.primary_type; })
+		.rollup(function(leaves) { return leaves.length; })
+		.entries(data);
+	return nested_data;
 }
