@@ -35,7 +35,7 @@ Database.prototype.genericQuery = function(select, where, order, group, limit, o
 
 		//var filters = "$select="+select+"&$where="+where+"&$order="+order+"&$group="+group+"&$limit="+limit+"&$offset="+offset;
 
-		var filters = "$select="+select+"&$where="+where;
+		var filters = "$select="+select+"&$where="+where+"&$limit=5000";
 		//console.log("from" + from);
 		//console.log("normal filter " + iden);
 		//console.log(filters);
