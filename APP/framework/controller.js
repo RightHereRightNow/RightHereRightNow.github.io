@@ -24,21 +24,24 @@ function Controller() {
 
 	this.mode = {
 		SELECTION: false,
+		PATHSELECTION: false,
+		BOUNDINGBOXSELECTION: false,
+		RECTANGLESELECTION: false,
 		LAYERS: false,
-		RECTANGLE:false
+		OTHER: false
 	};
 	this.layersFlags = {
 		TRAFFICLAYER: false,
 		CRIMELAYER:	false,
-		PLACESOFINTEREST: true,
-		DIVVYBIKES: false,
-		ABANDONEDVEHICLES: false,
-		STREETLIGHTSOUT: false,
-		CURRENTWEATHER:false,
-		POTHOLES: false,
-		YELP: false,
-		GRAPHS: false,
-		YELP: false
+		PLACESOFINTERESTLAYER: true,
+		DIVVYLAYER: false,
+		ABANDONEDVEHICLESLAYER: false,
+		STREETLIGHTSOUTLAYER: false,
+		POTHOLELAYER: false,
+		YELPLAYER: false,
+		WEATHERLAYER: false,
+		GRAPHSLAYER: false,
+		UBERLAYER: false
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -795,8 +798,12 @@ Controller.prototype.setWeather = function(b) {
 Controller.prototype.getMode = function(modeName) {
 	if (modeName in this.mode) {
 		return this.mode[modeName];
+	} else if (modeName in this.layersFlags) {
+		return this.layersFlags[modeName];
+	} else {
+		console.log("Mode " + modeName + " not defined");
+		return null;
 	}
-	return null;
 }
 
 Controller.prototype.getLayerFlag = function(layerName) {

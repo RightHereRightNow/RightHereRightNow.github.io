@@ -1,4 +1,4 @@
-var level1Button = function(parentUI,text,iconname,onClick,s,markers) {
+var level1Button = function(parentUI,text,iconname,onClick,s) {
 
 	this.ui = parentUI;
 	this.previousButton = null;
@@ -15,7 +15,6 @@ var level1Button = function(parentUI,text,iconname,onClick,s,markers) {
 	this.active = false;
 
 	this.clickCallback = onClick;
-	this.markerArray = markers;
 
 	this.colorActive = "#ccc";
 	this.colorInactive = "#888";
@@ -110,7 +109,7 @@ level1Button.prototype.update = function() {
 		this.yStart = this.previousButton.yEnd + this.ui.button1dy;
 	};
 
-	this.active = context.getMode(this.contextModeStr);
+	// this.active = context.getMode(this.contextModeStr); TODO: uncomment to sync with controller
 	if(!this.active) {
 		this.yEnd = this.yStart + this.ui.button1height;
 	}
