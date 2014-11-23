@@ -2,7 +2,7 @@
 //           CTA Marker object
 //////////////////////////////////////////////////////////////
 
-var CTAMarker = function(data) {
+var CTAMarker = function(data,context) {
     console.log("In CTA init, ", data);
     this.timestamp = data.timestamp; // "20141121 19:46"
     this.route = data.route; // "76"
@@ -13,6 +13,11 @@ var CTAMarker = function(data) {
     this.longitude = data.longitude; // "-87.63453674316406"
     this.pdist = data.pdist; // "56"
     this.pid = data.pid; // "4621"
+    this.controller = context;
+
+    var ctaClick = function(e){
+        context.getTwitters('cta');
+    };
 
     var popupstr = "<p><b>Destination:</b> " + this.destination +
         "</br><b>Route #:</b> "+ this.route +
@@ -65,4 +70,5 @@ var CTAMarker = function(data) {
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
     this.init();
+    this.marker.on("click", ctaClick);
 };
