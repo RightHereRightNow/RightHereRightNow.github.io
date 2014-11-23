@@ -99,3 +99,18 @@ div {
 .leaflet-popup-content{
 	font-size: 150%;
 }
+
+#legendlabel,
+.legend, 
+.title {
+	font-family: sans-serif;
+	font-size: 0.6rem;
+	fill: rgba(255,255,255,1.0);
+}
+
+.potholes,
+.abandonedvehicles{
+	font-family: sans-serif;
+	font-size: 0.8em;
+	fill: rgba(255,255,255,1.0);
+}
