@@ -111,6 +111,9 @@ level1Button.prototype.update = function() {
 	};
 
 	this.active = context.getMode(this.contextModeStr);
+	if(!this.active) {
+		this.yEnd = this.yStart + this.ui.button1height;
+	}
 
 	var thisButton = this;
 

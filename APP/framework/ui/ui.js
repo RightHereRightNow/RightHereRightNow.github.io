@@ -91,11 +91,10 @@ ui.prototype.draw = function() {
 	this.buttonYelp.create(svgmenu);
 
 	
-	/*
 	this.buttonGraphs = new level1Button(this,"Graphs","stack9",emptyCallback,"GRAPHS",emptyArray);
 	this.buttonGraphs.setPreviousButton(this.buttonYelp);
 	this.button1List.push(this.buttonGraphs);
-
+/*
 	this.buttonBla = new level1Button(this,"Bla","stack9",emptyCallback,"GRAPHS",emptyArray);
 	this.buttonBla.setPreviousButton(this.buttonGraphs);
 	this.button1List.push(this.buttonBla);
@@ -104,10 +103,10 @@ ui.prototype.draw = function() {
 	this.buttonBlub.setPreviousButton(this.buttonBla);
 	this.button1List.push(this.buttonBlub);
 	
-	this.buttonGraphs.create(svgmenu);
 	this.buttonBla.create(svgmenu);
 	this.buttonBlub.create(svgmenu);
 */	
+	this.buttonGraphs.create(svgmenu);
 
 
 	
