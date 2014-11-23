@@ -17,7 +17,10 @@ function Controller() {
 	this.weatherBox = null;
 	this.twitterBox = null;
 
+	this.minRadius = 0.2;
+	this.maxRadius = 2.0;
 	this.perimeterRadiusInKm = 0.4;
+
 	this.showDataAlongPathOnly = true; // Need a button to turn this on and off
 	this.routePoints = null;
 	// Possible modes of our application
@@ -953,4 +956,23 @@ function getCrimeTypeCount(data){
 		.rollup(function(leaves) { return leaves.length; })
 		.entries(data);
 	return nested_data;
+}
+
+Controller.prototype.increaseRadius = function() {
+	var newRadius = this.perimeterRadiusInKm + 0.2;
+	if(newRadius <= this.maxRadius) {
+		this.perimeterRadiusInKm = newRadius;
+	}
+	console.log(newRadius);
+}
+
+Controller.prototype.decreaseRadius = function() {
+	var newRadius = this.perimeterRadiusInKm - 0.2;
+	if(newRadius >= this.minRadius) {
+		this.perimeterRadiusInKm = newRadius;
+	}
+}
+
+Controller.prototype.getRadiusPercentage = function() {
+	return this.perimeterRadiusInKm/this.maxRadius;
 }
