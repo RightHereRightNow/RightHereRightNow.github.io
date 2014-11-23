@@ -22,27 +22,27 @@ var ui = function(menutag,mapcontroltag,radiuscontroltag) {
 	this.linepadding = 150;
 
 	this.button1height = 120;
-	this.button1width = 900;
+	this.button1width = 500; // TODO: change to 900
 	this.button1dx = 50;
 	this.button1dy = 20;
 
 	this.button2height = .8*this.button1height;
-	this.button2width = this.button1width - this.button1dx;
+	this.button2width = 800; // TODO: uncomment this:  this.button1width - this.button1dx;
 	this.button2dx = 2*this.button1dx;
 	this.button2dy = .5*this.button1dy;
 
-	this.textColor = "black"; // "#ccc";
+	this.textColor = "black";
 	divvyBlue = "#3db7e4";
 
-	this.buttonOneList = [];
-	this.buttonAllList = [];
+	this.button1List = [];
+	// this.buttonAllList = [];
 
 	this.dt = 1000; // Transition duration
 }
 
 ui.prototype.update = function() {
-	for (b in this.buttonAllList) {
-		this.buttonAllList[b].update();
+	for (b in this.button1List) {
+		this.button1List[b].update();
 	}
 }
 
@@ -51,6 +51,9 @@ ui.prototype.draw = function() {
 
 	console.log('Draw UI');
 
+	var emptyCallback = function() {};
+	var emptyArray = {};
+	
 	// MENU
 
 	var svgmenu = d3.select(this.menutag).append("svg:svg")
@@ -60,56 +63,48 @@ ui.prototype.draw = function() {
 		.attr("preserveAspectRatio", "xMinYMin meet")
 		.attr("width",this.viewBoxWidth).attr("height",this.viewBoxMenuHeight)
 
-	// Selection Button
-
-		/*
-	function clickHomepage() { console.log("TODO: link to homepage");
-		window.location.href = "../"; }
-	function clickSelection() { context.toggleSelectionMode(); }
-*/
-	var emptyCallback = function() {};
-
-	var clickGraphs = function() { console.log("TODO: implement"); };
-	clickGraphs = clickGraphs.bind(this);
-	
-
-	var ystart = 0; var yend = this.button1height;
-	var emptyArray = {};
-
-/*
-	this.buttonHome = new level1Button(this,"Project Homepage",ystart,yend,"house28",clickHomepage);
-	this.buttonHome.create(svgmenu,0);
-
-	ystart = yend + this.button1dy; yend = ystart + this.button1height;
-	*/
-
-
-	this.buttonSelection = new level1Button(this,"Selection",ystart,yend,"distance1",emptyCallback,"SELECTION",emptyArray);
+	this.buttonSelection = new level1Button(this,"Path Selection","distance1",emptyCallback,"SELECTION",emptyArray);
 	this.buttonSelection.setPreviousButton(null);
-	this.buttonOneList.push(this.buttonSelection);
+	this.button1List.push(this.buttonSelection);
 
-	ystart = yend + this.button1dy; yend = ystart + this.button1height;
-	
-	this.buttonLayers = new level1Button(this,"Layers",ystart,yend,"stack9",emptyCallback,"LAYERS",emptyArray);
+	this.buttonLayers = new level1Button(this,"Layers","stack9",emptyCallback,"LAYERS",emptyArray);
 	this.buttonLayers.setPreviousButton(this.buttonSelection);
-	this.buttonOneList.push(this.buttonLayers);
+	this.button1List.push(this.buttonLayers);
 	
-	ystart = yend + this.button1dy; yend = ystart + this.button1height;
-	
-	this.buttonYelp = new level1Button(this,"Yelp",ystart,yend,"distance1",emptyCallback,"YELP",emptyArray);
+	this.buttonYelp = new level1Button(this,"Yelp","distance1",emptyCallback,"YELP",emptyArray);
 	this.buttonYelp.setPreviousButton(this.buttonLayers);
-	this.buttonOneList.push(this.buttonYelp);
+	this.button1List.push(this.buttonYelp);
 	
-	ystart = yend + this.button1dy; yend = ystart + this.button1height;
-	
-	this.buttonGraphs = new level1Button(this,"Graphs",ystart,yend,"stack9",clickGraphs,"GRAPHS",emptyArray);
+	this.buttonGraphs = new level1Button(this,"Graphs","stack9",emptyCallback,"GRAPHS",emptyArray);
 	this.buttonGraphs.setPreviousButton(this.buttonYelp);
-	this.buttonOneList.push(this.buttonGraphs);
+	this.button1List.push(this.buttonGraphs);
 
+	this.buttonBla = new level1Button(this,"Bla","stack9",emptyCallback,"GRAPHS",emptyArray);
+	this.buttonBla.setPreviousButton(this.buttonGraphs);
+	this.button1List.push(this.buttonBla);
 
+	this.buttonBlub = new level1Button(this,"Bla","stack9",emptyCallback,"GRAPHS",emptyArray);
+	this.buttonBlub.setPreviousButton(this.buttonBla);
+	this.button1List.push(this.buttonBlub);
+	
+	
 	// SUBMENU LAYERS
 	
-	this.buttonAllList = this.buttonOneList.slice(0);
+	this.buttonLayers.addChildButton("Traffic","stack9",emptyCallback,"TRAFFICLAYER",emptyArray);
+	this.buttonLayers.addChildButton("Blub","stack9",emptyCallback,"CRIMELAYER",emptyArray);
+	
+	// Draw level1buttons last, so they are on top
+	this.buttonSelection.create(svgmenu);
+	this.buttonLayers.create(svgmenu);
+	this.buttonYelp.create(svgmenu);
+	this.buttonGraphs.create(svgmenu);
+	this.buttonBla.create(svgmenu);
+	this.buttonBlub.create(svgmenu);
+
+
+	
+/*	
+	this.buttonAllList = this.button1List.slice(0);
 
 	var ystart = 0; var yend = this.button2height;
 	
@@ -159,10 +154,11 @@ ui.prototype.draw = function() {
 	// TODO: remove ystart yend completely from constructor
 	// TODO: level1buttons are mutually exclusive, level2buttons are not
 	// TODO: level2buttons have layers, arrays, etc., level1buttons dont - modify in controller
-	
-	
+	*/
+
+
 	// SUBMENU GRAPHS
-	
+/*	
 	var ystart = 0; var yend = this.button2height;
 	
 	this.buttonWeatherGraph = new level2Button(this.buttonGraphs,"Weather",ystart,yend,"cold5",emptyCallback,"CURRENTWEATHER",emptyArray);
@@ -187,13 +183,19 @@ ui.prototype.draw = function() {
 	
 	this.buttonWeatherGraph.create(svgmenu);
 	this.buttonPotholeGraph.create(svgmenu);
+*/	
 	
-	
-	// Draw level1buttons last, so they are on top
-	this.buttonSelection.create(svgmenu);
-	this.buttonLayers.create(svgmenu);
-	this.buttonYelp.create(svgmenu);
-	this.buttonGraphs.create(svgmenu);
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -299,16 +301,6 @@ ui.prototype.draw = function() {
 		})
 		.attr("rx",.2*this.zoomButtonSize).attr("ry",.2*this.zoomButtonSize)
 		.attr("fill",divvyBlue)
-
-
-
-
-
-
-
-
-
-
 
 
 	// MAPCONTROL
