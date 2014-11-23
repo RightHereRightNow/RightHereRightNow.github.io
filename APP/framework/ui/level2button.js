@@ -17,8 +17,10 @@ var level2Button = function(parentButton,i,text,iconname,onClick,s,markers) {
 
 	this.clickCallback = onClick;
 
-	this.colorActive = "#bbb";
-	this.colorInactive = "#666";
+	// this.colorActive = "red";
+	this.colorActive = '#'+Math.floor(Math.random()*16777215).toString(16);
+
+	this.colorInactive = "#aaa";
 
 	this.markerArray = markers;
 
@@ -33,7 +35,7 @@ level2Button.prototype.create = function(svg) {
 
 	this.g = svg.append("svg:g")
 		.attr("fill",color)
-		.attr("class","level2button")
+		// .attr("class","level2button")
 		.attr("transform","translate(0," + this.yStart + ")")
 		.on("click", function() { 
 			thisButton.onClick();	

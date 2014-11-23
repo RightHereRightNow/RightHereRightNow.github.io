@@ -78,8 +78,12 @@ ui.prototype.draw = function() {
 	// SUBMENU LAYERS
 	
 	this.buttonLayers.addChildButton("A","stack9",emptyCallback,"TRAFFICLAYER",emptyArray);
-	this.buttonLayers.addChildButton("B","stack9",emptyCallback,"CRIMELAYER",emptyArray);
-	this.buttonLayers.addChildButton("C","stack9",emptyCallback,"POTHOLELAYER",emptyArray);
+	this.buttonLayers.addChildButton("B","crime1",emptyCallback,"CRIMELAYER",emptyArray);
+	this.buttonLayers.addChildButton("C","information38",emptyCallback,"POTHOLELAYER",emptyArray);
+	this.buttonLayers.addChildButton("D","regular2",emptyCallback,"ABANDONEDVEHICLES",emptyArray);
+	this.buttonLayers.addChildButton("E","criminal20",emptyCallback,"STREETLIGHTSOUT",emptyArray);
+	this.buttonLayers.addChildButton("F","street9",emptyCallback,"DIVVYBIKES",emptyArray);
+	this.buttonLayers.addChildButton("G","road22",emptyCallback,"PLACESOFINTEREST",emptyArray);
 	
 	// Draw Buttons
 	this.buttonSelection.create(svgmenu);
