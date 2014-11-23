@@ -288,7 +288,7 @@ Controller.prototype.twitterCallBack = function(data,iden){
 	tweetData = data;
 	twitterBox = new Twitter();
 	switchTweet();
-	twitterInterval = setInterval(switchTweet, 2000);
+	twitterInterval = setInterval(switchTweet, 5000);
 };
 
 function switchTweet() {
