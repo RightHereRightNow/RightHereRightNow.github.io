@@ -152,7 +152,7 @@ ui.prototype.draw = function() {
 				.attr("stroke","yellow")
 				.attr("stroke-width",40)
 				.attr("fill","blue");
-	
+		return svg;
 	}
 
 	function clickHomepage() {
@@ -166,15 +166,15 @@ ui.prototype.draw = function() {
 
 		} else {
 			graphsActive = true;
-			addGraph("#divgraphs1","graphCrime");
-			addGraph("#divgraphs1","graphPotholes");
-			addGraph("#divgraphs1","graphAbandonedVehicles");
-			addGraph("#divgraphs1","graphStreetLights");
+			context.crimeGraph = addGraph("#divgraphs1","graphCrime");
+			context.potHoleGraph = addGraph("#divgraphs1","graphPotholes");
+			context.abandonedVehicleGraph = addGraph("#divgraphs1","graphAbandonedVehicles");
+			context.streetLightGraph = addGraph("#divgraphs1","graphStreetLights");
 
-			addGraph("#divgraphs2","graphWeather");
-			addGraph("#divgraphs2","graphTwitter");
-			addGraph("#divgraphs2","graphUber");
-			addGraph("#divgraphs2","graphOther");
+			context.weatherBox = addGraph("#divgraphs2","weatherBox");
+			context.twitterBox = addGraph("#divgraphs2","twitterBox");
+			context.uberBox = addGraph("#divgraphs2","uberBox");
+			context.miscBox = addGraph("#divgraphs2","miscBox");
 		}
 
 	}

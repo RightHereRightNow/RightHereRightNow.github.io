@@ -34,5 +34,6 @@ function init() {
 
 	context.ui.draw();
 	context.getBusStopDataFromFile();
+	context.makePotholeGraph();
 
 }

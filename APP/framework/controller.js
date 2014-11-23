@@ -74,6 +74,18 @@ function Controller() {
 
 
 	this.busRoutes = [];
+
+	//svg handles for graphs and other data
+
+	this.crimeGraph = null;
+	this.potHoleGraph = null;
+	this.abandonedVehicleGraph = null;
+	this.streetLightGraph = null;
+
+	this.weatherBox = null;
+	this.twitterBox = null;
+	this.uberBox = null;
+	this.miscBox = null;
 }
 
 
@@ -626,4 +638,32 @@ Controller.prototype.getLayerFlag = function(layerName) {
 		return this.layersFlags[layerName];
 	}
 	return null;
+}
+
+
+Controller.prototype.makePotholeGraph = function(data){
+	if (this.potHoleGraph){
+		var chart = new PieChart(this.potHoleGraph);
+		chart.setData(data.values, data.names, "potholes", "Area");
+		chart.setTitle("Potholes");
+		chart.draw();
+	}
+}
+
+Controller.prototype.makeAbandonedVehicleGraph = function(data){
+	if (this.abandonedVehicleGraph){
+		var chart = new PieChart(this.abandonedVehicleGraph);
+		chart.setData(data.values, data.names, "abandonedvehicles", "Area");
+		chart.setTitle("Abandoned Vehicles");
+		chart.draw();
+	}
+}
+
+Controller.prototype.makeStreetlightGraph = function(data){
+	if (this.streetLightGraph){
+		var chart = new PieChart(this.streetLightGraph);
+		chart.setData(data.values, data.names, "streetlights", "Area");
+		chart.setTitle("Street Lights");
+		chart.draw();
+	}
 }
