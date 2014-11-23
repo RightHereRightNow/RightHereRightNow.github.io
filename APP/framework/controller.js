@@ -24,7 +24,7 @@ function Controller() {
 
 	this.mode = {
 		SELECTION: false,
-		RECTANGLE:false,
+		RECTANGLE:false
 	};
 	this.layersFlags = {
 		TRAFFICLAYER: false,
@@ -35,7 +35,7 @@ function Controller() {
 		STREETLIGHTSOUT: false,
 		CURRENTWEATHER:false,
 		POTHOLES: false,
-		YELP: false,
+		YELP: false
 
 	};
 
@@ -128,12 +128,13 @@ Controller.prototype.getBusStopDataFromFile = function(){
 
 //var twitterBox = new Twitter();
 var indexTwitter = 0;
-var numOfShowTwitter = 2;
+var numOfShowTwitter = 1;
 var tweetData = null;
 var twitterBox = null;
+var twitterInterval;
 
 Controller.prototype.getUpdates = function(){
-	var refreshrate = 30000; // Rate at which new data is queried
+	var refreshrate = 10000; // Rate at which new data is queried
 	this.getData();
 	//this.updateWeather();
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
@@ -209,14 +210,14 @@ Controller.prototype.getData = function() {
 			bounds = this.pathLine.getBounds();
 			northWest = getNewPointInLatLng(bounds.getNorth(),bounds.getWest(),this.perimeterRadiusInKm,-45); //Increase the bounding box by radius
 			southEast = getNewPointInLatLng(bounds.getSouth(),bounds.getEast(),this.perimeterRadiusInKm,135);
-		} 	
+		}
 		else{// this.rectangleConstructed is true
 			bounds = this.rectangleLayer.getBounds();
 			northWest = bounds.getNorthWest();
 			southEast = bounds.getSouthEast();
 		}
 
-		
+
 		var north = northWest.lat;
 		var west = northWest.lng;
 		var south = southEast.lat;
@@ -272,6 +273,7 @@ Controller.prototype.getDataCTA = function() {
 };
 
 Controller.prototype.getTwitters = function(queryParam){
+
 	var hashed = this.makeHashTag(queryParam);
 	var chicago = '#chicago';
 
@@ -291,12 +293,16 @@ Controller.prototype.getTwitters = function(queryParam){
 };
 
 Controller.prototype.twitterCallBack = function(data,iden){
+	clearInterval(twitterInterval);
+	if(twitterBox != null){
+		twitterBox.deleteText();
+	}
 	indexTwitter = 0;
-	numOfShowTwitter = 2;
+	numOfShowTwitter = 1;
 	tweetData = data;
 	twitterBox = new Twitter();
 	switchTweet();
-	setInterval(switchTweet, 2000);
+	twitterInterval = setInterval(switchTweet, 2000);
 };
 
 function switchTweet() {
@@ -322,7 +328,6 @@ function switchTweet() {
 		indexTwitter ++;
 	}
 };
-
 Controller.prototype.makeHashTag = function (string){
 
 	var nameArray = string.split(" ");
@@ -352,14 +357,14 @@ Controller.prototype.onMapClick = function(e){
 	else if (this.mode.RECTANGLE === true){
 		this.removePath();
 		if (this.rectangleConstructed === true){
-			
+
 			this.removeRectangle();
 		}
 		this.locations = [];
 		if (this.rectangle.ul===null)
 			this.rectangle.ul = point;
 		else if (this.rectangle.ul.lat < point.lat || this.rectangle.ul.lng > point.lng)
-			this.rectangle.ul = null; 
+			this.rectangle.ul = null;
 		else
 			this.rectangle.lr = point;
 
@@ -379,18 +384,18 @@ Controller.prototype.onMapClick = function(e){
 			this.rectangleLayer = new L.rectangle(rectBounds, {color: "#ff7800", weight: 1});
 			this.map.map.addLayer(this.rectangleLayer);
 		}
-		
+
 	}
 };
 
 Controller.prototype.removePath = function(){
-	
+
 	this.locations = [];
 	if (this.pathLineConstructed){
 		this.map.map.removeLayer(this.pathLine);
 		this.pathLineConstructed = false;
 	}
-	
+
 	this.removeAllMarkers();
 }
 Controller.prototype.removeRectangle = function(){
@@ -398,7 +403,7 @@ Controller.prototype.removeRectangle = function(){
 		this.map.map.removeLayer(this.rectangleLayer);
 		this.rectangleConstructed = false;
 	}
-	
+
 	this.rectangle = {ul:null,lr:null};
 	this.removeAllMarkers();
 }
@@ -493,10 +498,15 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		for (var d=0;d<data.length;d++){
 			var dist = 100; // Too far away!
 			var dataPoint = data[d];
+
+			if(dataPoint.hasOwnProperty("location.coordinate")){
+				dataPoint.latitude = dataPoint.location.coordinate.latitude;
+				dataPoint.longitude = dataPoint.location.coordinate.longitude;
+			}
 			console.log(dataPoint);
 			var dataRange = false;
 			for(var i=0;i<points.length;i++){
-
+				/*
 				var lat,lng;
 				if(dataPoint.location) {
 					console.log("dataPoint.location", dataPoint);
@@ -506,8 +516,9 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 					lat = dataPoint.latitude;
 					lng = dataPoint.longitude;
 				}
-
-				var tempDist = distance(points[i].lat,points[i].lng,lat,lng);
+				*/
+				//var tempDist = distance(points[i].lat,points[i].lng,lat,lng);
+				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude,dataPoint.longitude);
 
 				if (tempDist <= this.perimeterRadiusInKm){
 					console.log(tempDist,this.perimeterRadiusInKm);

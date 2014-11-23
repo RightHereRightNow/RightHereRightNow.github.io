@@ -146,12 +146,11 @@ ui.prototype.draw = function() {
 			/*var g = svg.append("svg:g")
 				// .attr("transform","translate(0 10)")
 
-			/*g.append("circle")
-				.attr("transform","translate(100,100)")
-				.attr("r",1000)
-				.attr("stroke","yellow")
-				.attr("stroke-width",40)
-				.attr("fill","blue");*/
+
+			/*
+			g.append("circle")
+			.attr("fill","blue");*/
+
 		return svg;
 	}
 
