@@ -138,11 +138,9 @@ ui.prototype.draw = function() {
 	var addGraph = function(drawTo,idStr) {
 
 			var svg = d3.select(drawTo).append("svg:svg")
-				.attr("id",idStr)
-				.attr("class","graphs")
 				.attr("viewBox", "0 0 160 90")
 				.attr("preserveAspectRatio", "xMinYMin meet")
-
+				.attr("backgroundColor", "rgba(0,0,0,0.8)");
 			/*var g = svg.append("svg:g")
 				// .attr("transform","translate(0 10)")
 

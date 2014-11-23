@@ -9,13 +9,13 @@ function PieChart (svg){
 	this.newName = null;
 	this.title = null;
 	this.data = null;
-	/*this.border = {
-		left: -75, 
-		right: 75, 
+	this.border = {
+		left: 0, 
+		right: 160, 
 		top: 10, 
-		bottom: 95 
+		bottom: 90 
 	};
-	this.svg.attr("viewBox","-80 0 160 100");*/
+	this.svg.attr("viewBox","0 0 160 90");
 }
 
 
@@ -36,7 +36,7 @@ PieChart.prototype.setData = function(valuesLst, nameLst, className, legendLabel
 	this.legendNames = nameLst;
 	this.legendLabel = legendLabel;
 	this.radius = (this.border.bottom - this.border.top)/2.5 -2.0; 
-	this.center = {x:(this.border.right+this.border.left)*0.5,y:(this.border.bottom + this.border.top)*0.55};
+	this.center = {x:(this.border.right+this.border.left)*0.3,y:(this.border.bottom + this.border.top)*0.55};
 	this.color = d3.scale.category20().range();
 
 	this.arc = d3.svg.arc()
@@ -73,13 +73,32 @@ PieChart.prototype.draw = function(){
 
 		arcGrp.append("path")
 	      	.attr("d", _this.arc)
-	      	.style("fill", function(d,i) { return _this.color[(_this.legendNames[i]).hashCode() % _this.color.length]; })
-			      	
+	      	.style("fill", function(d,i) { return _this.color[i]; })
+			.style("stroke", "rgba(230,230,230,0.8)");
 
 	  	arcGrp.append("text")
-	      	.attr("transform", function(d) { return "translate(" + _this.arc.centroid(d) + ")"; })
+		  	.attr("transform", function(d) {
+		  		if ((d.endAngle - d.startAngle) < (Math.PI/4.0)){
+		  			var c = _this.arc.centroid(d),
+			        x = c[0],
+			        y = c[1],
+			        h = Math.sqrt(x*x + y*y);
+				    return "translate(" + (x/h * (_this.radius + 5)) +  ',' + (y/h * (_this.radius + 5)) +  ")"; 
+		  		}
+		  		else{
+		  			return "translate(" + _this.arc.centroid(d) + ")";
+		  		}
+			    
+			})
+			.attr("text-anchor", function(d) {
+				if ((d.endAngle - d.startAngle) < (Math.PI/4.0))
+					return (d.endAngle + d.startAngle)/2 > Math.PI ? "end" : "start";
+				else
+			    	return "middle";
+			})
+	      	//.attr("transform", function(d) { return "translate(" + _this.arc.centroid(d) + ")"; })
 	      	.attr("dy", ".35em")
-	      	.style("text-anchor", "middle")
+	      	//.style("text-anchor", "middle")
 	      	.text(function(d) { return commas(d.data); });
 	    this.addLegend();
 	}
@@ -128,8 +147,8 @@ PieChart.prototype.addLegend  =  function(){
 	    .attr("height", legendSize)
 	    .attr("y", legendSize)
 	    //.style("stroke", "black")
-	    .style("fill", function(d){
-	    	return _this.color[d.hashCode() % _this.color.length]; 
+	    .style("fill", function(d,i){
+	    	return _this.color[i]; 
 	    });
 
 	legendGrp.append("text")

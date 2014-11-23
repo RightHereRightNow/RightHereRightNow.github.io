@@ -82,6 +82,7 @@ function Controller() {
 
 	this.crimeGraph = null;
 	this.potHoleGraph = null;
+	this.potHoleGraphSVG = null;
 	this.abandonedVehicleGraph = null;
 	this.abandonedVehicleGraphSVG = null;
 	this.streetLightGraph = null;
@@ -92,6 +93,18 @@ function Controller() {
 	this.miscBox = null;
 
 	this.chicagoData = {
+		crimesWeek: null,
+		potHolesWeek: null,
+		abandonedVehiclesWeek: null,
+		streetLightsAllWeek: null,
+		streetLightsOneWeek: null,
+		crimesMonth: null,
+		potHolesMonth: null,
+		abandonedVehiclesMonth: null,
+		streetLightsAllMonth: null,
+		streetLightsOneMonth: null
+	};
+	this.selectionData = {
 		crimesWeek: null,
 		potHolesWeek: null,
 		abandonedVehiclesWeek: null,
@@ -346,15 +359,22 @@ Controller.prototype.getTrafficFlow = function(bounds) {
 Controller.prototype.onMapClick = function(e){
 	var point = e.latlng;
 	if (this.mode.SELECTION === true){
-		this.removeRectangle();
-		this.rectangle = {ul:null,lr:null};
+		//if (this.rectangleConstructed===true){
+		//	this.removeRectangle();
+		//	this.rectangle = {ul:null,lr:null};
+		//}
+		
 		this.locations.push({latLng: {lat:point.lat,lng:point.lng}});
 		if (this.locations.length > 2)
 			this.locations.splice(0,1);
 		var locObj = { locations:this.locations };
 		this.getRoute(locObj);
 	}
-	else if (this.mode.RECTANGLE === true){
+	else{
+
+	}
+	/*else if (this.mode.RECTANGLE === true){
+
 		this.removePath();
 		if (this.rectangleConstructed === true){
 
@@ -385,7 +405,7 @@ Controller.prototype.onMapClick = function(e){
 			this.map.map.addLayer(this.rectangleLayer);
 		}
 
-	}
+	}*/
 };
 
 Controller.prototype.removePath = function(){
@@ -506,18 +526,6 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			console.log(dataPoint);
 			var dataRange = false;
 			for(var i=0;i<points.length;i++){
-				/*
-				var lat,lng;
-				if(dataPoint.location) {
-					console.log("dataPoint.location", dataPoint);
-					lat = dataPoint.location.coordinate.latitude;
-					lng = dataPoint.location.coordinate.longitude;
-				} else {
-					lat = dataPoint.latitude;
-					lng = dataPoint.longitude;
-				}
-				*/
-				//var tempDist = distance(points[i].lat,points[i].lng,lat,lng);
 				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude,dataPoint.longitude);
 
 				if (tempDist <= this.perimeterRadiusInKm){
@@ -541,15 +549,18 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 
 	switch(identifierStr) {
 		case 'crimes':
+			(this.queryDuration==="week"? this.selectionData.crimesWeek = data : this.selectionData.crimesMonth = data)
 			this.updateMarkers(data,this.crimeContainer,'case_number',CrimeMarker);
 			break;
 		case 'divvyStations':
 			this.updateMarkers(data,this.divvyArray,'id',DivvyMarker);
 			break;
 		case 'potHoles':
+			(this.queryDuration==="week"? this.selectionData.potHolesWeek = data : this.selectionData.potHolesMonth = data)
 			this.updateMarkers(data,this.potholesArray,'service_request_number',PotholeMarker);
 			break;
 		case 'abandonedVehicles':
+			(this.queryDuration==="week"? this.selectionData.abandonedVehiclesWeek = data : this.selectionData.abandonedVehiclesMonth = data)
 			this.updateMarkers(data,this.carsArray,'service_request_number',AbandonedVehicleMarker);
 			break;
 		case 'lightOutAll':
@@ -557,6 +568,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			// this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutAllMarker);
 			break;
 		case 'lightOutOne':
+			(this.queryDuration==="week"? this.selectionData.streetLightsOneWeek = data : this.selectionData.streetLightsOneMonth = data)
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
 		case 'yelp':
@@ -793,32 +805,95 @@ Controller.prototype.getLayerFlag = function(layerName) {
 
 
 Controller.prototype.makePotholeGraph = function(data){
-	if (this.potHoleGraph){
-		var chart = new PieChart(this.potHoleGraph);
-		chart.setData(data.values, data.names, "potholes", "Area");
-		chart.setTitle("Potholes");
-		chart.draw();
-	}
-}
-
-Controller.prototype.makeAbandonedVehicleGraph = function(data){
-	if (this.abandonedVehicleGraphSVG){
-		if (this.abandonedVehicleGraph === null){
-			this.abandonedVehicleGraph = new PieChart(this.abandonedVehicleGraph);
+	if (this.potHoleGraphSVG){
+		if (this.potHoleGraph === null){
+			this.potHoleGraph = new PieChart(this.potHoleGraphSVG);
+			console.log("Creating Pie");
+		}
+		if (this.layersFlags.POTHOLES === true && (this.pathLineConstructed || this.rectangleConstructed)){
+			var data ;
+			console.log("Creating Pie");
+			if (this.queryDuration==="week"){
+				data = {
+					values: [this.selectionData.potHolesWeek.length,this.chicagoData.potHolesWeek.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			else{
+				data = {
+					values: [this.selectionData.potHolesMonth.length,this.chicagoData.potHolesMonth.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			
+			this.potHoleGraph.setData(data.values, data.names, "potholes", "Area");
+			this.potHoleGraph.setTitle("Potholes");
+			this.potHoleGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.potHoleGraph.draw();	
 		}
 		
-		this.abandonedVehicleGraph.setData(data.values, data.names, "abandonedvehicles", "Area");
-		this.abandonedVehicleGraph.setTitle("Abandoned Vehicles");
-		this.abandonedVehicleGraph.draw();
 	}
 }
 
-Controller.prototype.makeStreetlightGraph = function(data){
-	if (this.streetLightGraph){
-		var chart = new PieChart(this.streetLightGraph);
-		chart.setData(data.values, data.names, "streetlights", "Area");
-		chart.setTitle("Street Lights");
-		chart.draw();
+Controller.prototype.makeAbandonedVehicleGraph = function(){
+	if (this.abandonedVehicleGraphSVG){
+		if (this.abandonedVehicleGraph === null){
+			this.abandonedVehicleGraph = new PieChart(this.abandonedVehicleGraphSVG);
+			console.log("Creating Pie");
+		}
+		if (this.layersFlags.ABANDONEDVEHICLES === true && (this.pathLineConstructed || this.rectangleConstructed)){
+			var data ;
+			console.log("Creating Pie");
+			if (this.queryDuration==="week"){
+				data = {
+					values: [this.selectionData.abandonedVehiclesWeek.length,this.chicagoData.abandonedVehiclesWeek.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			else{
+				data = {
+					values: [this.selectionData.abandonedVehiclesMonth.length,this.chicagoData.abandonedVehiclesMonth.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			
+			this.abandonedVehicleGraph.setData(data.values, data.names, "abandonedvehicles", "Area");
+			this.abandonedVehicleGraph.setTitle("Abandoned Vehicles");
+			this.abandonedVehicleGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.abandonedVehicleGraph.draw();	
+		}
+		
+	}
+}
+
+Controller.prototype.makeStreetlightGraph = function(){
+	if (this.abandonedVehicleGraphSVG){
+		if (this.abandonedVehicleGraph === null){
+			this.abandonedVehicleGraph = new PieChart(this.abandonedVehicleGraphSVG);
+			console.log("Creating Pie");
+		}
+		if (this.layersFlags.ABANDONEDVEHICLES === true && (this.pathLineConstructed || this.rectangleConstructed)){
+			var data ;
+			console.log("Creating Pie");
+			if (this.queryDuration==="week"){
+				data = {
+					values: [this.selectionData.abandonedVehiclesWeek.length,this.chicagoData.abandonedVehiclesWeek.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			else{
+				data = {
+					values: [this.selectionData.abandonedVehiclesMonth.length,this.chicagoData.abandonedVehiclesMonth.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			
+			this.abandonedVehicleGraph.setData(data.values, data.names, "abandonedvehicles", "Area");
+			this.abandonedVehicleGraph.setTitle("Abandoned Vehicles");
+			this.abandonedVehicleGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.abandonedVehicleGraph.draw();	
+		}
+		
 	}
 }
 
