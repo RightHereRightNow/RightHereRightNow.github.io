@@ -81,11 +81,13 @@ function Controller() {
 	//svg handles for graphs and other data
 
 	this.crimeGraph = null;
+	this.crimeGraphSVG = null;
 	this.potHoleGraph = null;
 	this.potHoleGraphSVG = null;
 	this.abandonedVehicleGraph = null;
 	this.abandonedVehicleGraphSVG = null;
 	this.streetLightGraph = null;
+	this.streetLightGraphSVG = null;
 
 	this.weatherBox = null;
 	this.twitterBox = null;
@@ -897,8 +899,41 @@ Controller.prototype.makeStreetlightGraph = function(){
 	}
 }
 
-Controller.prototype.makeCrimeGraph = function(data){
-	if (this.crimeGraph){
-
+Controller.prototype.makeCrimeGraph = function(){
+	if (this.crimeGraphSVG){
+		if (this.crimeGraph === null){
+			this.crimeGraph = new BarChart(this.crimeGraphSVG);
+			console.log("Creating Pie");
+		}
+		if (this.layersFlags.CRIMELAYER === true && (this.pathLineConstructed || this.rectangleConstructed)){
+			var data ;
+			var dataChicago;
+			console.log("Creating Pie");
+			if (this.queryDuration==="week"){
+				data = this.selectionData.abandonedVehiclesWeek;
+				chicagoData = this.chicagoData.abandonedVehiclesWeek;
+			}
+			else{
+				data = this.selectionData.abandonedVehiclesMonth;
+				chicagoData = this.chicagoData.abandonedVehiclesMonth;
+			}
+			data = getCrimeTypeCount(data);
+			chicagoData = getCrimeTypeCount(chicagoData);
+			console.log(data);
+			/*this.crimeGraph.setData(chicagoData, data, "crime");
+			this.crimeGraph.setTitle("Crimes");
+			this.crimeGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.crimeGraph.draw();	*/
+		}
+		
 	}
+}
+
+
+function getCrimeTypeCount(data){
+	var nested_data = d3.nest()
+		.key(function(d) { return d.primary_type; })
+		.rollup(function(leaves) { return leaves.length; })
+		.entries(data);
+	return nested_data;
 }
