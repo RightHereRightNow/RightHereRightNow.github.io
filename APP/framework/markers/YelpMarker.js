@@ -2,7 +2,7 @@
  * Created by krbalmryde on 11/20/14.
  */
 //coffee
-function YelpMarker(data) {
+function YelpMarker(data, context) {
 
     this.display_phone = data.display_phone; //  "+1-312-733-7595"
     this.id = data.id; //  "lotus-cafe-and-bánh-mì-sandwiches-chicago"
@@ -23,10 +23,12 @@ function YelpMarker(data) {
     this.snippet_text = data.snippet_text; //  "It is a long, long way from River North to University Street on a Divvy. Despite this, I find that I can't wait to make the 20-minute journey south..."
     this.url = data.url; //  "http://www.yelp.com/biz/lotus-cafe-and-b%C3%A1nh-m%C3%AC-sandwiches-chicago"
 
+    this.controller =  context;
+    var self = this;
     var yelpClick = function(e){
-        console.log(e, "has been clicked!!")
-    };
+        context.getTwitters('food');
 
+    };
 
 
     var popupstr = "<p><b>" + this.name + " </b>" +

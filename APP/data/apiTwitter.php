@@ -1,5 +1,5 @@
 <?php
-include_once('twitteroauth/OAuth.php');
+//include_once('twitteroauth/OAuth.php');
 include_once('twitteroauth/twitteroauth.php');
 
 function getConnectionWithAccessToken($oauth_token, $oauth_token_secret) {
@@ -20,16 +20,16 @@ for($i=0; $i<count($qparam); $i++){
     }
 }
 
-$lat = $_GET['latitude'];
-$lon = $_GET['longitude'];
-$radius = $_GET['radius'];
+//$lat = $_GET['latitude'];
+//$lon = $_GET['longitude'];
+//$radius = $_GET['radius'];
 
 $geocode = $lat.','.$lon.','.$radius;
 //echo $q;
 $parameters = array(
     'q' => $q,
     'count' => '100',
-    'geocode' => $geocode
+ //   'geocode' => $geocode
 
 );
 

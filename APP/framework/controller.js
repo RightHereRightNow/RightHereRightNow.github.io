@@ -12,6 +12,8 @@ function Controller() {
 
 	this.busRoutes = [];
 
+
+
 	this.weatherBox = null;
 
 	this.perimeterRadiusInKm = 0.4;
@@ -66,6 +68,11 @@ function Controller() {
 	this.getUpdates();
 
 }
+
+//var twitterBox = new Twitter();
+var indexTwitter = 0;
+var numOfShowTwitter = 2;
+var tweetData = null;
 
 Controller.prototype.getUpdates = function(){
 	var refreshrate = 30000; // Rate at which new data is queried
@@ -195,6 +202,65 @@ Controller.prototype.getDataCTA = function() {
 
 };
 
+Controller.prototype.getTwitters = function(queryParam){
+	var hashed = this.makeHashTag(queryParam);
+	var chicago = '#chicago';
+
+	hashed = encodeURIComponent(hashed);
+	chicago = encodeURIComponent(chicago);
+
+
+	console.log(hashed);
+	console.log(chicago);
+
+	var varTweet = [];
+	varTweet.push(hashed);
+	varTweet.push(chicago);
+
+	//database.twitter(varTweet,'','','',fringuello_tweets, 'tweets');
+	this.dataManager.twitter(varTweet,'','','',this.twitterCallBack,'tweets');
+};
+
+Controller.prototype.twitterCallBack = function(data,iden){
+	indexTwitter = 0;
+	numOfShowTwitter = 2;
+	tweetData = data;
+
+	switchTweet();
+	setInterval(switchTweet, 2000);
+};
+
+function switchTweet() {
+	if(tweetData.statuses.length == 0){
+		return;
+	}
+	for(var i =0; i < numOfShowTwitter; i++){
+		console.log(indexTwitter);
+		if(tweetData.statuses.length <= (indexTwitter)){
+			indexTwitter = 0;
+		}
+		//if(twitterBox.flag != 0){
+		//	twitterBox.deleteText();
+		//}
+		//twitterBox.showTweets();
+		console.log(tweetData.statuses[indexTwitter].user.created_at);
+		console.log(tweetData.statuses[indexTwitter].user.screen_name);
+		console.log(tweetData.statuses[indexTwitter].text);
+
+		indexTwitter ++;
+	}
+};
+
+Controller.prototype.makeHashTag = function (string){
+
+	var nameArray = string.split(" ");
+	var finalString = '#';
+	for(var i = 0; i<nameArray.length; i++){
+		finalString += nameArray[i];
+	}
+
+	return finalString;
+};
 
 Controller.prototype.onMapClick = function(e){
 	if (this.mode.SELECTION === true){
@@ -332,7 +398,7 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 			var key = data[i][idstr];
 			// A - B: Add new marker
 			if(!markerCollection[key]) {
-				markerCollection[key] = new marker(data[i]);
+				markerCollection[key] = new marker(data[i],context);
 				markerCollection[key].viewNewIcon();
 				console.log("Add new Marker!!", markerCollection[key]);
 				markerCollection[key].addTo(this.map);
