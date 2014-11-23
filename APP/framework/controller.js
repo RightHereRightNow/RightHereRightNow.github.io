@@ -12,10 +12,7 @@ function Controller() {
 
 	this.busRoutes = [];
 
-
-
 	this.weatherBox = null;
-	this.twitterBox = null;
 
 	this.perimeterRadiusInKm = 0.4;
 	this.showDataAlongPathOnly = true; // Need a button to turn this on and off
@@ -78,6 +75,8 @@ function Controller() {
 
 	this.busRoutes = [];
 
+	this.markersRemoved = false;
+
 	//svg handles for graphs and other data
 
 	this.crimeGraph = null;
@@ -110,17 +109,15 @@ Controller.prototype.getBusStopDataFromFile = function(){
 		console.log(this.ctaStopsData);
 		//console.log(data);
 	}.bind(this));
-}
+};
 
 //var twitterBox = new Twitter();
 var indexTwitter = 0;
-var numOfShowTwitter = 1;
+var numOfShowTwitter = 2;
 var tweetData = null;
-var twitterBox = null;
-var twitterInterval;
 
 Controller.prototype.getUpdates = function(){
-	var refreshrate = 10000; // Rate at which new data is queried
+	var refreshrate = 30000; // Rate at which new data is queried
 	this.getData();
 	//this.updateWeather();
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
@@ -196,14 +193,14 @@ Controller.prototype.getData = function() {
 			bounds = this.pathLine.getBounds();
 			northWest = getNewPointInLatLng(bounds.getNorth(),bounds.getWest(),this.perimeterRadiusInKm,-45); //Increase the bounding box by radius
 			southEast = getNewPointInLatLng(bounds.getSouth(),bounds.getEast(),this.perimeterRadiusInKm,135);
-		}
+		} 	
 		else{// this.rectangleConstructed is true
 			bounds = this.rectangleLayer.getBounds();
 			northWest = bounds.getNorthWest();
 			southEast = bounds.getSouthEast();
 		}
 
-
+		
 		var north = northWest.lat;
 		var west = northWest.lng;
 		var south = southEast.lat;
@@ -238,8 +235,11 @@ Controller.prototype.getData = function() {
 				//this.ctaArray["1701"].updateMarkerData(data);
 			//}
 			if(this.busRoutes.length == 0) {
+				console.log("bus routes is 0, getCTAData2");
 				this.dataManager.getCTAData2(this.busRoutes, north, west, south, east, dataCallback, "cta");
+				console.log("Now its,",this.busRoutes.length);
 			}else{
+				console.log("bus routes is",this.busRoutes.length);
 				for(var i = 0; i< this.busRoutes.length; i++){
 					this.dataManager.getVehiclesPublic(this.busRoutes[i], north,west,south,east,dataCallback,"cta");
 				}
@@ -259,7 +259,6 @@ Controller.prototype.getDataCTA = function() {
 };
 
 Controller.prototype.getTwitters = function(queryParam){
-
 	var hashed = this.makeHashTag(queryParam);
 	var chicago = '#chicago';
 
@@ -279,16 +278,12 @@ Controller.prototype.getTwitters = function(queryParam){
 };
 
 Controller.prototype.twitterCallBack = function(data,iden){
-	clearInterval(twitterInterval);
-	if(twitterBox != null){
-		twitterBox.deleteText();
-	}
 	indexTwitter = 0;
-	numOfShowTwitter = 1;
+	numOfShowTwitter = 2;
 	tweetData = data;
-	twitterBox = new Twitter();
+
 	switchTweet();
-	twitterInterval = setInterval(switchTweet, 2000);
+	setInterval(switchTweet, 2000);
 };
 
 function switchTweet() {
@@ -300,20 +295,18 @@ function switchTweet() {
 		if(tweetData.statuses.length <= (indexTwitter)){
 			indexTwitter = 0;
 		}
-		if(twitterBox.flag != 0){
-			console.log("is not zero!");
-			twitterBox.deleteText();
-		}
-
-		twitterBox.showTweets(tweetData.statuses[indexTwitter]);
+		//if(twitterBox.flag != 0){
+		//	twitterBox.deleteText();
+		//}
+		//twitterBox.showTweets();
 		console.log(tweetData.statuses[indexTwitter].user.created_at);
 		console.log(tweetData.statuses[indexTwitter].user.screen_name);
 		console.log(tweetData.statuses[indexTwitter].text);
 
-
 		indexTwitter ++;
 	}
 };
+
 Controller.prototype.makeHashTag = function (string){
 
 	var nameArray = string.split(" ");
@@ -327,7 +320,7 @@ Controller.prototype.makeHashTag = function (string){
 
 Controller.prototype.getTrafficFlow = function(bounds) {
 	var url = "http://www.mapquestapi.com/traffic/v2/flow?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&inFormat=json&json={mapState: { center: { lat:39.739028996383965 , lng:-104.98479299999998}, height:400, width:400, scale:433342}}";
-}
+};
 
 Controller.prototype.onMapClick = function(e){
 	var point = e.latlng;
@@ -350,7 +343,7 @@ Controller.prototype.onMapClick = function(e){
 		if (this.rectangle.ul===null)
 			this.rectangle.ul = point;
 		else if (this.rectangle.ul.lat < point.lat || this.rectangle.ul.lng > point.lng)
-			this.rectangle.ul = null;
+			this.rectangle.ul = null; 
 		else
 			this.rectangle.lr = point;
 
@@ -370,33 +363,54 @@ Controller.prototype.onMapClick = function(e){
 			this.rectangleLayer = new L.rectangle(rectBounds, {color: "#ff7800", weight: 1});
 			this.map.map.addLayer(this.rectangleLayer);
 		}
-
+		
 	}
 };
 
 Controller.prototype.removePath = function(){
-
+	
 	this.locations = [];
 	if (this.pathLineConstructed){
 		this.map.map.removeLayer(this.pathLine);
 		this.pathLineConstructed = false;
 	}
-
+	
 	this.removeAllMarkers();
-}
+};
+
 Controller.prototype.removeRectangle = function(){
 	if (this.rectangleConstructed){
 		this.map.map.removeLayer(this.rectangleLayer);
 		this.rectangleConstructed = false;
 	}
-
+	
 	this.rectangle = {ul:null,lr:null};
 	this.removeAllMarkers();
-}
+};
 
 Controller.prototype.removeAllMarkers = function(){
-	//TODO remove all markers
-}
+	console.log("removeAllMarkers");
+	var markerContainers = [
+		//this.pointsOfInterestArray,
+		this.potholesArray,
+		this.crimeContainer,  //new CrimeContainer();
+		this.divvyArray,
+		this.carsArray,
+		//this.lightsAllArray,
+		//this.lights1Array = {};
+		//this.ctaArray,
+		this.yelpContainer
+	];
+
+	var self = this;
+	markerContainers.forEach(function(container){
+		for (key in container){
+			//console.log(container[key]);
+			self.map.removeLayer(container[key]);
+			delete container[key];
+		}
+	})
+};
 
 
 Controller.prototype.normalModeClick = function(e){};
@@ -429,27 +443,17 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		for (var d=0;d<data.length;d++){
 			var dist = 100; // Too far away!
 			var dataPoint = data[d];
-
-			if(dataPoint.hasOwnProperty("location.coordinate")){
+			if(dataPoint.hasOwnProperty('location.coordinate')) {
+				console.log("dataPoint.location",dataPoint);
 				dataPoint.latitude = dataPoint.location.coordinate.latitude;
 				dataPoint.longitude = dataPoint.location.coordinate.longitude;
 			}
+
 			console.log(dataPoint);
 			var dataRange = false;
 			for(var i=0;i<points.length;i++){
-				/*
-				var lat,lng;
-				if(dataPoint.location) {
-					console.log("dataPoint.location", dataPoint);
-					lat = dataPoint.location.coordinate.latitude;
-					lng = dataPoint.location.coordinate.longitude;
-				} else {
-					lat = dataPoint.latitude;
-					lng = dataPoint.longitude;
-				}
-				*/
-				//var tempDist = distance(points[i].lat,points[i].lng,lat,lng);
-				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude,dataPoint.longitude);
+
+				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude, dataPoint.longitude);
 
 				if (tempDist <= this.perimeterRadiusInKm){
 					console.log(tempDist,this.perimeterRadiusInKm);
@@ -631,8 +635,8 @@ Controller.prototype.init = function(){
 	//database.yelp('food','London',0,'4000','','','','','','',fringuello, 'yelpdata-city');
 	//database.yelp('food', '', 0, '4000','','', '41.8747107','-87.0','41.8710629','-87.9',fringuello, 'yelp-data-square');
 
-	var data = {destination: "Congress Plaza", headdirect: "87",latitude: 41.8779182434082,longitude: -87.64629666310437,pdist: "37681",pid: "4506",route: "126",timestamp: "20141121 22:48",vehicleid: "1701"};
-	this.ctaArray["1701"] = new CTAMarker(data);
+	//var data = {destination: "Congress Plaza", headdirect: "87",latitude: 41.8779182434082,longitude: -87.64629666310437,pdist: "37681",pid: "4506",route: "126",timestamp: "20141121 22:48",vehicleid: "1701"};
+	//this.ctaArray["1701"] = new CTAMarker(data);
 	//console.log(this.pointsOfInterestArray[5]);
 	for( var key in this.pointsOfInterestArray){
 		this.pointsOfInterestArray[key].addTo(this.map);

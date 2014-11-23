@@ -25,14 +25,14 @@ var CTAMarker = function(data) {
     var iconOld = L.AwesomeMarkers.icon({
         icon: "bus",
         spin:false,
-        markerColor: "pink",
+        markerColor: "cadetblue",
         iconColor: "white"
     });
 
     var iconNew = L.AwesomeMarkers.icon({
         icon: "bus",
         spin:false,
-        markerColor: "pink",
+        markerColor: "cadetblue",
         iconColor: "white"
     });
 

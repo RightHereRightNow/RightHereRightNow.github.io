@@ -1,60 +1,23 @@
 function Twitter() {
-    this.svg = d3.select('#twitterBox');
+    this.svg = d3.select('#graphTwitter');
     this.flag = 0; //all clean
 }
 
 Twitter.prototype.showTweets = function(tweets){
     //var svg = d3.select('#graphTwitter');
 
-    this.svg.append("svg:image")
-        .attr("xlink:href","./img/twitter.svg")
-        .attr("x",5)
-        .attr("y",0)
-        .attr("width", 100)
-        .attr("height", 100)
-        .attr("class", "pidgeon")
-        .attr("opacity", 0.5);
-
     this.svg
         .append("text")
-        .text(""+tweets.text)
-        .attr("transform", "translate(" + (1) + " , " + 10 + " )")
-        .attr("dx", 1)
-        .attr("dy", 1)
-        .attr("class", "tweet-text")
+        .text("Current Temperature:")
+        .attr("transform", "translate(" + (100/2) + " , " + 2*100 + " )")
+        .attr("class", "curr-temp")
         .attr("fill", "white")
-        .attr("font-size", "0.4em");
+        .attr("font-size", "200%");
 
-    this.svg.select(".tweet-text").call(wrap,150);
     this.flag = 1;
 };
 
 Twitter.prototype.deleteText = function(){
-    this.svg.select('.tweet-text').remove();
-    this.svg.select('.pidgeon').remove();
+    this.svg.select('.curr-temp').exit();
     this.flag = 0;
 };
-
-function wrap(text, width) {
-    text.each(function() {
-        var text = d3.select(this),
-            words = text.text().split(/\s+/).reverse(),
-            word,
-            line = [],
-            lineNumber = 0,
-            lineHeight = 1.1, // ems
-            y = text.attr("y"),
-            dy = parseFloat(text.attr("dy")),
-            tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-        while (word = words.pop()) {
-            line.push(word);
-            tspan.text(line.join(" "));
-            if (tspan.node().getComputedTextLength() > width) {
-                line.pop();
-                tspan.text(line.join(" "));
-                line = [word];
-                tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-            }
-        }
-    });
-}

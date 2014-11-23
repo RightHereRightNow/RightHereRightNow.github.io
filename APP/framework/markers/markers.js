@@ -18,8 +18,8 @@ extend(LightsOutMarker, AbstractMarker);
 
 
 
-//extend(SimpleContainer, AbstractMarkerContainer);
-//extend(CrimeContainer, AbstractMarkerContainer);
+extend(SimpleContainer, AbstractMarkerContainer);
+extend(CrimeContainer, AbstractMarkerContainer);
 
 //extend(DivvyContainer, AbstractMarkerContainer);
 //extend(AbandonedVehicleContainer, AbstractMarkerContainer);

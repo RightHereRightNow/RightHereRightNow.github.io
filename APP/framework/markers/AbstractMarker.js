@@ -41,7 +41,7 @@ AbstractMarker.prototype = {
 
     init: function() {
         this.marker = L.marker(this.LatLng, {icon: this.iconNew});
-        //this.ID = setInterval(this.pulse.bind(this), 400);
+        this.ID = setInterval(this.pulse.bind(this), 200);
         if (this.popupString) {
             this.bindPopup();
         }
@@ -99,7 +99,7 @@ AbstractMarker.prototype = {
 
         this.setOpacity(this.opacity);
 
-        if (this._counter == 80){
+        if (this._counter == 10){
             //console.log("clear interval");
             clearInterval(this.ID);
         }
@@ -149,7 +149,7 @@ AbstractMarkerContainer.prototype = {
     keys: function() {
         var keys = [];
 
-        for ( k in this.container){
+        for ( var k in this.container){
             keys.push(k);
         }
 
