@@ -140,18 +140,18 @@ ui.prototype.draw = function() {
 			var svg = d3.select(drawTo).append("svg:svg")
 				.attr("id",idStr)
 				.attr("class","graphs")
-				.attr("viewBox", "0 0 1600 900")
+				.attr("viewBox", "0 0 160 90")
 				.attr("preserveAspectRatio", "xMinYMin meet")
 
-			var g = svg.append("svg:g")
+			/*var g = svg.append("svg:g")
 				// .attr("transform","translate(0 10)")
 
-			g.append("circle")
+			/*g.append("circle")
 				.attr("transform","translate(100,100)")
 				.attr("r",1000)
 				.attr("stroke","yellow")
 				.attr("stroke-width",40)
-				.attr("fill","blue");
+				.attr("fill","blue");*/
 		return svg;
 	}
 
@@ -166,10 +166,10 @@ ui.prototype.draw = function() {
 
 		} else {
 			graphsActive = true;
-			context.crimeGraph = addGraph("#divgraphs1","graphCrime");
-			context.potHoleGraph = addGraph("#divgraphs1","graphPotholes");
-			context.abandonedVehicleGraph = addGraph("#divgraphs1","graphAbandonedVehicles");
-			context.streetLightGraph = addGraph("#divgraphs1","graphStreetLights");
+			context.crimeGraphSVG = addGraph("#divgraphs1","graphCrime");
+			context.potHoleGraphSVG = addGraph("#divgraphs1","graphPotholes");
+			context.abandonedVehicleGraphSVG = addGraph("#divgraphs1","graphAbandonedVehicles");
+			context.streetLightGraphSVG = addGraph("#divgraphs1","graphStreetLights");
 
 			context.weatherBox = addGraph("#divgraphs2","weatherBox");
 			context.twitterBox = addGraph("#divgraphs2","twitterBox");

@@ -27,6 +27,7 @@ function init() {
 	
 
 	context.init();
+	context.getChicagoData();
 	context.map.on("click", context.onMapClick.bind(context));
 
 	// Initialize controller in selection mode

@@ -58,7 +58,7 @@ function Controller() {
 	this.updateCounter = 0; // counts number of updates - only for debugging
 
 	this.cycles = -1;  // Keeps track of the number of update cycles, mostly important for the initial cycle
-
+	this.queryDuration = "week";
 	//
 	this.pointsOfInterestArray = {};
 	this.potholesArray = {};
@@ -83,12 +83,26 @@ function Controller() {
 	this.crimeGraph = null;
 	this.potHoleGraph = null;
 	this.abandonedVehicleGraph = null;
+	this.abandonedVehicleGraphSVG = null;
 	this.streetLightGraph = null;
 
 	this.weatherBox = null;
 	this.twitterBox = null;
 	this.uberBox = null;
 	this.miscBox = null;
+
+	this.chicagoData = {
+		crimesWeek: null,
+		potHolesWeek: null,
+		abandonedVehiclesWeek: null,
+		streetLightsAllWeek: null,
+		streetLightsOneWeek: null,
+		crimesMonth: null,
+		potHolesMonth: null,
+		abandonedVehiclesMonth: null,
+		streetLightsAllMonth: null,
+		streetLightsOneMonth: null
+	};
 }
 
 
@@ -121,7 +135,7 @@ var twitterBox = null;
 Controller.prototype.getUpdates = function(){
 	var refreshrate = 30000; // Rate at which new data is queried
 	this.getData();
-	this.updateWeather();
+	//this.updateWeather();
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
 };
 
@@ -216,15 +230,15 @@ Controller.prototype.getData = function() {
 		if(this.layersFlags.CURRENTWEATHER) {
 			// this.updateWeather();
 		}
-		if (this.layersFlags.CRIMELAYER) this.dataManager.crimes("week2",north,west,south,east,dataCallback, "crimes" );
+		if (this.layersFlags.CRIMELAYER) this.dataManager.crimes((this.queryDuration==="week" ? "week2" : this.queryDuration),north,west,south,east,dataCallback, "crimes" );
 
-		if (this.layersFlags.POTHOLES) this.dataManager.potHoles("week",north,west,south,east,dataCallback, "potHoles" );
+		if (this.layersFlags.POTHOLES) this.dataManager.potHoles(this.queryDuration,north,west,south,east,dataCallback, "potHoles" );
 
-		if (this.layersFlags.ABANDONEDVEHICLES) this.dataManager.abandonedVehicle("week",north,west,south,east,dataCallback, "abandonedVehicles" );
+		if (this.layersFlags.ABANDONEDVEHICLES) this.dataManager.abandonedVehicle(this.queryDuration,north,west,south,east,dataCallback, "abandonedVehicles" );
 
 		if (this.layersFlags.STREETLIGHTSOUT) {
-			this.dataManager.lightOutAllNotCompleted("week",north,west,south,east,dataCallback, "lightOutAll" );
-			this.dataManager.lightOut1NotCompleted("week",north,west,south,east,dataCallback, "lightOutOne" );
+			this.dataManager.lightOutAllNotCompleted(this.queryDuration,north,west,south,east,dataCallback, "lightOutAll" );
+			this.dataManager.lightOut1NotCompleted(this.queryDuration,north,west,south,east,dataCallback, "lightOutOne" );
 		}
 		if (this.layersFlags.DIVVYBIKES) this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 
@@ -414,6 +428,61 @@ function distance (lat1,lng1,lat2,lng2) {
 	return R * c;
 }
 
+Controller.prototype.getChicagoData = function(){ // One time pull of the city wide data
+	var dataCallback1 = this.storeChicagoWeekData.bind(this);
+	this.dataManager.crimes("week2",0,0,0,0,dataCallback1, "crimes" );
+    this.dataManager.potHoles("week",0,0,0,0,dataCallback1, "potHoles" );
+    this.dataManager.abandonedVehicle("week",0,0,0,0,dataCallback1, "abandonedVehicles" );
+	this.dataManager.lightOutAllNotCompleted("week",0,0,0,0,dataCallback1, "lightOutAll" );
+	this.dataManager.lightOut1NotCompleted("week",0,0,0,0,dataCallback1, "lightOutOne" );
+	var dataCallback2 = this.storeChicagoMonthData.bind(this);
+	this.dataManager.crimes("month",0,0,0,0,dataCallback2, "crimes" );
+    this.dataManager.potHoles("month",0,0,0,0,dataCallback2, "potHoles" );
+    this.dataManager.abandonedVehicle("month",0,0,0,0,dataCallback2, "abandonedVehicles" );
+	this.dataManager.lightOutAllNotCompleted("month",0,0,0,0,dataCallback2, "lightOutAll" );
+	this.dataManager.lightOut1NotCompleted("month",0,0,0,0,dataCallback2, "lightOutOne" );
+
+}
+
+Controller.prototype.storeChicagoWeekData = function(data, id){
+	switch(id){
+		case "crimes":
+			this.chicagoData.crimesWeek = data;
+			break;
+		case "potHoles":
+			this.chicagoData.potHolesWeek = data;
+			break;
+		case "abandonedVehicles":
+			this.chicagoData.abandonedVehiclesWeek = data;
+			break;
+		case "lightOutAll":
+			this.chicagoData.streetLightsAllWeek = data;
+			break;
+		case "lightOutOne":
+			this.chicagoData.streetLightsOneWeek = data;
+			break;
+	}
+}
+
+Controller.prototype.storeChicagoMonthData = function(data, id){
+	switch(id){
+		case "crimes":
+			this.chicagoData.crimesMonth = data;
+			break;
+		case "potHoles":
+			this.chicagoData.potHolesMonth = data;
+			break;
+		case "abandonedVehicles":
+			this.chicagoData.abandonedVehiclesMonth = data;
+			break;
+		case "lightOutAll":
+			this.chicagoData.streetLightsAllMonth = data;
+			break;
+		case "lightOutOne":
+			this.chicagoData.streetLightsOneMonth = data;
+			break;
+	}
+}
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	console.log("filterByPerimeter", data,identifierStr,data);
@@ -722,11 +791,14 @@ Controller.prototype.makePotholeGraph = function(data){
 }
 
 Controller.prototype.makeAbandonedVehicleGraph = function(data){
-	if (this.abandonedVehicleGraph){
-		var chart = new PieChart(this.abandonedVehicleGraph);
-		chart.setData(data.values, data.names, "abandonedvehicles", "Area");
-		chart.setTitle("Abandoned Vehicles");
-		chart.draw();
+	if (this.abandonedVehicleGraphSVG){
+		if (this.abandonedVehicleGraph === null){
+			this.abandonedVehicleGraph = new PieChart(this.abandonedVehicleGraph);
+		}
+		
+		this.abandonedVehicleGraph.setData(data.values, data.names, "abandonedvehicles", "Area");
+		this.abandonedVehicleGraph.setTitle("Abandoned Vehicles");
+		this.abandonedVehicleGraph.draw();
 	}
 }
 
@@ -736,5 +808,11 @@ Controller.prototype.makeStreetlightGraph = function(data){
 		chart.setData(data.values, data.names, "streetlights", "Area");
 		chart.setTitle("Street Lights");
 		chart.draw();
+	}
+}
+
+Controller.prototype.makeCrimeGraph = function(data){
+	if (this.crimeGraph){
+
 	}
 }
