@@ -1,4 +1,4 @@
-var level2Button = function(parentButton,text,iconname,onClick,s,markers) {
+var level2Button = function(parentButton,i,text,iconname,onClick,s,markers) {
 
 	this.parentButton = parentButton;
 	this.ui = this.parentButton.ui;
@@ -21,6 +21,8 @@ var level2Button = function(parentButton,text,iconname,onClick,s,markers) {
 	this.colorInactive = "#666";
 
 	this.markerArray = markers;
+
+	this.index = i;
 
 }
 
@@ -91,10 +93,12 @@ level2Button.prototype.setPreviousButton = function(prevButton) {
 level2Button.prototype.update = function() {
 
 	// TODO: add reference to parent button
-	if(this.previousButton === null || this.previousButton === undefined) {
-		this.yStart = this.ui.button1height + this.ui.button1dx;
+	if(!this.parentButton.active) {
+		console.log(this.textStr + "Parent Button Inactive");
+		this.yStart = this.parentButton.yStart;
 	} else {
-		this.yStart = this.previousButton.yEnd + this.ui.button2dy;
+		console.log("B\tLevel1Button" + this.textStr);
+		this.yStart = this.parentButton.yStart + this.ui.button1dy + this.ui.button1height + this.index*(this.ui.button2height + this.ui.button2dy);
 	};
 
 	this.active = context.getMode(this.contextSwitchStr);
@@ -102,7 +106,7 @@ level2Button.prototype.update = function() {
 	var thisButton = this;
 
 	var color = (this.active ? this.colorActive : this.colorInactive);
-	var opac = 1;
+	var opac = (this.parentButton.active ? 1 : 0);
 
 	var thisButton = this;
 

@@ -22,12 +22,12 @@ var ui = function(menutag,mapcontroltag,radiuscontroltag) {
 	this.linepadding = 150;
 
 	this.button1height = 120;
-	this.button1width = 500; // TODO: change to 900
+	this.button1width = 900;
 	this.button1dx = 50;
 	this.button1dy = 20;
 
 	this.button2height = .8*this.button1height;
-	this.button2width = 800; // TODO: uncomment this:  this.button1width - this.button1dx;
+	this.button2width = this.button1width - this.button1dx;
 	this.button2dx = 2*this.button1dx;
 	this.button2dy = .5*this.button1dy;
 
@@ -35,7 +35,6 @@ var ui = function(menutag,mapcontroltag,radiuscontroltag) {
 	divvyBlue = "#3db7e4";
 
 	this.button1List = [];
-	// this.buttonAllList = [];
 
 	this.dt = 1000; // Transition duration
 }
@@ -74,7 +73,21 @@ ui.prototype.draw = function() {
 	this.buttonYelp = new level1Button(this,"Yelp","distance1",emptyCallback,"YELP",emptyArray);
 	this.buttonYelp.setPreviousButton(this.buttonLayers);
 	this.button1List.push(this.buttonYelp);
+
 	
+	// SUBMENU LAYERS
+	
+	this.buttonLayers.addChildButton("A","stack9",emptyCallback,"TRAFFICLAYER",emptyArray);
+	this.buttonLayers.addChildButton("B","stack9",emptyCallback,"CRIMELAYER",emptyArray);
+	this.buttonLayers.addChildButton("C","stack9",emptyCallback,"POTHOLELAYER",emptyArray);
+	
+	// Draw Buttons
+	this.buttonSelection.create(svgmenu);
+	this.buttonLayers.create(svgmenu);
+	this.buttonYelp.create(svgmenu);
+
+	
+	/*
 	this.buttonGraphs = new level1Button(this,"Graphs","stack9",emptyCallback,"GRAPHS",emptyArray);
 	this.buttonGraphs.setPreviousButton(this.buttonYelp);
 	this.button1List.push(this.buttonGraphs);
@@ -87,71 +100,38 @@ ui.prototype.draw = function() {
 	this.buttonBlub.setPreviousButton(this.buttonBla);
 	this.button1List.push(this.buttonBlub);
 	
-	
-	// SUBMENU LAYERS
-	
-	this.buttonLayers.addChildButton("Traffic","stack9",emptyCallback,"TRAFFICLAYER",emptyArray);
-	this.buttonLayers.addChildButton("Blub","stack9",emptyCallback,"CRIMELAYER",emptyArray);
-	
-	// Draw level1buttons last, so they are on top
-	this.buttonSelection.create(svgmenu);
-	this.buttonLayers.create(svgmenu);
-	this.buttonYelp.create(svgmenu);
 	this.buttonGraphs.create(svgmenu);
 	this.buttonBla.create(svgmenu);
 	this.buttonBlub.create(svgmenu);
+*/	
 
 
 	
 /*	
-	this.buttonAllList = this.button1List.slice(0);
 
 	var ystart = 0; var yend = this.button2height;
 	
 	this.buttonTraffic = new level2Button(this.buttonLayers,"Traffic",ystart,yend,"stack9",emptyCallback,"TRAFFICLAYER",emptyArray);
 	this.buttonTraffic.setPreviousButton(null);
-	this.buttonAllList.push(this.buttonTraffic);
-
-	ystart = yend + this.button2dy; yend = ystart + this.button2height;
 
 	this.buttonCrime = new level2Button(this.buttonLayers,"Crimes",ystart,yend,"crime1",emptyCallback,"CRIMELAYER",emptyArray);
 	this.buttonCrime.setPreviousButton(this.buttonTraffic);
-	this.buttonAllList.push(this.buttonCrime);
 
-	ystart = yend + this.button2dy; yend = ystart + this.button2height;
-	
 	this.buttonPlacesOfInterest = new level2Button(this.buttonLayers,"Places of Interest",ystart,yend,"information38",emptyCallback,"PLACESOFINTEREST",emptyArray);
 	this.buttonPlacesOfInterest.setPreviousButton(this.buttonCrime);
-	this.buttonAllList.push(this.buttonPlacesOfInterest);
-
-	ystart = yend + this.button2dy; yend = ystart + this.button2height;
 	
 	this.buttonDivvyBikes = new level2Button(this.buttonLayers,"Divvy Bike Stations",ystart,yend,"regular2",emptyCallback,"DIVVYBIKES",emptyArray);
 	this.buttonDivvyBikes.setPreviousButton(this.buttonPlacesOfInterest);
-	this.buttonAllList.push(this.buttonDivvyBikes);
-
-	ystart = yend + this.button2dy; yend = ystart + this.button2height;
 	
 	this.buttonAbandonedVehicles = new level2Button(this.buttonLayers,"Abandoned Vehicles",ystart,yend,"criminal20",emptyCallback,"ABANDONEDVEHICLES",emptyArray);
 	this.buttonAbandonedVehicles.setPreviousButton(this.buttonDivvyBikes);
-	this.buttonAllList.push(this.buttonAbandonedVehicles);
-
-	ystart = yend + this.button2dy; yend = ystart + this.button2height;
 	
 	this.buttonStreetLightsOut = new level2Button(this.buttonLayers,"Streetlights Out",ystart,yend,"street9",emptyCallback,"STREETLIGHTSOUT",emptyArray);
 	this.buttonAbandonedVehicles.setPreviousButton(this.buttonAbandonedVehicles);
-	this.buttonAllList.push(this.buttonStreetLightsOut);
-
-	ystart = yend + this.button2dy; yend = ystart + this.button2height;
 	
 	this.buttonPotholes = new level2Button(this.buttonLayers,"Streetlights Out",ystart,yend,"road22",emptyCallback,"POTHOLES",emptyArray);
 	this.buttonAbandonedVehicles.setPreviousButton(this.buttonStreetLightsOut);
-	this.buttonAllList.push(this.buttonPotholes);
 
-	ystart = yend + this.button2dy; yend = ystart + this.button2height;
-
-	// TODO: Submenu buttons should be managed by main buttons
-	// TODO: remove ystart yend completely from constructor
 	// TODO: level1buttons are mutually exclusive, level2buttons are not
 	// TODO: level2buttons have layers, arrays, etc., level1buttons dont - modify in controller
 	*/

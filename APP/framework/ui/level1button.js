@@ -117,18 +117,23 @@ level1Button.prototype.update = function() {
 	var color = (this.active ? this.colorActive : this.colorInactive);
 	var opac = 1; // (this.active ? 1 : .4);
 	
-	console.log("ySTART = " + this.yStart + "\tName = " + this.textStr);
+	// console.log("ySTART = " + this.yStart + "\tName = " + this.textStr);
 
 	this.g.transition()
 		.duration(this.ui.dt)
 		.attr("transform","translate(0," + this.yStart + ")")
 		.attr("fill", color)
 		.attr("opacity", opac);
+
+	for(c in this.childButtons) {
+		this.childButtons[c].update();
+	}
 	
 }
 
 level1Button.prototype.addChildButton = function(text,iconname,onClick,s,markers) {
-	var c = new level2Button(this,text,iconname,onClick,s,markers);
+	var index = this.childButtons.length;
+	var c = new level2Button(this,index,text,iconname,onClick,s,markers);
 	this.childButtons.push(c);
 	c.setPreviousButton(this.childButtons[this.childButtons.length-2]);
 }
