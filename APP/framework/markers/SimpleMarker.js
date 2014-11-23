@@ -34,6 +34,7 @@ var SimpleMarker = function(data) {
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
     this.init();
+    //this.pulse();
 };
 
 

@@ -1,7 +1,7 @@
 function Controller() {
 
 	console.log("CONTROLLER initialized");
-
+	var self = this;
 	// this.mapId = null;
 	this.base = 1;
 
@@ -10,16 +10,24 @@ function Controller() {
 	this.ui = new ui("#divmenu","#divmapcontrol","#divradiuscontrol","#divtimerange");
 	this.modes = null;
 
+	this.busRoutes = [];
+
+
+
 	this.weatherBox = null;
+	this.twitterBox = null;
 
 	this.perimeterRadiusInKm = 0.4;
-	this.showDataAlongPathOnly = false; // Need a button to turn this on and off
+	this.showDataAlongPathOnly = true; // Need a button to turn this on and off
 	this.routePoints = null;
 	// Possible modes of our application
 
 	this.mode = {
 		SELECTION: false,
 		LAYERS: false,
+		RECTANGLE:false
+	};
+	this.layersFlags = {
 		TRAFFICLAYER: false,
 		CRIMELAYER:	false,
 		PLACESOFINTEREST: true,
@@ -29,7 +37,8 @@ function Controller() {
 		CURRENTWEATHER:false,
 		POTHOLES: false,
 		YELP: false,
-		GRAPHS: false
+		GRAPHS: false,
+		YELP: false
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -39,6 +48,8 @@ function Controller() {
 	// thisController.layer = new layer();
 
 	this.locations = [];
+	this.rectangle = {ul:null,lr:null};
+	this.rectangleConstructed = false;
 	var response;
 	this.mapCenter = new L.LatLng(41.864755, -87.631474);
 	this.pathLine = null;
@@ -49,7 +60,7 @@ function Controller() {
 	this.updateCounter = 0; // counts number of updates - only for debugging
 
 	this.cycles = -1;  // Keeps track of the number of update cycles, mostly important for the initial cycle
-
+	this.queryDuration = "week";
 	//
 	this.pointsOfInterestArray = {};
 	this.potholesArray = {};
@@ -59,17 +70,88 @@ function Controller() {
 	this.lightsAllArray = {};
 	this.lights1Array = {};
 	this.ctaArray = {};
+
+	this.ctaStopsArray = {};
+	this.ctaStopsData = [];
+	this.ctaStopsDataLoaded = false;
 	this.yelpContainer = {};
-
-
 	this.getUpdates();
 
+
+	this.busRoutes = [];
+
+	//svg handles for graphs and other data
+
+	this.crimeGraph = null;
+	this.potHoleGraph = null;
+	this.potHoleGraphSVG = null;
+	this.abandonedVehicleGraph = null;
+	this.abandonedVehicleGraphSVG = null;
+	this.streetLightGraph = null;
+
+	this.weatherBox = null;
+	this.twitterBox = null;
+	this.uberBox = null;
+	this.miscBox = null;
+
+	this.chicagoData = {
+		crimesWeek: null,
+		potHolesWeek: null,
+		abandonedVehiclesWeek: null,
+		streetLightsAllWeek: null,
+		streetLightsOneWeek: null,
+		crimesMonth: null,
+		potHolesMonth: null,
+		abandonedVehiclesMonth: null,
+		streetLightsAllMonth: null,
+		streetLightsOneMonth: null
+	};
+	this.selectionData = {
+		crimesWeek: null,
+		potHolesWeek: null,
+		abandonedVehiclesWeek: null,
+		streetLightsAllWeek: null,
+		streetLightsOneWeek: null,
+		crimesMonth: null,
+		potHolesMonth: null,
+		abandonedVehiclesMonth: null,
+		streetLightsAllMonth: null,
+		streetLightsOneMonth: null
+	};
 }
 
+
+Controller.prototype.getBusStopDataFromFile = function(){
+	d3.json("data/busstops.json",function(data){
+		var reg = new RegExp ("<td>STOP ID<\/td>[^\/]*");//*<\/td>");
+		var numExp = /\d+/;
+		var features = data.features;
+		for (var i=0;i<features.length;i++){
+			var temp = features[i].properties.Description.match(reg);
+			if (temp){
+				var ID = (temp[0]).match(numExp)[0];
+				var loc = new L.LatLng(features[i].geometry.coordinates[1],features[i].geometry.coordinates[0]);
+				this.ctaStopsData.push({stopID:ID,latlng:loc});
+			}
+
+		}
+		this.ctaStopsDataLoaded = true;
+		console.log(this.ctaStopsData);
+		//console.log(data);
+	}.bind(this));
+}
+
+//var twitterBox = new Twitter();
+var indexTwitter = 0;
+var numOfShowTwitter = 1;
+var tweetData = null;
+var twitterBox = null;
+var twitterInterval;
+
 Controller.prototype.getUpdates = function(){
-	var refreshrate = 5000; // Rate at which new data is queried
+	var refreshrate = 10000; // Rate at which new data is queried
 	this.getData();
-	this.updateWeather();
+	//this.updateWeather();
 	this.updateId = setInterval(this.getData.bind(this), refreshrate);
 };
 
@@ -79,7 +161,7 @@ Controller.prototype.stopUpdates = function(){
 
 
 Controller.prototype.getCTAUpdates = function() {
-  var refreshrate = 1000;
+  var refreshrate = 30000; // 30 seconds
   this.getDataCTA();
   this.updateCTAId = setInterval(this.getDataCTA().bind(this), refreshrate)
 };
@@ -93,7 +175,7 @@ Controller.prototype.updateWeather = function(){
 	// 	this.weatherBox.remove()
 	// }
 	this.dataManager.currentWeather(this.weatherFun,'weather');
-}
+};
 
 Controller.prototype.weatherFun =  function (data, iden){
 	//console.log(this.weatherBox);
@@ -118,6 +200,7 @@ function getNewPointInLatLng(lat,lng,distance,angle){
 }
 
 
+
 // Queries Data from Database and writes to Marker Objects
 // Function calls itself in regular intervals of length "refreshrate"
 Controller.prototype.getData = function() {
@@ -131,14 +214,25 @@ Controller.prototype.getData = function() {
 	console.log("\tCONTROLLER - getData -- WOOT", this.updateCounter++);
 	// console.log("Path line constructed:\t" + this.pathLineConstructed);
 
-	if (this.pathLineConstructed){
+	if (this.pathLineConstructed || this.rectangleConstructed){
 
 		this.updateCounter+=1;
 
-		var bounds = this.pathLine.getBounds();
+		var bounds;
+		var northWest;
+		var southEast;
+		if (this.pathLineConstructed){
+			bounds = this.pathLine.getBounds();
+			northWest = getNewPointInLatLng(bounds.getNorth(),bounds.getWest(),this.perimeterRadiusInKm,-45); //Increase the bounding box by radius
+			southEast = getNewPointInLatLng(bounds.getSouth(),bounds.getEast(),this.perimeterRadiusInKm,135);
+		}
+		else{// this.rectangleConstructed is true
+			bounds = this.rectangleLayer.getBounds();
+			northWest = bounds.getNorthWest();
+			southEast = bounds.getSouthEast();
+		}
 
-		var northWest = getNewPointInLatLng(bounds.getNorth(),bounds.getWest(),this.perimeterRadiusInKm,-45); //Increase the bounding box by radius
-		var southEast = getNewPointInLatLng(bounds.getSouth(),bounds.getEast(),this.perimeterRadiusInKm,135);
+
 		var north = northWest.lat;
 		var west = northWest.lng;
 		var south = southEast.lat;
@@ -149,30 +243,41 @@ Controller.prototype.getData = function() {
 		console.log("fetching data");
 
 		// Sending requests to database
-		if(this.mode.CURRENTWEATHER) {
+		if(this.layersFlags.CURRENTWEATHER) {
 			// this.updateWeather();
 		}
-		if (this.mode.CRIMELAYER) this.dataManager.crimes("week2",north,west,south,east,dataCallback, "crimes" );
+		if (this.layersFlags.CRIMELAYER) this.dataManager.crimes((this.queryDuration==="week" ? "week2" : this.queryDuration),north,west,south,east,dataCallback, "crimes" );
 
-		if (this.mode.POTHOLES) this.dataManager.potHoles("week",north,west,south,east,dataCallback, "potHoles" );
+		if (this.layersFlags.POTHOLES) this.dataManager.potHoles(this.queryDuration,north,west,south,east,dataCallback, "potHoles" );
 
-		if (this.mode.ABANDONEDVEHICLES) this.dataManager.abandonedVehicle("week",north,west,south,east,dataCallback, "abandonedVehicles" );
+		if (this.layersFlags.ABANDONEDVEHICLES) this.dataManager.abandonedVehicle(this.queryDuration,north,west,south,east,dataCallback, "abandonedVehicles" );
 
-		if (this.mode.STREETLIGHTSOUT) {
-			this.dataManager.lightOutAllNotCompleted("week",north,west,south,east,dataCallback, "lightOutAll" );
-			this.dataManager.lightOut1NotCompleted("week",north,west,south,east,dataCallback, "lightOutOne" );
+		if (this.layersFlags.STREETLIGHTSOUT) {
+			this.dataManager.lightOutAllNotCompleted(this.queryDuration,north,west,south,east,dataCallback, "lightOutAll" );
+			this.dataManager.lightOut1NotCompleted(this.queryDuration,north,west,south,east,dataCallback, "lightOutOne" );
 		}
-		if (this.mode.DIVVYBIKES) this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
+		if (this.layersFlags.DIVVYBIKES) this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 
-		if (this.mode.YELP) this.dataManager.yelp('food', 'Chicago', 0, '4000','','', north,west,south,east,dataCallback, 'yelp-data-lat-lon-chicago');
+		if (this.layersFlags.YELP) this.dataManager.yelp('food', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelp');
 
-		//if (this.mode.TRAFFICLAYER) {
-		//	this.dataManager.getCTAData2(north,west,south,east,dataCallback, "cta" );
-        //
-		//	this.dataManager.busRoute.forEach(function(route){
-		//		this.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
-		//	})
-		//}
+		var self = this;
+		if (this.layersFlags.TRAFFICLAYER) {
+			//if(this.updateCounter >= 8) {
+				//var data = {destination: "Congress Plaza", headdirect: "87",latitude: 41.86635, longitude: -87.60659,pdist: "37681",pid: "4506",route: "126",timestamp: "20141121 22:48",vehicleid: "1701"};
+				//this.ctaArray["1701"].updateMarkerData(data);
+			//}
+			if(this.busRoutes.length == 0) {
+				this.dataManager.getCTAData2(this.busRoutes, north, west, south, east, dataCallback, "cta");
+			}else{
+				for(var i = 0; i< this.busRoutes.length; i++){
+					this.dataManager.getVehiclesPublic(this.busRoutes[i], north,west,south,east,dataCallback,"cta");
+				}
+			}
+
+			//this.dataManager.busRoute.forEach(function(route){
+			//	self.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
+			//})
+		}
 	}
 	this.firstload = false;
 };
@@ -182,10 +287,85 @@ Controller.prototype.getDataCTA = function() {
 
 };
 
+Controller.prototype.getTwitters = function(queryParam){
+
+	var hashed = this.makeHashTag(queryParam);
+	var chicago = '#chicago';
+
+	hashed = encodeURIComponent(hashed);
+	chicago = encodeURIComponent(chicago);
+
+
+	console.log(hashed);
+	console.log(chicago);
+
+	var varTweet = [];
+	varTweet.push(hashed);
+	varTweet.push(chicago);
+
+	//database.twitter(varTweet,'','','',fringuello_tweets, 'tweets');
+	this.dataManager.twitter(varTweet,'','','',this.twitterCallBack,'tweets');
+};
+
+Controller.prototype.twitterCallBack = function(data,iden){
+	clearInterval(twitterInterval);
+	if(twitterBox != null){
+		twitterBox.deleteText();
+	}
+	indexTwitter = 0;
+	numOfShowTwitter = 1;
+	tweetData = data;
+	twitterBox = new Twitter();
+	switchTweet();
+	twitterInterval = setInterval(switchTweet, 5000);
+};
+
+function switchTweet() {
+	if(tweetData.statuses.length == 0){
+		return;
+	}
+	for(var i =0; i < numOfShowTwitter; i++){
+		console.log(indexTwitter);
+		if(tweetData.statuses.length <= (indexTwitter)){
+			indexTwitter = 0;
+		}
+		if(twitterBox.flag != 0){
+			console.log("is not zero!");
+			twitterBox.deleteText();
+		}
+
+		twitterBox.showTweets(tweetData.statuses[indexTwitter]);
+		console.log(tweetData.statuses[indexTwitter].user.created_at);
+		console.log(tweetData.statuses[indexTwitter].user.screen_name);
+		console.log(tweetData.statuses[indexTwitter].text);
+
+
+		indexTwitter ++;
+	}
+};
+Controller.prototype.makeHashTag = function (string){
+
+	var nameArray = string.split(" ");
+	var finalString = '#';
+	for(var i = 0; i<nameArray.length; i++){
+		finalString += nameArray[i];
+	}
+
+	return finalString;
+};
+
+Controller.prototype.getTrafficFlow = function(bounds) {
+	var url = "http://www.mapquestapi.com/traffic/v2/flow?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&inFormat=json&json={mapState: { center: { lat:39.739028996383965 , lng:-104.98479299999998}, height:400, width:400, scale:433342}}";
+}
 
 Controller.prototype.onMapClick = function(e){
+	var point = e.latlng;
 	if (this.mode.SELECTION === true){
-		var point = e.latlng;
+		//if (this.rectangleConstructed===true){
+		//	this.removeRectangle();
+		//	this.rectangle = {ul:null,lr:null};
+		//}
+		
 		this.locations.push({latLng: {lat:point.lat,lng:point.lng}});
 		if (this.locations.length > 2)
 			this.locations.splice(0,1);
@@ -193,9 +373,67 @@ Controller.prototype.onMapClick = function(e){
 		this.getRoute(locObj);
 	}
 	else{
-		//Do stuff like clicking on marker and popups
+
 	}
+	/*else if (this.mode.RECTANGLE === true){
+
+		this.removePath();
+		if (this.rectangleConstructed === true){
+
+			this.removeRectangle();
+		}
+		this.locations = [];
+		if (this.rectangle.ul===null)
+			this.rectangle.ul = point;
+		else if (this.rectangle.ul.lat < point.lat || this.rectangle.ul.lng > point.lng)
+			this.rectangle.ul = null;
+		else
+			this.rectangle.lr = point;
+
+		if (this.rectangle.ul !== null && this.rectangle.lr !== null)
+			this.rectangleConstructed = true;
+		else
+			this.rectangleConstructed = false;
+		//Do stuff like clicking on marker and popups
+		if (this.rectangleConstructed === true){
+			var bounds = this.rectangle;
+			console.log(bounds);
+			northWest = getNewPointInLatLng(bounds.ul.lat,bounds.ul.lng,this.perimeterRadiusInKm,-45); //Increase the bounding box by radius
+			southEast = getNewPointInLatLng(bounds.lr.lat,bounds.lr.lng,this.perimeterRadiusInKm,135);
+			var rectBounds = [[southEast.lat, northWest.lng], [northWest.lat, southEast.lng]];
+			console.log(rectBounds);
+			// create an orange rectangle
+			this.rectangleLayer = new L.rectangle(rectBounds, {color: "#ff7800", weight: 1});
+			this.map.map.addLayer(this.rectangleLayer);
+		}
+
+	}*/
 };
+
+Controller.prototype.removePath = function(){
+
+	this.locations = [];
+	if (this.pathLineConstructed){
+		this.map.map.removeLayer(this.pathLine);
+		this.pathLineConstructed = false;
+	}
+
+	this.removeAllMarkers();
+}
+Controller.prototype.removeRectangle = function(){
+	if (this.rectangleConstructed){
+		this.map.map.removeLayer(this.rectangleLayer);
+		this.rectangleConstructed = false;
+	}
+
+	this.rectangle = {ul:null,lr:null};
+	this.removeAllMarkers();
+}
+
+Controller.prototype.removeAllMarkers = function(){
+	//TODO remove all markers
+}
+
 
 Controller.prototype.normalModeClick = function(e){};
 
@@ -216,15 +454,78 @@ function distance (lat1,lng1,lat2,lng2) {
 
 	return R * c;
 }
+
+Controller.prototype.getChicagoData = function(){ // One time pull of the city wide data
+	var dataCallback1 = this.storeChicagoWeekData.bind(this);
+	this.dataManager.crimes("week2",0,0,0,0,dataCallback1, "crimes" );
+    this.dataManager.potHoles("week",0,0,0,0,dataCallback1, "potHoles" );
+    this.dataManager.abandonedVehicle("week",0,0,0,0,dataCallback1, "abandonedVehicles" );
+	this.dataManager.lightOutAllNotCompleted("week",0,0,0,0,dataCallback1, "lightOutAll" );
+	this.dataManager.lightOut1NotCompleted("week",0,0,0,0,dataCallback1, "lightOutOne" );
+	var dataCallback2 = this.storeChicagoMonthData.bind(this);
+	this.dataManager.crimes("month",0,0,0,0,dataCallback2, "crimes" );
+    this.dataManager.potHoles("month",0,0,0,0,dataCallback2, "potHoles" );
+    this.dataManager.abandonedVehicle("month",0,0,0,0,dataCallback2, "abandonedVehicles" );
+	this.dataManager.lightOutAllNotCompleted("month",0,0,0,0,dataCallback2, "lightOutAll" );
+	this.dataManager.lightOut1NotCompleted("month",0,0,0,0,dataCallback2, "lightOutOne" );
+
+}
+
+Controller.prototype.storeChicagoWeekData = function(data, id){
+	switch(id){
+		case "crimes":
+			this.chicagoData.crimesWeek = data;
+			break;
+		case "potHoles":
+			this.chicagoData.potHolesWeek = data;
+			break;
+		case "abandonedVehicles":
+			this.chicagoData.abandonedVehiclesWeek = data;
+			break;
+		case "lightOutAll":
+			this.chicagoData.streetLightsAllWeek = data;
+			break;
+		case "lightOutOne":
+			this.chicagoData.streetLightsOneWeek = data;
+			break;
+	}
+}
+
+Controller.prototype.storeChicagoMonthData = function(data, id){
+	switch(id){
+		case "crimes":
+			this.chicagoData.crimesMonth = data;
+			break;
+		case "potHoles":
+			this.chicagoData.potHolesMonth = data;
+			break;
+		case "abandonedVehicles":
+			this.chicagoData.abandonedVehiclesMonth = data;
+			break;
+		case "lightOutAll":
+			this.chicagoData.streetLightsAllMonth = data;
+			break;
+		case "lightOutOne":
+			this.chicagoData.streetLightsOneMonth = data;
+			break;
+	}
+}
+
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	console.log("filterByPerimeter", data,identifierStr,data);
 
-	if (this.showDataAlongPathOnly == true){
+	if (this.pathLineConstructed === true && this.showDataAlongPathOnly == true){
 		var filteredData = [];
 		var points = this.pathLine.getLatLngs();
 		for (var d=0;d<data.length;d++){
 			var dist = 100; // Too far away!
 			var dataPoint = data[d];
+
+			if(dataPoint.hasOwnProperty("location.coordinate")){
+				dataPoint.latitude = dataPoint.location.coordinate.latitude;
+				dataPoint.longitude = dataPoint.location.coordinate.longitude;
+			}
+			console.log(dataPoint);
 			var dataRange = false;
 			for(var i=0;i<points.length;i++){
 				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude,dataPoint.longitude);
@@ -250,15 +551,18 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 
 	switch(identifierStr) {
 		case 'crimes':
+			(this.queryDuration==="week"? this.selectionData.crimesWeek = data : this.selectionData.crimesMonth = data)
 			this.updateMarkers(data,this.crimeContainer,'case_number',CrimeMarker);
 			break;
 		case 'divvyStations':
 			this.updateMarkers(data,this.divvyArray,'id',DivvyMarker);
 			break;
 		case 'potHoles':
+			(this.queryDuration==="week"? this.selectionData.potHolesWeek = data : this.selectionData.potHolesMonth = data)
 			this.updateMarkers(data,this.potholesArray,'service_request_number',PotholeMarker);
 			break;
 		case 'abandonedVehicles':
+			(this.queryDuration==="week"? this.selectionData.abandonedVehiclesWeek = data : this.selectionData.abandonedVehiclesMonth = data)
 			this.updateMarkers(data,this.carsArray,'service_request_number',AbandonedVehicleMarker);
 			break;
 		case 'lightOutAll':
@@ -266,13 +570,14 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			// this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutAllMarker);
 			break;
 		case 'lightOutOne':
+			(this.queryDuration==="week"? this.selectionData.streetLightsOneWeek = data : this.selectionData.streetLightsOneMonth = data)
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
 		case 'yelp':
 			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
 			break;
 		case 'cta':
-			//this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
+			this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
 			break;
 		default:
 			console.log('Invalid string');
@@ -288,8 +593,8 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 // 'idstr' is the name of the field of the object that is used to uniquely identify the marker as a string
 // 'marker' is the class name of the marker object to be created, e.g. PotholeMarker, ect.
 Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker) {
-	console.log(data);
-	if (data.length != 0) {
+	console.log("update markers, data length is ",data.length);
+	if (data.length > 0) {
 		var iKey = {};
 		data.forEach(
 			function(d){
@@ -299,32 +604,39 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 		);
 
 		//console.log(iKey.length, iKey);
+
 		for(var i = 0; i< data.length; i++){
+			console.log("doing shit", data[i])
 			var key = data[i][idstr];
 			// A - B: Add new marker
 			if(!markerCollection[key]) {
-				console.log("Add new Marker!!");
-				markerCollection[key] = new marker(data[i]);
+				markerCollection[key] = new marker(data[i],context);
 				markerCollection[key].viewNewIcon();
+				console.log("Add new Marker!!", markerCollection[key]);
 				markerCollection[key].addTo(this.map);
 			// B in A: update!
-			} else { //if(markerCollection[key]){
-				console.log("Marker is in the collection!!");
-				if (marker instanceof CTAMarker){
-					console.log(" updateMarkers",idstr, data[i][idstr], data[i], markerCollection.get(key) );
-					//markerCollection[key].updateLine(data[i]);
+			} else if(markerCollection[key]){
+				console.log("Marker is in the collection!!", data[i]);
+				if (markerCollection[key] instanceof CTAMarker){
+					console.log(" updateMarkers");//,idstr, data[i][idstr], data[i], key, markerCollection[key] );
+					markerCollection[key].updateMarkerData(data[i]);
 				} //else
 			// Remove B!
 			}
 		}
 		for ( k in markerCollection){
 			if (!iKey[k]){
-				console.log("Kill the Marker!!");
-				map.removeLayer(markerCollection[k]); // markerCollection.remove(k) acts like pop or slice. It returns the marker, then deletes it from the collection
-				delete markerCollection[k];
+				if (!marker instanceof CTAMarker) {
+					console.log("Kill the Marker!!");
+					map.removeLayer(markerCollection[k]); // markerCollection.remove(k) acts like pop or slice. It returns the marker, then deletes it from the collection
+					delete markerCollection[k];
+				}
+					console.log(markerCollection[k]);
 			}
 		}
-	}
+	} else
+		console.log("data is zero!")
+
 };
 
 
@@ -402,7 +714,8 @@ Controller.prototype.init = function(){
 	//database.yelp('food','London',0,'4000','','','','','','',fringuello, 'yelpdata-city');
 	//database.yelp('food', '', 0, '4000','','', '41.8747107','-87.0','41.8710629','-87.9',fringuello, 'yelp-data-square');
 
-
+	var data = {destination: "Congress Plaza", headdirect: "87",latitude: 41.8779182434082,longitude: -87.64629666310437,pdist: "37681",pid: "4506",route: "126",timestamp: "20141121 22:48",vehicleid: "1701"};
+	this.ctaArray["1701"] = new CTAMarker(data);
 	//console.log(this.pointsOfInterestArray[5]);
 	for( var key in this.pointsOfInterestArray){
 		this.pointsOfInterestArray[key].addTo(this.map);
@@ -455,10 +768,10 @@ Controller.prototype.setLayer = function(layerName,array,b) {
 	// 'array' is the array that holds the markers for the associated object, e.g. divvyArray, pointsOfInterestArray, crimeContainer
 	// 'b' is the Boolean value to which the layer is set (true or false)
 
-	console.log("MODENAME = " + layerName + ":\t" + this.mode[layerName] + " --> " + b);
+	console.log("LAYERNAME = " + layerName + ":\t" + this.layersFlags[layerName] + " --> " + b);
 	console.log( (b ? "SHOW " : "HIDE ") + layerName );
 
-	this.mode[layerName] = b;
+	this.layersFlags[layerName] = b;
 
 	for(var key in array) {
 		(b ?
@@ -470,12 +783,13 @@ Controller.prototype.setLayer = function(layerName,array,b) {
 
 Controller.prototype.toggleSelectionMode = function() {
 	this.mode.SELECTION = !this.mode.SELECTION;
+	this.mode.RECTANGLE = !this.mode.RECTANGLE;
 };
 Controller.prototype.setSelectionMode = function() {
 	this.mode.SELECTION = true;
 };
 Controller.prototype.setWeather = function(b) {
-	this.mode.CURRENTWEATHER = b;
+	this.layersFlags.CURRENTWEATHER = b;
 };
 
 Controller.prototype.getMode = function(modeName) {
@@ -483,4 +797,111 @@ Controller.prototype.getMode = function(modeName) {
 		return this.mode[modeName];
 	}
 	return null;
+}
+
+Controller.prototype.getLayerFlag = function(layerName) {
+	if (layerName in this.layersFlags) {
+		return this.layersFlags[layerName];
+	}
+	return null;
+}
+
+
+Controller.prototype.makePotholeGraph = function(data){
+	if (this.potHoleGraphSVG){
+		if (this.potHoleGraph === null){
+			this.potHoleGraph = new PieChart(this.potHoleGraphSVG);
+			console.log("Creating Pie");
+		}
+		if (this.layersFlags.POTHOLES === true && (this.pathLineConstructed || this.rectangleConstructed)){
+			var data ;
+			console.log("Creating Pie");
+			if (this.queryDuration==="week"){
+				data = {
+					values: [this.selectionData.potHolesWeek.length,this.chicagoData.potHolesWeek.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			else{
+				data = {
+					values: [this.selectionData.potHolesMonth.length,this.chicagoData.potHolesMonth.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			
+			this.potHoleGraph.setData(data.values, data.names, "potholes", "Area");
+			this.potHoleGraph.setTitle("Potholes");
+			this.potHoleGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.potHoleGraph.draw();	
+		}
+		
+	}
+}
+
+Controller.prototype.makeAbandonedVehicleGraph = function(){
+	if (this.abandonedVehicleGraphSVG){
+		if (this.abandonedVehicleGraph === null){
+			this.abandonedVehicleGraph = new PieChart(this.abandonedVehicleGraphSVG);
+			console.log("Creating Pie");
+		}
+		if (this.layersFlags.ABANDONEDVEHICLES === true && (this.pathLineConstructed || this.rectangleConstructed)){
+			var data ;
+			console.log("Creating Pie");
+			if (this.queryDuration==="week"){
+				data = {
+					values: [this.selectionData.abandonedVehiclesWeek.length,this.chicagoData.abandonedVehiclesWeek.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			else{
+				data = {
+					values: [this.selectionData.abandonedVehiclesMonth.length,this.chicagoData.abandonedVehiclesMonth.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			
+			this.abandonedVehicleGraph.setData(data.values, data.names, "abandonedvehicles", "Area");
+			this.abandonedVehicleGraph.setTitle("Abandoned Vehicles");
+			this.abandonedVehicleGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.abandonedVehicleGraph.draw();	
+		}
+		
+	}
+}
+
+Controller.prototype.makeStreetlightGraph = function(){
+	if (this.abandonedVehicleGraphSVG){
+		if (this.abandonedVehicleGraph === null){
+			this.abandonedVehicleGraph = new PieChart(this.abandonedVehicleGraphSVG);
+			console.log("Creating Pie");
+		}
+		if (this.layersFlags.ABANDONEDVEHICLES === true && (this.pathLineConstructed || this.rectangleConstructed)){
+			var data ;
+			console.log("Creating Pie");
+			if (this.queryDuration==="week"){
+				data = {
+					values: [this.selectionData.abandonedVehiclesWeek.length,this.chicagoData.abandonedVehiclesWeek.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			else{
+				data = {
+					values: [this.selectionData.abandonedVehiclesMonth.length,this.chicagoData.abandonedVehiclesMonth.length],
+					names: ["Selected Area","Chicago"]
+				};
+			}
+			
+			this.abandonedVehicleGraph.setData(data.values, data.names, "abandonedvehicles", "Area");
+			this.abandonedVehicleGraph.setTitle("Abandoned Vehicles");
+			this.abandonedVehicleGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.abandonedVehicleGraph.draw();	
+		}
+		
+	}
+}
+
+Controller.prototype.makeCrimeGraph = function(data){
+	if (this.crimeGraph){
+
+	}
 }

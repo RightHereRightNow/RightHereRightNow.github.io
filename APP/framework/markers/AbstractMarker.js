@@ -19,6 +19,8 @@ function AbstractMarker() {
 
 // top level method which allows the setting of a markers latitude/longitude
 AbstractMarker.prototype = {
+
+
     setLatLng: function(newLatLngObj) {
         this.LatLng = newLatLngObj; // This should be a LatLng leaflets object!!
     },
@@ -39,13 +41,10 @@ AbstractMarker.prototype = {
 
     init: function() {
         this.marker = L.marker(this.LatLng, {icon: this.iconNew});
-        this.ID = setInterval(this.pulse.bind(this), 100);
+        //this.ID = setInterval(this.pulse.bind(this), 400);
         if (this.popupString) {
             this.bindPopup();
         }
-        this.setZIndexOffset(1000) && this.update();
-        this.pulse();
-        this.setZIndexOffset(0) && this.update();
     },
 
     viewOldIcon: function() {
@@ -93,14 +92,14 @@ AbstractMarker.prototype = {
         //console.log("calling Pulse", this.ID, this.opacity, this._counter);
         this._counter+=1;
 
-        if((this._counter / 2) % 2 > 0)
-            this.opacity -= 1.0;
-        else
+        if(this._counter % 2 == 0)
             this.opacity = 1.0;
+        else
+            this.opacity = 0.25;
 
         this.setOpacity(this.opacity);
 
-        if (this._counter == 20){
+        if (this._counter == 80){
             //console.log("clear interval");
             clearInterval(this.ID);
         }

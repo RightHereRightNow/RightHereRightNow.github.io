@@ -215,7 +215,7 @@ ui.prototype.draw = function() {
 		.attr("transform","translate(" + 5.2*headerFontSize + "," + 2.4*headerFontSize + ")")
 		.attr("fill","#fc6").attr("class","buttontext").attr("text-anchor","bottom")
 		.attr("font-size", 1.2*headerFontSize).attr("font-variant", "small-caps").attr("font-family", "Roboto")
-	
+/*	
 	svgheader.append("svg:text")
 		.text("city of")
 		.attr("transform","translate(" + 1.2*headerFontSize + "," + 3.4*headerFontSize + ")")
@@ -227,7 +227,7 @@ ui.prototype.draw = function() {
 		.attr("transform","translate(" + 3.4*headerFontSize + "," + 3.4*headerFontSize + ")")
 		.attr("fill","#fc6").attr("class","buttontext").attr("text-anchor","bottom")
 		.attr("font-size", .8*headerFontSize).attr("font-variant", "small-caps").attr("font-family", "Roboto")
-
+*/
 
 
 

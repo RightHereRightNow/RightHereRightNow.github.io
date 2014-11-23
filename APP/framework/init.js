@@ -27,12 +27,15 @@ function init() {
 	
 
 	context.init();
+	context.getChicagoData();
 	context.map.on("click", context.onMapClick.bind(context));
 	
 	// Initialize controller in selection mode
 	context.setSelectionMode();
 
 	context.ui.draw();
+	context.getBusStopDataFromFile();
+	context.makePotholeGraph();
 
 	context.ui.buttonSelection.setActive();
 	context.ui.update();

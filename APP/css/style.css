@@ -104,7 +104,7 @@ div {
 	left:				80%;
 	width:				20%;
 	display:			block;
-	margin:			`	auto;
+	margin:				auto;
 }
 
 #divmapcontrol {
@@ -114,10 +114,28 @@ div {
 	left:				80%;
 	width:				20%;
 	display:			block;
-	margin:			`	auto;
+	margin:				auto;
 }
 
 
+#divgraphs1 {
+	position:			absolute;
+	top:				0%;
+	height:				100vw!important;
+	right:				0vh;
+	width:				40vh!important;
+	background-color:	black;
+}
+
+#divgraphs2 {
+	position:			absolute;
+	top:				0%;
+	height:				100vw!important;
+	right:				50vh;
+	width:				40vh!important;
+	background-color:	black;
+}
+	
 .route{
 	position: absolute;
 	color: rgba(200,50,50,0.8);
@@ -132,4 +150,3 @@ div {
 .leaflet-popup-content{
 	font-size: 150%;
 }
-
