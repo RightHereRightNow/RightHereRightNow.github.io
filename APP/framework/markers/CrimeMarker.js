@@ -9,12 +9,17 @@
     latitude,
     longitude
  */
-function CrimeMarker(data) {
+function CrimeMarker(data,context) {
 
     this.case_number = data.case_number;
     this.date = data.date;
     this.primary_type = data.primary_type;
     this.description = data.description;
+    this.controller = context;
+
+    var crimeClick = function(e){
+        context.getTwitters('crime');
+    };
 
     var popupstr = "<p><b>Type:</b> " + this.primary_type +
                   "</br><b>Case #:</b> "+ this.case_number +
@@ -43,6 +48,7 @@ function CrimeMarker(data) {
     this.setPopupString(popupstr);
     this.init();
     //this.pulse();
+    this.marker.on("click", crimeClick);
 
 }
 

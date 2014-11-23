@@ -17,8 +17,28 @@ Twitter.prototype.showTweets = function(tweets){
 
     this.svg
         .append("text")
+        .text(""+tweets.user.screen_name)
+        .attr("transform", "translate(" + (45) + " , " + 5 + " )")
+        .attr("dx", 1)
+        .attr("dy", 1)
+        .attr("class", "tweet-user")
+        .attr("fill", "white")
+        .attr("font-size", "0.4em");
+
+    this.svg
+        .append("text")
+        .text(""+tweets.user.created_at)
+        .attr("transform", "translate(" + (10) + " , " + 15 + " )")
+        .attr("dx", 1)
+        .attr("dy", 1)
+        .attr("class", "tweet-date")
+        .attr("fill", "white")
+        .attr("font-size", "0.4em");
+
+    this.svg
+        .append("text")
         .text(""+tweets.text)
-        .attr("transform", "translate(" + (1) + " , " + 10 + " )")
+        .attr("transform", "translate(" + (1) + " , " + 20 + " )")
         .attr("dx", 1)
         .attr("dy", 1)
         .attr("class", "tweet-text")
@@ -31,6 +51,8 @@ Twitter.prototype.showTweets = function(tweets){
 
 Twitter.prototype.deleteText = function(){
     this.svg.select('.tweet-text').remove();
+    this.svg.select('.tweet-user').remove();
+    this.svg.select('.tweet-date').remove();
     this.svg.select('.pidgeon').remove();
     this.flag = 0;
 };

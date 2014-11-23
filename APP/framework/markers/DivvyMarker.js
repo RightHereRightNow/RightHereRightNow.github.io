@@ -3,13 +3,18 @@
 //           Divvy Marker object
 //////////////////////////////////////////////////////////////
 
-function DivvyMarker(data) {
+function DivvyMarker(data, context) {
     this.id = data.id;
     this.stationName = data.stationName;
     this.availableDocks = data.availableDocks;
     this.totalDocks = data.totalDocks;
     this.statusValue = data.statusValue;
     this.availableBikes = data.availableBikes;
+    this.controller = context;
+
+    var divvyClick = function(){
+        context.getTwitters('bike');
+    };
 
     var popupstr = "<p><b>Id:</b> " + this.id +
                     "</br><b>Station Name:</b> " + this.stationName +
@@ -59,5 +64,6 @@ function DivvyMarker(data) {
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
     this.init();
+    this.marker.on("click", divvyClick);
 }
 
