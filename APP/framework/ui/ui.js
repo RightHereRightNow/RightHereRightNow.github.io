@@ -1,12 +1,13 @@
-var ui = function(menutag,mapcontroltag,radiuscontroltag) {
+var ui = function(menutag,mapcontroltag,radiuscontroltag,timerangetag) {
 
 	this.menutag = menutag;
 	this.mapcontroltag = mapcontroltag;
 	this.radiuscontroltag = radiuscontroltag;
+	this.timerangetag = timerangetag;
 
 	// Defining parameters for drawing
 	this.viewBoxWidth = 1000;
-	this.viewBoxMenuHeight = 1000;
+	this.viewBoxMenuHeight = 1600;
 	this.viewBoxMapControlHeight = 240;
 
 	this.zoomButtonSize = 800;
@@ -18,7 +19,7 @@ var ui = function(menutag,mapcontroltag,radiuscontroltag) {
 	this.font1size = 60;
 	this.font2size = 50;
 
-	this.linewidth = 32;
+	this.linewidth = 42;
 	this.linepadding = 150;
 
 	this.button1height = 120;
@@ -36,7 +37,7 @@ var ui = function(menutag,mapcontroltag,radiuscontroltag) {
 
 	this.button1List = [];
 
-	this.dt = 1000; // Transition duration
+	this.dt = 2000; // Transition duration
 }
 
 ui.prototype.update = function() {
@@ -77,6 +78,10 @@ ui.prototype.draw = function() {
 	this.buttonGraphs = new level1Button(this,"Graphs","stack9",emptyCallback,"GRAPHS",emptyArray);
 	this.buttonGraphs.setPreviousButton(this.buttonYelp);
 	this.button1List.push(this.buttonGraphs);
+	
+	this.buttonWeather = new level1Button(this,"Weather","stack9",emptyCallback,"WEATHER",emptyArray);
+	this.buttonWeather.setPreviousButton(this.buttonGraphs);
+	this.button1List.push(this.buttonWeather);
 
 	// SUBMENU SELECTION
 	this.buttonSelection.addChildButton("Path","distance1",emptyCallback,"TRAFFICLAYER",emptyArray,"#fc6");
@@ -110,6 +115,7 @@ ui.prototype.draw = function() {
 	this.buttonLayers.create(svgmenu);
 	this.buttonYelp.create(svgmenu);
 	this.buttonGraphs.create(svgmenu);
+	this.buttonWeather.create(svgmenu);
 	
 /*	
 
@@ -168,19 +174,132 @@ ui.prototype.draw = function() {
 	this.buttonWeatherGraph.create(svgmenu);
 	this.buttonPotholeGraph.create(svgmenu);
 */	
+
+
+
+
+
+
+
+
+	// Header
+
+	var headerFontSize = 2*this.font1size;
+
+	var svgheader = d3.select("#divheader").append("svg:svg")
+		.attr("id","timerange")
+		.attr("class","uisvgelement")
+		.attr("viewBox", "0 0 " + this.viewBoxWidth + " " + this.viewBoxWidth/6)
+		.attr("preserveAspectRatio", "xMinYMin meet")
+
+	svgheader.append("svg:text")
+		.text("Right")
+		.attr("transform","translate(" + .4*headerFontSize + "," + 1.2*headerFontSize + ")")
+		.attr("fill",this.textColor).attr("class","buttontext").attr("text-anchor","bottom")
+		.attr("font-size", headerFontSize).attr("font-variant", "small-caps").attr("font-family", "Roboto")
+	
+	svgheader.append("svg:text")
+		.text("Here")
+		.attr("transform","translate(" + 3.4*headerFontSize + "," + 1.2*headerFontSize + ")")
+		.attr("fill","#fc6").attr("class","buttontext").attr("text-anchor","bottom")
+		.attr("font-size", 1.2*headerFontSize).attr("font-variant", "small-caps").attr("font-family", "Roboto")
+	
+	svgheader.append("svg:text")
+		.text("Right")
+		.attr("transform","translate(" + 2.2*headerFontSize + "," + 2.4*headerFontSize + ")")
+		.attr("fill",this.textColor).attr("class","buttontext").attr("text-anchor","bottom")
+		.attr("font-size", headerFontSize).attr("font-variant", "small-caps").attr("font-family", "Roboto")
+
+	svgheader.append("svg:text")
+		.text("Now")
+		.attr("transform","translate(" + 5.2*headerFontSize + "," + 2.4*headerFontSize + ")")
+		.attr("fill","#fc6").attr("class","buttontext").attr("text-anchor","bottom")
+		.attr("font-size", 1.2*headerFontSize).attr("font-variant", "small-caps").attr("font-family", "Roboto")
+	
+	svgheader.append("svg:text")
+		.text("city of")
+		.attr("transform","translate(" + 1.2*headerFontSize + "," + 3.4*headerFontSize + ")")
+		.attr("fill",this.textColor).attr("class","buttontext").attr("text-anchor","bottom")
+		.attr("font-size", .7*headerFontSize).attr("font-variant", "small-caps").attr("font-family", "Roboto")
+	
+	svgheader.append("svg:text")
+		.text("Chicago")
+		.attr("transform","translate(" + 3.4*headerFontSize + "," + 3.4*headerFontSize + ")")
+		.attr("fill","#fc6").attr("class","buttontext").attr("text-anchor","bottom")
+		.attr("font-size", .8*headerFontSize).attr("font-variant", "small-caps").attr("font-family", "Roboto")
+
+
+
+
+
+
+
+	// Switch between Week and Month Filter
+
+	var week = false;
+
+	var svgtimerange = d3.select(this.timerangetag).append("svg:svg")
+		.attr("id","timerange")
+		.attr("class","uisvgelement")
+		.attr("viewBox", "0 0 " + this.viewBoxWidth + " " + this.viewBoxWidth/6)
+		.attr("preserveAspectRatio", "xMinYMin meet")
+
+	var gWeek = svgtimerange.append("svg:g")
+		.attr("fill","#888")
+		.attr("class","level1button")
+		.attr("transform","translate(0,0)")
+		.on("click", function() { 
+			week = true;
+			gWeek/*.transition().duration(this.dt)*/.attr("fill","#aaa");
+			gMonth/*.transition().duration(this.dt)*/.attr("fill","#888");
+			console.log("TODO: Implement week");
+		});
+
+	gWeek.append("rect")
+		.attr("x",this.button1dx)
+		.attr("y",this.button1dy)
+		.attr("width",this.button1width/2-2*this.button1dy)
+		.attr("height",this.button1height);
+	
+	gWeek.append("svg:text")
+		.attr("fill",this.textColor)
+		.attr("class","buttontext")
+		.attr("transform","translate(" + (2*this.button1dx) + "," + (this.font1size+this.button1dy+(this.button1height-this.font1size)/2) + ")")
+		.text("Week")
+		.attr("text-anchor","bottom")
+		.attr("font-size", this.font1size)
+		.attr("font-variant", "small-caps")
+		.attr("font-family", "Roboto")
+		.attr("cursor","default");
 	
 
+	var gMonth = svgtimerange.append("svg:g")
+		.attr("fill","#888")
+		.attr("class","level1button")
+		.attr("transform","translate(" + this.button1width/2 + ",0)")
+		.on("click", function() { 
+			week = false;
+			gWeek/*.transition().duration(this.dt)*/.attr("fill","#888");
+			gMonth/*.transition().duration(this.dt)*/.attr("fill","#aaa");
+			console.log("TODO: Implement month");
+		});
 
+	gMonth.append("rect")
+		.attr("x",this.button1dy)
+		.attr("y",this.button1dy)
+		.attr("width",this.button1width/2-2*this.button1dy)
+		.attr("height",this.button1height);
 
-
-
-
-
-
-
-
-
-
+	gMonth.append("svg:text")
+		.attr("fill",this.textColor)
+		.attr("class","buttontext")
+		.attr("transform","translate(" + this.button1dx + "," + (this.font1size+this.button1dy+(this.button1height-this.font1size)/2) + ")")
+		.text("Month")
+		.attr("text-anchor","bottom")
+		.attr("font-size", this.font1size)
+		.attr("font-variant", "small-caps")
+		.attr("font-family", "Roboto")
+		.attr("cursor","default");
 
 
 
@@ -193,13 +312,14 @@ ui.prototype.draw = function() {
 	var svgmapcontrol = d3.select(this.radiuscontroltag).append("svg:svg")
 		.attr("id","radiuscontrol")
 		.attr("class","uisvgelement")
-		.attr("viewBox", "0 0 " + this.viewBoxWidth + " " + (5*this.zoomButtonSize + 4*this.zoomButtonMargin))
+		.attr("viewBox", "0 0 " + (this.zoomButtonSize + 2*this.zoomButtonMargin) + " " + (4*this.zoomButtonSize + 4*this.zoomButtonMargin))
 		.attr("preserveAspectRatio", "xMinYMin meet")
+//		.attr("width",this.zoomButtonSize + 2*this.zoomButtonMargin).attr("height",5*this.zoomButtonSize + 4*this.zoomButtonMargin)
 
 
-	// Radius "+" Button
-	var gZoomIn = svgmapcontrol.append("svg:g")
-		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (this.zoomButtonMargin) + ")")
+	// Radius Up Button
+	var gRadiusUp = svgmapcontrol.append("svg:g")
+		.attr("transform","translate(" + this.zoomButtonMargin + ",0)")
 		.style("fill","transparent")
 		.on("click", function() { 
 			console.log("TODO: increase radius");
@@ -211,86 +331,61 @@ ui.prototype.draw = function() {
 			d3.select(this).style("fill","transparent");
 		});
 
-	gZoomIn.append("circle")
-		.attr("transform","translate(" + (this.zoomButtonSize/2) + "," + (this.zoomButtonSize/2) + ")")
+	gRadiusUp.append("polygon")
+		.attr("points","0," + .5*this.zoomButtonSize + " " + this.zoomButtonSize + "," + .5*this.zoomButtonSize + " " + .5*this.zoomButtonSize + ",0")
+		// .attr("transform","translate(" + (this.zoomButtonSize/2) + "," + (this.zoomButtonSize/2) + ")")
 		.attr("r",this.zoomButtonSize/2)
 		.attr("stroke",this.buttonStrokeColor)
 		.attr("stroke-width",this.linewidth)
 	
-	gZoomIn.append("line")
-		.attr("x1",this.zoomButtonSize/2).attr("y1",this.linepadding)
-		.attr("x2",this.zoomButtonSize/2).attr("y2",this.zoomButtonSize-this.linepadding)
-		.attr("stroke",this.buttonStrokeColor)
-		.attr("stroke-width",this.linewidth)
-	
-	gZoomIn.append("line")
-		.attr("x1",this.linepadding).attr("y1",this.zoomButtonSize/2)
-		.attr("x2",this.zoomButtonSize-this.linepadding).attr("y2",this.zoomButtonSize/2)
-		.attr("stroke",this.buttonStrokeColor)
-		.attr("stroke-width",this.linewidth)
-
-	
-		
 
 
-	// Radius "-" Button
-	var gZoomOut = svgmapcontrol.append("svg:g")
-		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (4*this.zoomButtonSize + 3*this.zoomButtonMargin) + ")")
-		.attr("fill","transparent")
+	// Radius Down Button
+	var gRadiusDown = svgmapcontrol.append("svg:g")
+		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (3.5*this.zoomButtonSize - this.zoomButtonMargin) + ")")
+		.style("fill","transparent")
 		.on("click", function() { 
-			console.log("TODO: Implement decrease radius");
+			console.log("TODO: increase radius");
 		})
 		.on("mouseover", function() {
-			d3.select(this).style("fill",divvyBlue);
+			d3.select(this).style("fill",divvyBlue)
 		})
 		.on("mouseout", function() {
 			d3.select(this).style("fill","transparent");
 		});
 
-	gZoomOut.append("circle")
-		.attr("transform","translate(" + (this.zoomButtonSize/2) + "," + (this.zoomButtonSize/2) + ")")
-		.attr("x",0).attr("y",0)
+	gRadiusDown.append("polygon")
+		.attr("points","0,0 " + this.zoomButtonSize + ",0 " + .5*this.zoomButtonSize + "," + .5*this.zoomButtonSize)
 		.attr("r",this.zoomButtonSize/2)
-		.attr("stroke",this.buttonStrokeColor)
-		.attr("stroke-width",this.linewidth)
-
-	gZoomOut.append("line")
-		.attr("x1",this.linepadding).attr("y1",this.zoomButtonSize/2)
-		.attr("x2",this.zoomButtonSize-this.linepadding).attr("y2",this.zoomButtonSize/2)
-		.attr("stroke",this.buttonStrokeColor)
-		.attr("stroke-width",this.linewidth)
-
-	gZoomOut.append("polygon")
-		.attr("points","10,0 0,10 -10,0")
-		.attr("fill","lime")
 		.attr("stroke",this.buttonStrokeColor)
 		.attr("stroke-width",this.linewidth)
 
 
 	// Radius Status bar	
 	var gRadius = svgmapcontrol.append("svg:g")
-		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (this.zoomButtonSize + 2*this.zoomButtonMargin) + ")")
+		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (.5*this.zoomButtonSize + 2*this.zoomButtonMargin) + ")")
 		.style("fill","transparent")
 
 	gRadius.append("rect")
-		.attr("x",this.zoomButtonSize/2-.2*this.zoomButtonSize).attr("y",this.linepadding)
-		.attr("width",.4*this.zoomButtonSize).attr("height",3*this.zoomButtonSize-2*this.linepadding)
+		.attr("x",this.zoomButtonSize/2-.1*this.zoomButtonSize).attr("y",this.linepadding)
+		.attr("width",.2*this.zoomButtonSize).attr("height",3*this.zoomButtonSize-4*this.linepadding)
 		.attr("rx",.2*this.zoomButtonSize).attr("ry",.2*this.zoomButtonSize)
 		.attr("fill",this.buttonStrokeColor)
 
 	gRadius.append("rect")
-		.attr("x",this.zoomButtonSize/2-.2*this.zoomButtonSize)
+		.attr("x",this.zoomButtonSize/2-.1*this.zoomButtonSize)
 		.attr("y",function() {
 			return 20;
-			// (1- radiusPercentage) * (3*this.zoomButtonSize-2*this.linepadding) + this.linepadding;
+			// (1- radiusPercentage) * (3*this.zoomButtonSize-4*this.linepadding) + this.linepadding;
 		})
-		.attr("width",.4*this.zoomButtonSize)
+		.attr("width",.2*this.zoomButtonSize)
 		.attr("height",function() {
 			return 500;
-			// radiusPercentage * (3*this.zoomButtonSize-2*this.linepadding);
+			// radiusPercentage * (3*this.zoomButtonSize-4*this.linepadding);
 		})
 		.attr("rx",.2*this.zoomButtonSize).attr("ry",.2*this.zoomButtonSize)
 		.attr("fill",divvyBlue)
+
 
 
 	// MAPCONTROL
@@ -298,7 +393,7 @@ ui.prototype.draw = function() {
 	var svgmapcontrol = d3.select(this.mapcontroltag).append("svg:svg")
 		.attr("id","mapcontrol")
 		.attr("class","uisvgelement")
-		.attr("viewBox", "0 0 " + this.viewBoxWidth + " " + (3*this.zoomButtonSize + 5*this.zoomButtonMargin))
+		.attr("viewBox", "0 0 " + (this.zoomButtonSize + 2*this.zoomButtonMargin) + " " + (3*this.zoomButtonSize + 5*this.zoomButtonMargin))
 		.attr("preserveAspectRatio", "xMinYMin meet")
 
 
