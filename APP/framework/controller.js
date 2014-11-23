@@ -23,7 +23,6 @@ function Controller() {
 	// Possible modes of our application
 
 	this.mode = {
-		SELECTION: false,
 		PATHSELECTION: false,
 		BOUNDINGBOXSELECTION: false,
 		RECTANGLESELECTION: false,
@@ -363,7 +362,7 @@ Controller.prototype.getTrafficFlow = function(bounds) {
 
 Controller.prototype.onMapClick = function(e){
 	var point = e.latlng;
-	if (this.mode.SELECTION === true){
+	if (this.mode.PATHSELECTION === true ||	this.mode.BOUNDINGBOXSELECTION === true || this.mode.RECTANGLESELECTION === true) {
 		//if (this.rectangleConstructed===true){
 		//	this.removeRectangle();
 		//	this.rectangle = {ul:null,lr:null};
@@ -784,13 +783,6 @@ Controller.prototype.setLayer = function(layerName,array,b) {
 	}
 };
 
-Controller.prototype.toggleSelectionMode = function() {
-	this.mode.SELECTION = !this.mode.SELECTION;
-	this.mode.RECTANGLE = !this.mode.RECTANGLE;
-};
-Controller.prototype.setSelectionMode = function() {
-	this.mode.SELECTION = true;
-};
 Controller.prototype.setWeather = function(b) {
 	this.layersFlags.WEATHERLAYER = b;
 };
@@ -912,3 +904,20 @@ Controller.prototype.makeCrimeGraph = function(data){
 
 	}
 }
+
+
+Controller.prototype.addGraph = function(drawTo,idStr) {
+
+	var svg = d3.select(drawTo).append("svg:svg")
+		.attr("viewBox", "0 0 160 90")
+		.attr("preserveAspectRatio", "xMinYMin meet")
+		.attr("backgroundColor", "rgba(0,0,0,0.8)");
+
+	return svg;
+}
+
+Controller.prototype.removeGraphs = function(){
+	d3.select("#divgraphs1").selectAll(".graphs").remove();
+	d3.select("#divgraphs2").selectAll(".graphs").remove();
+}
+
