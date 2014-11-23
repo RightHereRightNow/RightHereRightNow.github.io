@@ -134,9 +134,9 @@ level1Button.prototype.update = function() {
 	
 }
 
-level1Button.prototype.addChildButton = function(text,iconname,onClick,s,markers) {
+level1Button.prototype.addChildButton = function(text,iconname,onClick,s,markers,col) {
 	var index = this.childButtons.length;
-	var c = new level2Button(this,index,text,iconname,onClick,s,markers);
+	var c = new level2Button(this,index,text,iconname,onClick,s,markers,col);
 	this.childButtons.push(c);
 	c.setPreviousButton(this.childButtons[this.childButtons.length-2]);
 }

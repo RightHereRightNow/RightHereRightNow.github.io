@@ -28,10 +28,13 @@ function init() {
 
 	context.init();
 	context.map.on("click", context.onMapClick.bind(context));
-
+	
 	// Initialize controller in selection mode
 	context.setSelectionMode();
 
 	context.ui.draw();
+
+	context.ui.buttonSelection.setActive();
+	context.ui.update();
 
 }

@@ -73,42 +73,43 @@ ui.prototype.draw = function() {
 	this.buttonYelp = new level1Button(this,"Yelp","distance1",emptyCallback,"YELP",emptyArray);
 	this.buttonYelp.setPreviousButton(this.buttonLayers);
 	this.button1List.push(this.buttonYelp);
-
-	
-	// SUBMENU LAYERS
-	
-	this.buttonLayers.addChildButton("A","stack9",emptyCallback,"TRAFFICLAYER",emptyArray);
-	this.buttonLayers.addChildButton("B","crime1",emptyCallback,"CRIMELAYER",emptyArray);
-	this.buttonLayers.addChildButton("C","information38",emptyCallback,"POTHOLELAYER",emptyArray);
-	this.buttonLayers.addChildButton("D","regular2",emptyCallback,"ABANDONEDVEHICLES",emptyArray);
-	this.buttonLayers.addChildButton("E","criminal20",emptyCallback,"STREETLIGHTSOUT",emptyArray);
-	this.buttonLayers.addChildButton("F","street9",emptyCallback,"DIVVYBIKES",emptyArray);
-	this.buttonLayers.addChildButton("G","road22",emptyCallback,"PLACESOFINTEREST",emptyArray);
-	
-	// Draw Buttons
-	this.buttonSelection.create(svgmenu);
-	this.buttonLayers.create(svgmenu);
-	this.buttonYelp.create(svgmenu);
-
 	
 	this.buttonGraphs = new level1Button(this,"Graphs","stack9",emptyCallback,"GRAPHS",emptyArray);
 	this.buttonGraphs.setPreviousButton(this.buttonYelp);
 	this.button1List.push(this.buttonGraphs);
-/*
-	this.buttonBla = new level1Button(this,"Bla","stack9",emptyCallback,"GRAPHS",emptyArray);
-	this.buttonBla.setPreviousButton(this.buttonGraphs);
-	this.button1List.push(this.buttonBla);
 
-	this.buttonBlub = new level1Button(this,"Bla","stack9",emptyCallback,"GRAPHS",emptyArray);
-	this.buttonBlub.setPreviousButton(this.buttonBla);
-	this.button1List.push(this.buttonBlub);
+	// SUBMENU SELECTION
+	this.buttonSelection.addChildButton("Path","distance1",emptyCallback,"TRAFFICLAYER",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Bounding Box","stack9",emptyCallback,"CRIMELAYER",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Rectangle","stack9",emptyCallback,"POTHOLELAYER",emptyArray,"#fc6");
 	
-	this.buttonBla.create(svgmenu);
-	this.buttonBlub.create(svgmenu);
-*/	
+	// SUBMENU LAYERS
+	this.buttonLayers.addChildButton("Traffic","stack9",emptyCallback,"TRAFFICLAYER",emptyArray,"#fc6");
+	this.buttonLayers.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",emptyArray,"#fc6");
+	this.buttonLayers.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",emptyArray,"#fc6");
+	this.buttonLayers.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLES",emptyArray,"#fc6");
+	this.buttonLayers.addChildButton("Street Lights Out","street9",emptyCallback,"STREETLIGHTSOUT",emptyArray,"#fc6");
+	this.buttonLayers.addChildButton("Divvy Bike Stations","regular2",emptyCallback,"DIVVYBIKES",emptyArray,"#fc6");
+	this.buttonLayers.addChildButton("Places of Interest","information38",emptyCallback,"PLACESOFINTEREST",emptyArray,"#fc6");
+	
+	// SUBMENU YELP
+	this.buttonYelp.addChildButton("Traffic","stack9",emptyCallback,"TRAFFICLAYER",emptyArray,"#fc6");
+	this.buttonYelp.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",emptyArray,"#fc6");
+	this.buttonYelp.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",emptyArray,"#fc6");
+	this.buttonYelp.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLES",emptyArray,"#fc6");
+
+	// SUBMENU GRAPHS
+	this.buttonGraphs.addChildButton("Traffic","stack9",emptyCallback,"TRAFFICLAYER",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLES",emptyArray,"#fc6");
+
+
+	// Drawing Buttons
+	this.buttonSelection.create(svgmenu);
+	this.buttonLayers.create(svgmenu);
+	this.buttonYelp.create(svgmenu);
 	this.buttonGraphs.create(svgmenu);
-
-
 	
 /*	
 
@@ -256,6 +257,12 @@ ui.prototype.draw = function() {
 	gZoomOut.append("line")
 		.attr("x1",this.linepadding).attr("y1",this.zoomButtonSize/2)
 		.attr("x2",this.zoomButtonSize-this.linepadding).attr("y2",this.zoomButtonSize/2)
+		.attr("stroke",this.buttonStrokeColor)
+		.attr("stroke-width",this.linewidth)
+
+	gZoomOut.append("polygon")
+		.attr("points","10,0 0,10 -10,0")
+		.attr("fill","lime")
 		.attr("stroke",this.buttonStrokeColor)
 		.attr("stroke-width",this.linewidth)
 
