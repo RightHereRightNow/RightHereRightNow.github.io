@@ -292,8 +292,6 @@ Controller.prototype.getData = function() {
 				}
 			}
 
-			if(!this.ctaStopsDataLoaded)
-				this.getBusStopDataFromFile();
 
 			if(!this.ctaStopsDataDrawn){
 				this.filterByPerimeter(this.ctaStopsData, 'busStop');
