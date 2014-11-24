@@ -20,6 +20,7 @@ function Controller() {
 	this.minRadius = 0.2;
 	this.maxRadius = 2.0;
 	this.perimeterRadiusInKm = 0.4;
+	this.perimeterCircles = [];
 
 	this.showDataAlongPathOnly = true; // Need a button to turn this on and off
 	this.routePoints = null;
@@ -42,7 +43,6 @@ function Controller() {
 		POTHOLELAYER: false,
 		YELPRESTAURANTLAYER: false,
 		YELPBARLAYER: false,
-		YELPCLUBLAYER: false,
 		WEATHERLAYER: false,
 		GRAPHSLAYER: false,
 		UBERLAYER: false,
@@ -64,11 +64,18 @@ function Controller() {
 
 	this.locations = [];
 	this.rectangle = {ul:null,lr:null};
+	this.rectangleLayer = null;
 	this.rectangleConstructed = false;
+
 	var response;
 	this.mapCenter = new L.LatLng(41.864755, -87.631474);
 	this.pathLine = null;
 	this.pathLineConstructed = false;
+
+	this.boundingBoxLayer = null;
+	this.boundingBoxConstructed = false;
+
+
 
 	this.firstload = true;
 
@@ -277,9 +284,7 @@ Controller.prototype.getData = function() {
 		}
 		if (this.layersFlags.DIVVYLAYER) this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 
-		if (this.layersFlags.YELPRESTAURANTLAYER) this.dataManager.yelp('food', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelpFood');
-		if (this.layersFlags.YELPBARLAYER) this.dataManager.yelp('bar', '', 0, '4000','','',north,west,south,east,dataCallback,'yelpBar');
-		if (this.layersFlags.YELPCLUBLAYER) this.dataManager.yelp('club', '',0,'4000','','',north,west,south,east,dataCallback,'yelpClub');
+		if (this.layersFlags.YELPLAYER) this.dataManager.yelp('food', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelp');
 
 		var self = this;
 		if (this.layersFlags.TRAFFICLAYER) {
@@ -406,7 +411,7 @@ Controller.prototype.getTrafficFlow = function(bounds) {
 
 Controller.prototype.onMapClick = function(e){
 	var point = e.latlng;
-	if (this.mode.PATHSELECTION === true ||	this.mode.BOUNDINGBOXSELECTION === true || this.mode.RECTANGLESELECTION === true) {
+	if (this.mode.PATHSELECTION === true ||	this.mode.BOUNDINGBOXSELECTION === true){
 		//if (this.rectangleConstructed===true){
 		//	this.removeRectangle();
 		//	this.rectangle = {ul:null,lr:null};
@@ -418,7 +423,7 @@ Controller.prototype.onMapClick = function(e){
 		var locObj = { locations:this.locations };
 		this.getRoute(locObj);
 	}
-	else{
+	else if (this.mode.RECTANGLESELECTION === true) {
 
 	}
 	/*else if (this.mode.RECTANGLE === true){
@@ -456,15 +461,42 @@ Controller.prototype.onMapClick = function(e){
 	}*/
 };
 
+Controller.prototype.drawBoundingBox = function(){
+	
+	if (this.pathLineConstructed===true && this.mode.BOUNDINGBOXSELECTION === true){
+		if (this.boundingBoxConstructed === true)
+			this.removeBoundingBox();
+		bounds = this.pathLine.getBounds();
+
+		northWest = getNewPointInLatLng(bounds.getNorth(),bounds.getWest(),this.perimeterRadiusInKm,-45); //Increase the bounding box by radius
+		southEast = getNewPointInLatLng(bounds.getSouth(),bounds.getEast(),this.perimeterRadiusInKm,135);
+		console.log(bounds.getNorthWest(),bounds.getSouthEast());
+		console.log(northWest,southEast);
+		var rectBounds = [[southEast.lat, northWest.lng], [northWest.lat, southEast.lng]];
+		this.boundingBoxLayer = new L.rectangle(rectBounds, {color: "#ff7800", weight: 1});
+		this.boundingBoxConstructed = true;
+		this.map.map.addLayer(this.boundingBoxLayer);
+	}
+}
+
+Controller.prototype.removeBoundingBox = function(){
+	if (this.boundingBoxConstructed === true){
+		this.map.map.removeLayer(this.boundingBoxLayer);
+		this.boundingBoxConstructed = false;
+	}
+}
+
 Controller.prototype.removePath = function(){
 
 	this.locations = [];
 	if (this.pathLineConstructed){
 		this.map.map.removeLayer(this.pathLine);
 		this.pathLineConstructed = false;
+		for (var i=0;i<this.perimeterCircles.length;i++){
+			this.map.map.removeLayer(this.perimeterCircles[i]);
+		}
+		this.perimeterCircles = [];
 	}
-
-	this.removeAllMarkers();
 }
 Controller.prototype.removeRectangle = function(){
 	if (this.rectangleConstructed){
@@ -581,7 +613,7 @@ Controller.prototype.storeChicagoMonthData = function(data, id){
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	console.log("filterByPerimeter", data,identifierStr,data);
 
-	if (this.pathLineConstructed === true && this.showDataAlongPathOnly == true){
+	if (this.pathLineConstructed === true && this.mode.BOUNDINGBOXSELECTION === false){
 		var filteredData = [];
 		var points = this.pathLine.getLatLngs();
 		for (var d=0;d<data.length;d++){
@@ -641,13 +673,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			(this.queryDuration==="week"? this.selectionData.streetLightsOneWeek = data : this.selectionData.streetLightsOneMonth = data)
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
-		case 'yelpFood':
-			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
-			break;
-		case 'yelpBar':
-			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
-			break;
-		case 'yelpClub':
+		case 'yelp':
 			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
 			break;
 		case 'cta':
@@ -766,8 +792,9 @@ Controller.prototype.drawPath = function(points){
 		// Add the first uberMarker
 		this.uberArray[0] = new UberMarker({latitude:points[0], longitude: points[1]});
 		this.uberArray[0].addTo(this.map);
-
-
+		var circle = new L.circle(new L.LatLng(points[0],points[1]), this.perimeterRadiusInKm*1000, {color: "#ff7800", weight: 1});
+		this.map.map.addLayer(circle);
+		this.perimeterCircles.push(circle);
 	}
     // console.log(points);
     for(var i=0;i<points.length/2;i++){
@@ -775,8 +802,12 @@ Controller.prototype.drawPath = function(points){
     }
     this.pathLineConstructed = true;
     this.pathLine.redraw();
+    var circle = new L.circle(new L.LatLng(points[points.length-2],points[points.length-1]), this.perimeterRadiusInKm*1000, {color: "#ff7800", weight: 1});
+	this.map.map.addLayer(circle);
+	this.perimeterCircles.push(circle);
     // console.log(this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
+    this.drawBoundingBox();
 	this.ctaStopsDataDrawn = false;
     //this.getPerimeterAroundPath(30);
 };
@@ -909,19 +940,19 @@ Controller.prototype.makePotholeGraph = function(data){
 			if (this.queryDuration==="week"){
 				data = {
 					values: [this.selectionData.potHolesWeek.length,this.chicagoData.potHolesWeek.length-this.selectionData.potHolesWeek.length],
-					names: ["Selected Area","Chicago"]
+					names: ["Selection","Chicago"]
 				};
 			}
 			else{
 				data = {
 					values: [this.selectionData.potHolesMonth.length,this.chicagoData.potHolesMonth.length-this.selectionData.potHolesMonth.length],
-					names: ["Selected Area","Chicago"]
+					names: ["Selection","Chicago"]
 				};
 			}
 			
 			this.potHoleGraph.setData(data.values, data.names, "potholes", "Area");
 			this.potHoleGraph.setTitle("Potholes");
-			this.potHoleGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.potHoleGraph.setColor(["rgba(150,150,100,0.8)","rgba(51,185,213,1.0)"])
 			this.potHoleGraph.draw();	
 		}
 		
@@ -940,19 +971,19 @@ Controller.prototype.makeAbandonedVehicleGraph = function(){
 			if (this.queryDuration==="week"){
 				data = {
 					values: [this.selectionData.abandonedVehiclesWeek.length,this.chicagoData.abandonedVehiclesWeek.length-this.selectionData.abandonedVehiclesWeek.length],
-					names: ["Selected Area","Chicago"]
+					names: ["Selection","Chicago"]
 				};
 			}
 			else{
 				data = {
 					values: [this.selectionData.abandonedVehiclesMonth.length,this.chicagoData.abandonedVehiclesMonth.length-this.selectionData.abandonedVehiclesMonth.length],
-					names: ["Selected Area","Chicago"]
+					names: ["Selection","Chicago"]
 				};
 			}
 			
 			this.abandonedVehicleGraph.setData(data.values, data.names, "abandonedvehicles", "Area");
 			this.abandonedVehicleGraph.setTitle("Abandoned Vehicles");
-			this.abandonedVehicleGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.abandonedVehicleGraph.setColor(["rgba(150,150,100,0.8)","rgba(51,185,213,1.0)"])
 			this.abandonedVehicleGraph.draw();	
 		}
 		
@@ -982,10 +1013,10 @@ Controller.prototype.makeStreetlightGraph = function(){
 				data[1].value = this.selectionData.streetLightsAllMonth.length;
 			}
 			
-			this.streetLightGraph.setData(chicagoData, data, "streetlight");
+			this.streetLightGraph.setData(chicagoData, data, "streetlight", ["Selection","Chicago"], "Area");
 			this.streetLightGraph.setAxes("key","Type","value","# of cases");
 			this.streetLightGraph.setTitle("Street Lights Out");
-			//this.crimeGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.streetLightGraph.setColor(["rgba(150,150,100,0.8)","rgba(51,185,213,1.0)"]);
 			this.streetLightGraph.draw();	
 		}
 		
@@ -1013,10 +1044,10 @@ Controller.prototype.makeCrimeGraph = function(){
 			data = getCrimeTypeCount(data);
 			chicagoData = getCrimeTypeCount(chicagoData);
 			console.log(data);
-			this.crimeGraph.setData(chicagoData, data, "crime");
+			this.crimeGraph.setData(chicagoData, data, "crime",["Selection","Chicago"], "Area");
 			this.crimeGraph.setAxes("key","Type","value","# of crimes");
 			this.crimeGraph.setTitle("Crimes");
-			//this.crimeGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.crimeGraph.setColor(["rgba(150,150,100,0.8)","rgba(51,185,213,1.0)"])
 			this.crimeGraph.draw();
 		}
 		
@@ -1093,6 +1124,9 @@ Controller.prototype.increaseRadius = function() {
 	var newRadius = this.perimeterRadiusInKm + 0.2;
 	if(newRadius <= this.maxRadius) {
 		this.perimeterRadiusInKm = newRadius;
+		for (var i=0;i<this.perimeterCircles.length;i++){
+    		this.perimeterCircles[i].setRadius(this.perimeterRadiusInKm*1000);
+    	}
 	}
 	console.log(newRadius);
 }
@@ -1101,6 +1135,9 @@ Controller.prototype.decreaseRadius = function() {
 	var newRadius = this.perimeterRadiusInKm - 0.2;
 	if(newRadius >= this.minRadius) {
 		this.perimeterRadiusInKm = newRadius;
+		for (var i=0;i<this.perimeterCircles.length;i++){
+    		this.perimeterCircles[i].setRadius(this.perimeterRadiusInKm*1000);
+    	}
 	}
 }
 

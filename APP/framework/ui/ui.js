@@ -95,7 +95,7 @@ ui.prototype.draw = function() {
 	this.buttonSelection.addChildButton("Path","distance1",emptyCallback,"PATHSELECTION",emptyArray,"#fc6");
 	this.buttonSelection.addChildButton("Bounding Box","stack9",emptyCallback,"BOUNDINGBOXSELECTION",emptyArray,"#fc6");
 	this.buttonSelection.addChildButton("Rectangle","stack9",emptyCallback,"RECTANGLESELECTION",emptyArray,"#fc6");
-	this.buttonSelection.addChildButton("Clear","stack9",emptyCallback,"RECTANGLESELECTION",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Clear","stack9",emptyCallback,"NOMODE",emptyArray,"#fc6");
 	
 	// SUBMENU LAYERS
 	this.buttonLayers.addChildButton("Traffic","traffic17",emptyCallback,"TRAFFICLAYER",context.ctaArray,"#fc6");

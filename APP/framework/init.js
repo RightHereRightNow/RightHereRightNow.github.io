@@ -14,7 +14,7 @@ function init() {
 
 	context.ui.draw();
 	context.getBusStopDataFromFile();
-	context.makePotholeGraph();
+
 
 	// Make UI consistent
 	context.ui.buttonSelection.setActive();

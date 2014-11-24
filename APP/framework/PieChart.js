@@ -11,7 +11,7 @@ function PieChart (svg){
 	this.data = null;
 	this.border = {
 		left: 20, 
-		right: 150, 
+		right: 155, 
 		top: 15, 
 		bottom: 80 
 	};
@@ -86,7 +86,7 @@ PieChart.prototype.draw = function(){
 
 	  	arcGrp.append("text")
 		  	.attr("transform", function(d) {
-		  		if ((d.endAngle - d.startAngle) < (Math.PI/4.0)){
+		  		if ((d.endAngle - d.startAngle) < (Math.PI/2.0)){
 		  			var c = _this.arc.centroid(d),
 			        x = c[0],
 			        y = c[1],
@@ -99,7 +99,7 @@ PieChart.prototype.draw = function(){
 			    
 			})
 			.attr("text-anchor", function(d) {
-				if ((d.endAngle - d.startAngle) < (Math.PI/4.0))
+				if ((d.endAngle - d.startAngle) < (Math.PI/2.0))
 					return (d.endAngle + d.startAngle)/2 > Math.PI ? "end" : "start";
 				else
 			    	return "middle";
@@ -116,7 +116,7 @@ PieChart.prototype.draw = function(){
 		this.svg.selectAll(".title").remove();
 		this.svg.append("text")
 			.attr("class", "title")
-			.attr("transform", "translate(" + (_this.center.x) + "," + (_this.border.top) + ")")
+			.attr("transform", "translate(" + ((this.border.right+this.border.left)*0.5) + "," + (_this.border.top) + ")")
 		    .style("text-anchor","middle")
 		    .text(_this.title);
 	}
@@ -137,7 +137,7 @@ PieChart.prototype.addLegend  =  function(){
 	var _this = this;
 	
 	
-	var legendSize = (this.border.bottom - this.border.top)/10.0;
+	var legendSize = (this.border.bottom - this.border.top)/8.0;
 	//svgHandle.selectAll(".legend").remove();
 	legend = this.svg.selectAll(".legend")
   		.data(this.legendNames);
@@ -161,7 +161,7 @@ PieChart.prototype.addLegend  =  function(){
 
 	legendGrp.append("text")
 	    .attr("y", legendSize*2)
-	    .attr("dy", "-.2em")
+	    .attr("dy", "-.25em")
 	    .style("text-anchor","end")
 	    .text(function(d){return d;});
 
