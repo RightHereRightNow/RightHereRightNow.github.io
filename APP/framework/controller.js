@@ -516,8 +516,7 @@ Controller.prototype.removeAllMarkers = function(){
 		this.crimeContainer,  //new CrimeContainer();
 		this.divvyArray,
 		this.carsArray,
-		//this.lightsAllArray,
-		//this.lights1Array = {};
+		this.lights1Array,
 		this.ctaArray,
 		this.ctaStopsArray,
 		this.yelpFoodContainer,
@@ -716,7 +715,7 @@ Controller.prototype.updateUberMarkers  = function(data) {
 };
 
 
-Controller.prototype.updateCTAMarkers = function(data,markerCollection,idstr,marker) {
+Controller.prototype.updateCTAStations = function(data) {
 	for(var i = 0; i< data.length; i++){
 		var key = data[i][idstr];
 		// A - B: Add new marker
