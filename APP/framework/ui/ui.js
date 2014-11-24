@@ -92,29 +92,25 @@ ui.prototype.draw = function() {
 	
 	// SUBMENU LAYERS
 	this.buttonLayers.addChildButton("Traffic","traffic17",emptyCallback,"TRAFFICLAYER",context.ctaArray,"#fc6");
-	this.buttonLayers.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",context.crimeContainer,"#fc6");
+	this.buttonLayers.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",context.crimeContainer,"red");
 	this.buttonLayers.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",context.potholesArray,"#fc6");
 	this.buttonLayers.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLESLAYER",context.carsArray,"#fc6");
 	this.buttonLayers.addChildButton("Street Lights Out","street9",emptyCallback,"STREETLIGHTSOUTLAYER",context.lights1Array,"#fc6"); // TODO: add lights all
-	this.buttonLayers.addChildButton("Divvy Bike Stations","regular2",emptyCallback,"DIVVYLAYER",context.divvyArray,"#fc6");
+	this.buttonLayers.addChildButton("Divvy Bike Stations","regular2",emptyCallback,"DIVVYLAYER",context.divvyArray,divvyBlue);
 	this.buttonLayers.addChildButton("Places of Interest","information38",emptyCallback,"PLACESOFINTERESTLAYER",context.pointsOfInterestArray,"#fc6");
 	this.buttonLayers.addChildButton("Uber","stack9",emptyCallback,"UBERLAYER",emptyArray,"#fc6");
 
 	// SUBMENU YELP
-	this.buttonYelp.addChildButton("Yelp 1","criminal20",emptyCallback,"ABANDONEDVEHICLESLAYER",emptyArray,"#fc6");
-	this.buttonYelp.addChildButton("Yelp 2","crime1",emptyCallback,"CRIMELAYER",emptyArray,"#fc6");
-	this.buttonYelp.addChildButton("Yelp 3","road22",emptyCallback,"POTHOLELAYER",emptyArray,"#fc6");
-	this.buttonYelp.addChildButton("Yelp 4","street9",emptyCallback,"TRAFFICLAYER",emptyArray,"#fc6");
+	this.buttonYelp.addChildButton("Restaurants","criminal20",emptyCallback,"YELPRESTAURANTLAYER",emptyArray,"#fc6");
+	this.buttonYelp.addChildButton("Bars","crime1",emptyCallback,"YELPBARLAYER",emptyArray,"#fc6");
 	
 	// SUBMENU GRAPHS
-	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLESLAYER",emptyArray,"#fc6");
-	this.buttonGraphs.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",emptyArray,"#fc6");
-	this.buttonGraphs.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",emptyArray,"#fc6");
-	this.buttonGraphs.addChildButton("Street Lights","street9",emptyCallback,"TRAFFICLAYER",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",context.updateGraphs,"ABANDONEDVEHICLESGRAPH",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Crime","crime1",context.updateGraphs,"CRIMEGRAPH",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Potholes","road22",context.updateGraphs,"POTHOLEGRAPH",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Street Lights","street9",context.updateGraphs,"STREETLIGHTSOUTGRAPH",emptyArray,"#fc6");
 
 	
-	
-
 
 	// Drawing Buttons
 	this.buttonSelection.create(svgmenu);
@@ -227,7 +223,7 @@ ui.prototype.draw = function() {
 		.attr("class","level1button")
 		.attr("transform","translate(0,0)")
 		.on("click", function() {
-			context.queryDuration = "week";
+			context.setQueryDuration("week");
 			gWeek/*.transition().duration(this.dt)*/.attr("fill","#aaa");
 			gMonth/*.transition().duration(this.dt)*/.attr("fill","#888");
 		});
@@ -255,7 +251,7 @@ ui.prototype.draw = function() {
 		.attr("class","level1button")
 		.attr("transform","translate(" + this.button1width/2 + ",0)")
 		.on("click", function() { 
-			context.queryDuration = "month";
+			context.setQueryDuration("month");
 			gWeek/*.transition().duration(this.dt)*/.attr("fill","#888");
 			gMonth/*.transition().duration(this.dt)*/.attr("fill","#aaa");
 		});

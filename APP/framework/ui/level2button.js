@@ -77,13 +77,13 @@ level2Button.prototype.onClick = function() {
 
 level2Button.prototype.setActive = function() {
 	this.active = true;
-	context.setLayer(this.contextSwitchStr,this.markerArray,true);
+	context.setMode(this.contextSwitchStr,this.markerArray,true);
 	this.yEnd = this.yStart + this.ui.button2height;
 }
 
 level2Button.prototype.setInactive = function() {
 	this.active = false;
-	context.setLayer(this.contextSwitchStr,this.markerArray,false);
+	context.setMode(this.contextSwitchStr,this.markerArray,false);
 	this.yEnd = this.yStart + this.ui.button2height;
 }
 

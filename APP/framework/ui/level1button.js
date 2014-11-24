@@ -76,7 +76,7 @@ level1Button.prototype.onClick = function() {
 
 level1Button.prototype.setActive = function() {
 	this.active = true;
-	context.setLayer(this.contextModeStr,this.markerArray,true);
+	context.setMode(this.contextModeStr,this.markerArray,true);
 	this.yEnd = this.yStart + this.ui.button1height + this.childButtons.length*(this.ui.button2height+this.ui.button2dy);
 
 	for (c in this.childButtons) {
@@ -87,7 +87,7 @@ level1Button.prototype.setActive = function() {
 
 level1Button.prototype.setInactive = function() {
 	this.active = false;
-	context.setLayer(this.contextModeStr,this.markerArray,false);
+	context.setMode(this.contextModeStr,this.markerArray,false);
 	this.yEnd = this.yStart + this.ui.button1height;
 }
 
