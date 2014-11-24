@@ -294,13 +294,30 @@ Database.prototype.crimes = function(weekOrMonth, fromLat,fromLong, toLat, toLon
 			break;
 	}
 	if(fromLong == 0 && fromLat == 0 && toLong == 0 && toLat == 0 ){
-		this.genericQuery("case_number,date,primary_type, description, latitude, longitude", "date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
+		this.genericQuery("case_number,date,primary_type, description, latitude, longitude", "date>='"+date+"' AND primary_type != 'homicide'","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
 	}else{
-		this.genericQuery("case_number,date,primary_type, description, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
+		this.genericQuery("case_number,date,primary_type, description, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND date>='"+date+"' AND primary_type != 'homicide' ","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
 	}
 
 
 };
+
+/*
+ get other two weeks
+ */
+Database.prototype.crimesOthers = function(fromLat,fromLong,toLat,toLong,callback,iden){
+	var startDate, endDate;
+	startDate = this.currentDate('oneMonthAgo');
+	endDate = this.currentDate('twoWeeksAgo');
+
+	if(fromLong == 0 && fromLat == 0 && toLong == 0 && toLat == 0 ){
+		this.genericQuery("case_number,date,primary_type, description, latitude, longitude", "date>='"+startDate+"' AND date <='"+endDate+"' AND primary_type != 'homicide'","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
+	}else{
+		this.genericQuery("case_number,date,primary_type, description, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND date>='"+startDate+"' AND date <='"+endDate+"' AND primary_type != 'homicide' ","","","","","http://data.cityofchicago.org/resource/ijzp-q8t2.json", callback,iden );
+	}
+
+}
+
 Database.prototype.queryNoParam = function(from,dataType, callback, iden){
 		$.ajax({
 			url: from,
@@ -619,7 +636,7 @@ returning:
 	-tmstmp : date and time when the prediction was generated
 	-typ :	A = arrival
 			D = departure prediction
-	-stpnm: name of the dtop for wich the prediction was generated
+	-stpnm: name of the stop for wich the prediction was generated
 	-stpid: unique id!! of the stop
 	-vid:
  */

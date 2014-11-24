@@ -15,13 +15,15 @@ function Controller() {
 	this.weatherBox = null;
 	this.twitterBox = null;
 
+	this.minRadius = 0.2;
+	this.maxRadius = 2.0;
 	this.perimeterRadiusInKm = 0.4;
+
 	this.showDataAlongPathOnly = true; // Need a button to turn this on and off
 	this.routePoints = null;
 	// Possible modes of our application
 
 	this.mode = {
-		SELECTION: false,
 		PATHSELECTION: false,
 		BOUNDINGBOXSELECTION: false,
 		RECTANGLESELECTION: false,
@@ -36,10 +38,18 @@ function Controller() {
 		ABANDONEDVEHICLESLAYER: false,
 		STREETLIGHTSOUTLAYER: false,
 		POTHOLELAYER: false,
-		YELPLAYER: false,
+		YELPRESTAURANTLAYER: false,
+		YELPBARLAYER: false,
 		WEATHERLAYER: false,
 		GRAPHSLAYER: false,
 		UBERLAYER: false
+	};
+
+	this.graphsFlags = {
+		CRIMEGRAPH:	false,
+		ABANDONEDVEHICLESGRAPH: false,
+		STREETLIGHTSOUTGRAPH: false,
+		POTHOLEGRAPH: false,
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -373,7 +383,7 @@ Controller.prototype.getTrafficFlow = function(bounds) {
 
 Controller.prototype.onMapClick = function(e){
 	var point = e.latlng;
-	if (this.mode.SELECTION === true){
+	if (this.mode.PATHSELECTION === true ||	this.mode.BOUNDINGBOXSELECTION === true || this.mode.RECTANGLESELECTION === true) {
 		//if (this.rectangleConstructed===true){
 		//	this.removeRectangle();
 		//	this.rectangle = {ul:null,lr:null};
@@ -798,31 +808,40 @@ Controller.prototype.getPerimeterAroundPath = function(radius){
 Controller.prototype.addRouteLayer = function(){};
 
 
-Controller.prototype.setLayer = function(layerName,array,b) {
-	// 'layerName' is the name of the layer to be set, e.g. DIVVYLAYER, PLACESOFINTERESTLAYER, CRIMELAYER, etc.
+Controller.prototype.setMode = function(modeName,array,b) {
+	// 'modeName' is the name of the layer to be set, e.g. DIVVYLAYER, PLACESOFINTERESTLAYER, CRIMELAYER, etc.
 	// 'array' is the array that holds the markers for the associated object, e.g. divvyArray, pointsOfInterestArray, crimeContainer
 	// 'b' is the Boolean value to which the layer is set (true or false)
 
-	console.log("LAYERNAME = " + layerName + ":\t" + this.layersFlags[layerName] + " --> " + b);
-	console.log( (b ? "SHOW " : "HIDE ") + layerName );
-
-	this.layersFlags[layerName] = b;
-
-	for(var key in array) {
-		(b ?
-			this.map.addLayer(array[key]) :
-			this.map.removeLayer(array[key])
-		)
+	///////////////////////////////////////////////////////////////
+	console.log("MODENAME = " + modeName + ":\t" + this.layersFlags[modeName] + " --> " + b);
+	
+	if (modeName in this.mode) {
+		this.mode[modeName] = b;
+		// Only one main mode can be selected at a time
+		/* TODO: will fix
+		for(var key in this.mode) {
+			if(b === true && this.mode[key] != this.mode[modeName]) {
+				this.mode[key] = false;
+			}
+		}
+		*/
+	} else if (modeName in this.layersFlags) {
+		this.layersFlags[modeName] = b;
+		// add or remove layers accordingly	
+		for(var key in array) {
+			(b ?
+				this.map.addLayer(array[key]) :
+				this.map.removeLayer(array[key])
+			)
+		}
+	} else if (modeName in this.graphsFlags) {
+		this.graphsFlags[modeName] = b;
+	} else {
+		console.log("ERROR: Cannot Set Mode:\t" + modeName + " not defined");
 	}
 };
 
-Controller.prototype.toggleSelectionMode = function() {
-	this.mode.SELECTION = !this.mode.SELECTION;
-	this.mode.RECTANGLE = !this.mode.RECTANGLE;
-};
-Controller.prototype.setSelectionMode = function() {
-	this.mode.SELECTION = true;
-};
 Controller.prototype.setWeather = function(b) {
 	this.layersFlags.WEATHERLAYER = b;
 };
@@ -832,6 +851,8 @@ Controller.prototype.getMode = function(modeName) {
 		return this.mode[modeName];
 	} else if (modeName in this.layersFlags) {
 		return this.layersFlags[modeName];
+	} else if (modeName in this.graphsFlags) {
+		return this.graphsFlags[modeName];
 	} else {
 		console.log("Mode " + modeName + " not defined");
 		return null;
@@ -970,10 +991,60 @@ Controller.prototype.makeCrimeGraph = function(){
 }
 
 
+Controller.prototype.addGraph = function(drawTo,idStr) {
+
+	var svg = d3.select(drawTo).append("svg:svg")
+		.attr("viewBox", "0 0 160 90")
+		.attr("preserveAspectRatio", "xMinYMin meet")
+		.attr("backgroundColor", "rgba(0,0,0,0.8)");
+
+	return svg;
+}
+
+Controller.prototype.removeGraphs = function(){
+	d3.select("#divgraphs1").selectAll(".graphs").remove();
+	d3.select("#divgraphs2").selectAll(".graphs").remove();
+}
+
 function getCrimeTypeCount(data){
 	var nested_data = d3.nest()
 		.key(function(d) { return d.primary_type; })
 		.rollup(function(leaves) { return leaves.length; })
 		.entries(data);
 	return nested_data;
+}
+
+Controller.prototype.increaseRadius = function() {
+	var newRadius = this.perimeterRadiusInKm + 0.2;
+	if(newRadius <= this.maxRadius) {
+		this.perimeterRadiusInKm = newRadius;
+	}
+	console.log(newRadius);
+}
+
+Controller.prototype.decreaseRadius = function() {
+	var newRadius = this.perimeterRadiusInKm - 0.2;
+	if(newRadius >= this.minRadius) {
+		this.perimeterRadiusInKm = newRadius;
+	}
+}
+
+Controller.prototype.getRadiusPercentage = function() {
+	return this.perimeterRadiusInKm/this.maxRadius;
+}
+
+Controller.prototype.updateGraphs = function() {
+	// TODO: implement
+	console.log("THIS FUNCTION IS CALLED EVERYTIME A GRAPH FLAG IS CHANGED");
+}
+
+Controller.prototype.setQueryDuration = function(qd) {
+	console.log("Set queryDuration to " + qd);
+	if(qd === "week") {
+		this.queryDuration = "week";
+	} else if(qd === "month") {
+		this.queryDuration = "month";
+	} else {
+		console.log("ERROR: invalid query duration " + qd);
+	}
 }
