@@ -29,8 +29,8 @@
       <file leaf-file-name="controller.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/APP/framework/controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.497151" vertical-offset="9611" max-vertical-offset="16605">
-              <caret line="664" column="66" selection-start-line="664" selection-start-column="59" selection-end-line="664" selection-end-column="66" />
+            <state vertical-scroll-proportion="0.497151" vertical-offset="9866" max-vertical-offset="16860">
+              <caret line="681" column="66" selection-start-line="664" selection-start-column="59" selection-end-line="664" selection-end-column="66" />
               <folding />
             </state>
           </provider>
@@ -279,9 +279,9 @@
             <option name="myCanBeAbsent" value="false" />
             <option name="myId" value="UPDATED" />
             <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/css/style.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/BarChart.js</PATH>
             <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/PieChart.js</PATH>
             <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/controller.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/twitter.js</PATH>
             <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/ui/ui.js</PATH>
           </FILE-GROUP>
           <FILE-GROUP>
@@ -290,8 +290,6 @@
             <option name="mySupportsDeletion" value="false" />
             <option name="myCanBeAbsent" value="false" />
             <option name="myId" value="CREATED" />
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/BarChart.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/img/twitter2.svg</PATH>
           </FILE-GROUP>
           <FILE-GROUP>
             <option name="myUpdateName" value="Deleted" />
@@ -678,12 +676,18 @@
       <option name="project" value="LOCAL" />
       <updated>1416804537387</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="pushing stuff">
+      <created>1416804556942</created>
+      <option name="number" value="00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1416804556942</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1132,8 +1136,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/APP/framework/controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.497151" vertical-offset="9611" max-vertical-offset="16605">
-          <caret line="664" column="66" selection-start-line="664" selection-start-column="59" selection-end-line="664" selection-end-column="66" />
+        <state vertical-scroll-proportion="0.497151" vertical-offset="9866" max-vertical-offset="16860">
+          <caret line="681" column="66" selection-start-line="664" selection-start-column="59" selection-end-line="664" selection-end-column="66" />
           <folding />
         </state>
       </provider>
