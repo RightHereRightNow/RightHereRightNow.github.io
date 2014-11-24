@@ -999,13 +999,12 @@ Controller.prototype.makeCrimeGraph = function(){
 }
 
 
+
 Controller.prototype.addGraph = function(drawTo,idStr) {
 
 	var svg = d3.select(drawTo).append("svg:svg")
 		.attr("viewBox", "0 0 160 90")
-		.attr("preserveAspectRatio", "xMinYMin meet")
-		.attr("backgroundColor", "rgba(0,0,0,0.8)");
-
+		.attr("preserveAspectRatio", "xMinYMin meet");
 	return svg;
 }
 
@@ -1086,6 +1085,24 @@ Controller.prototype.getRadiusPercentage = function() {
 
 Controller.prototype.updateGraphs = function() {
 	// TODO: implement
+	if (this.graphsFlags.CRIMEGRAPH === true)
+		this.makeCrimeGraph();
+	else{
+		this.crimeGraphSVG.selectAll("*").remove();
+		this.crimeGraph = null;
+	}
+	if (this.graphsFlags.ABANDONEDVEHICLESGRAPH === true)
+		this.makeAbandonedVehicleGraph();
+	else{
+		this.abandonedVehicleGraphSVG.selectAll("*").remove();
+		this.abandonedVehicleGraph = null;
+	}
+	if (this.graphsFlags.POTHOLEGRAPH === true)
+		this.makePotholeGraph();
+	else{
+		this.potHoleGraphSVG.selectAll("*").remove();
+		this.potHoleGraph = null;
+	}
 	console.log("THIS FUNCTION IS CALLED EVERYTIME A GRAPH FLAG IS CHANGED");
 }
 
