@@ -891,19 +891,19 @@ Controller.prototype.setMode = function(modeName,array,b) {
 	// 'b' is the Boolean value to which the layer is set (true or false)
 
 	///////////////////////////////////////////////////////////////
-	console.log("MODENAME = " + modeName + ":\t" + this.layersFlags[modeName] + " --> " + b);
 	
 	if (modeName in this.mode) {
+		console.log("MODENAME = " + modeName + ":\t" + this.mode[modeName] + " --> " + b);
 		this.mode[modeName] = b;
 		// Only one main mode can be selected at a time
-		/* TODO: will fix
 		for(var key in this.mode) {
 			if(b === true && this.mode[key] != this.mode[modeName]) {
 				this.mode[key] = false;
 			}
 		}
-		*/
+		console.log(this.mode);
 	} else if (modeName in this.layersFlags) {
+		console.log("MODENAME = " + modeName + ":\t" + this.layersFlags[modeName] + " --> " + b);
 		this.layersFlags[modeName] = b;
 		// add or remove layers accordingly	
 		for(var key in array) {
@@ -921,6 +921,7 @@ Controller.prototype.setMode = function(modeName,array,b) {
 			}
 		}
 	} else if (modeName in this.graphsFlags) {
+		console.log("MODENAME = " + modeName + ":\t" + this.graphsFlags[modeName] + " --> " + b);
 		this.graphsFlags[modeName] = b;
 	} else {
 		console.log("ERROR: Cannot Set Mode:\t" + modeName + " not defined");

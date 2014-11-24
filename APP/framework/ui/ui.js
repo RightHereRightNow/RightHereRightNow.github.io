@@ -54,8 +54,9 @@ ui.prototype.draw = function() {
 	var emptyCallback = function() {};
 	var emptyArray = {};
 	
-	// MENU
+	var removePathCallback = function() { context.removePath();	}
 
+	// MENU
 	var svgmenu = d3.select(this.menutag).append("svg:svg")
 		.attr("id","menu")
 		.attr("class","uisvgelement")
@@ -63,7 +64,7 @@ ui.prototype.draw = function() {
 		.attr("preserveAspectRatio", "xMinYMin meet")
 		.attr("width",this.viewBoxWidth).attr("height",this.viewBoxMenuHeight)
 
-	this.buttonSelection = new level1Button(this,"Selection","distance1",emptyCallback,"SELECTION");
+	this.buttonSelection = new level1Button(this,"Selection","distance1",emptyCallback,"PATHSELECTION");
 	this.buttonSelection.setPreviousButton(null);
 	this.button1List.push(this.buttonSelection);
 
@@ -88,14 +89,11 @@ ui.prototype.draw = function() {
 	this.buttonTwitter.setPreviousButton(this.buttonWeather);
 	this.button1List.push(this.buttonTwitter);
 
-
-
-
 	// SUBMENU SELECTION
 	this.buttonSelection.addChildButton("Path","distance1",emptyCallback,"PATHSELECTION",emptyArray,"#fc6");
 	this.buttonSelection.addChildButton("Bounding Box","stack9",emptyCallback,"BOUNDINGBOXSELECTION",emptyArray,"#fc6");
 	this.buttonSelection.addChildButton("Rectangle","stack9",emptyCallback,"RECTANGLESELECTION",emptyArray,"#fc6");
-	this.buttonSelection.addChildButton("Clear","stack9",emptyCallback,"RECTANGLESELECTION",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Clear","stack9",removePathCallback,"CLEAR",emptyArray,"#fc6");
 	
 	// SUBMENU LAYERS
 	this.buttonLayers.addChildButton("Traffic","traffic17",emptyCallback,"TRAFFICLAYER",context.ctaArray,"#fc6");
