@@ -32,14 +32,14 @@ function YelpMarker(data, context) {
                          this.icon = "yelp";
                          break;
         case 'yelpBar': this.string = 'bar';
-                        this.color="darkblue";
-                        this.icon = "fa-coffee";
+                        this.color="lightred";
+                        this.icon = "beer"; // beer
                         break;
         case 'yelpClub':this.string = 'club';
-                        this.color = "darkgreen";
-                        this.icon = "fa-music";
+                        this.color = "pink";
+                        this.icon = "glass";
                         break;
-        default : console.log("error yelp marker");
+        default : console.log(this.yelpType, "error yelp marker");
                   break;
     }
 
@@ -47,8 +47,6 @@ function YelpMarker(data, context) {
     var self = this;
     var yelpClick = function(e){
         context.getTwitters(self.string);
-
-
     };
 
 
@@ -66,26 +64,15 @@ function YelpMarker(data, context) {
 
     var latlng = L.latLng(this.latitude, this.longitude);
 
-    var iconOld = L.AwesomeMarkers.icon({
-        //icon: "yelp",
-        icon:this.icon,
-        spin:false,
-        //markerColor: "darkred",
-        markerColor: this.color,
-        iconColor: "white"
-    });
 
     var iconNew = L.AwesomeMarkers.icon({
-        //icon: "yelp",
         icon:this.icon,
         spin:false,
-        //markerColor: "darkred",
         markerColor: this.color,
         iconColor: "white"
     });
 
     this.setIconNew(iconNew);
-    this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
     this.init();

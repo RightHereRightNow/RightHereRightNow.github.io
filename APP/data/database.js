@@ -673,10 +673,15 @@ function getVehicles (route,fromLat, fromLong, toLat, toLong, callback, iden){
  */
 
 Database.prototype.getPredictionsFromStopids = function(stopIds, callback, iden){
+	var idString = []
+	for (k in stopIds){
+		idString.push(k)
+	}
+
 	var predictions = [];
 
 	var baseSite = "http://www.ctabustracker.com/bustime/api/v1/";
-	var routes = baseSite + "getpredictions?key="+key+"&stpid="+stopIds;
+	var routes = baseSite + "getpredictions?key="+key+"&stpid="+idString.join();
 
 	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + routes + '"') + '&format=xml&callback=?';
 	$.getJSON(yql, function(data){

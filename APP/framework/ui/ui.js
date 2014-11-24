@@ -36,6 +36,7 @@ var ui = function(menutag,mapcontroltag,radiuscontroltag,timerangetag) {
 	divvyBlue = "#3db7e4";
 
 	this.button1List = [];
+	this.buttonSelectionList = [];
 
 	this.dt = 1000; // Transition duration
 }
@@ -64,9 +65,16 @@ ui.prototype.draw = function() {
 		.attr("preserveAspectRatio", "xMinYMin meet")
 		.attr("width",this.viewBoxWidth).attr("height",this.viewBoxMenuHeight)
 
-	this.buttonSelection = new level1Button(this,"Selection","distance1",emptyCallback,"PATHSELECTION");
+	this.buttonSelection = new level1Button(this,"Selection","distance1",emptyCallback,"SELECTION");
 	this.buttonSelection.setPreviousButton(null);
 	this.button1List.push(this.buttonSelection);
+	
+	setTimeout(function() {
+			for(c in context.ui.buttonSelection.childButtons) {
+				context.ui.buttonSelectionList.push(context.ui.buttonSelection.childButtons[c]);
+				console.log("SELECTION BUTTONS: " + c + " - " + context.ui.buttonSelectionList[c].textStr);
+			}
+		},1000)
 
 	this.buttonLayers = new level1Button(this,"Layers","stack9",emptyCallback,"LAYERS");
 	this.buttonLayers.setPreviousButton(this.buttonSelection);
@@ -95,6 +103,7 @@ ui.prototype.draw = function() {
 	this.buttonSelection.addChildButton("Rectangle","stack9",emptyCallback,"RECTANGLESELECTION",emptyArray,"#fc6");
 	this.buttonSelection.addChildButton("Clear","stack9",context.clearAll.bind(context),"CLEAR",emptyArray,"#fc6");
 	
+
 	// SUBMENU LAYERS
 	this.buttonLayers.addChildButton("Traffic","traffic17",emptyCallback,"TRAFFICLAYER",context.ctaArray,"#fc6");
 	this.buttonLayers.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",context.crimeContainer,"red");
@@ -155,7 +164,6 @@ ui.prototype.draw = function() {
 	this.buttonWeatherGraph.create(svgmenu);
 	this.buttonPotholeGraph.create(svgmenu);
 */	
-
 
 
 

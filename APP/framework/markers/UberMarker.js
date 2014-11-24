@@ -60,7 +60,7 @@ var UberMarker = function(data) {
             "</br><b>Estimated Distance:</b> "+ this.distance + " miles" +
             "</br><b>UberX Arrival Time:</b> "+ this.estimate + " mins" +
             "</br><b>Estimated Travel Time:</b> "+ this.duration + " mins" +
-            "</br><b>Sure Multiplier:</b> " + this.surge_multiplier + "</p>";
+            "</br><b>Surge Multiplier:</b> x" + this.surge_multiplier + "</p>";
 
         console.log(popupstr);
         this.setPopupString(popupstr);
