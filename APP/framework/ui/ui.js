@@ -64,7 +64,7 @@ ui.prototype.draw = function() {
 		.attr("preserveAspectRatio", "xMinYMin meet")
 		.attr("width",this.viewBoxWidth).attr("height",this.viewBoxMenuHeight)
 
-	this.buttonSelection = new level1Button(this,"Selection","distance1",emptyCallback,"PATHSELECTION");
+	this.buttonSelection = new level1Button(this,"Selection","distance1",emptyCallback,"SELECTION");
 	this.buttonSelection.setPreviousButton(null);
 	this.button1List.push(this.buttonSelection);
 
