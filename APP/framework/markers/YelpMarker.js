@@ -4,6 +4,7 @@
 //coffee
 function YelpMarker(data, context) {
 
+    this.yelpType = data.idenType;
     this.display_phone = data.display_phone; //  "+1-312-733-7595"
     this.id = data.id; //  "lotus-cafe-and-bánh-mì-sandwiches-chicago"
     this.image_url = data.image_url; //  "http://s3-media1.fl.yelpcdn.com/bphoto/bFWtqYWPrkemeQDgSQ0OhQ/ms.jpg"
@@ -24,10 +25,33 @@ function YelpMarker(data, context) {
     this.url = data.url; //  "http://www.yelp.com/biz/lotus-cafe-and-b%C3%A1nh-m%C3%AC-sandwiches-chicago"
 
     this.controller =  context;
+
+    switch(this.yelpType){
+        case 'yelpFood': this.string = 'food';
+                         this.color = "darkred";
+                         this.icon = "yelp";
+                         break;
+        case 'yelpBar': this.string = 'bar';
+                        this.color="darkblue";
+                        this.icon = "fa-coffee";
+                        break;
+        case 'yelpClub':this.string = 'club';
+                        this.color = "darkgreen";
+                        this.icon = "fa-music";
+                        break;
+        default : console.log("error yelp marker");
+                  break;
+    }
+
+
     var self = this;
     var yelpClick = function(e){
-        context.getTwitters('food');
+        context.getTwitters(self.string);
+
+
     };
+
+
 
 
     var popupstr = "<p><b>" + this.name + " </b>" +
@@ -43,16 +67,20 @@ function YelpMarker(data, context) {
     var latlng = L.latLng(this.latitude, this.longitude);
 
     var iconOld = L.AwesomeMarkers.icon({
-        icon: "yelp",
+        //icon: "yelp",
+        icon:this.icon,
         spin:false,
-        markerColor: "darkred",
+        //markerColor: "darkred",
+        markerColor: this.color,
         iconColor: "white"
     });
 
     var iconNew = L.AwesomeMarkers.icon({
-        icon: "yelp",
+        //icon: "yelp",
+        icon:this.icon,
         spin:false,
-        markerColor: "darkred",
+        //markerColor: "darkred",
+        markerColor: this.color,
         iconColor: "white"
     });
 

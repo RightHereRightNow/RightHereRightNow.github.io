@@ -1,17 +1,17 @@
 /* remember to include:
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
- 	<script type="text/javascript" src="xml2json.js"></script>
+ <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+ <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+ <script type="text/javascript" src="xml2json.js"></script>
 
-	 <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha1.js"></script>
-	 <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js"></script>
-	 <script src="oauth-1.0a.js"></script>
-	*/
+ <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha1.js"></script>
+ <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js"></script>
+ <script src="oauth-1.0a.js"></script>
+ */
 
 /*
-CALLBACK is the function used to manage the data
-iden is an id used to recognize what data we are handling
-*/
+ CALLBACK is the function used to manage the data
+ iden is an id used to recognize what data we are handling
+ */
 function Database(){
 	var this_db = this;
 	this.busRoute = null;
@@ -19,40 +19,40 @@ function Database(){
 
 var keyCTA1 = 'nBy7EWCMF5qH2bJ3x5NyXpL6N';
 var keyCTA2 = 'jgfD8euazQYDTiGeQhP6NKPYj';
-var key = keyCTA2	;
+var key = keyCTA1;
 var CtaData;
 var drawn = [];
 var _busRoute = [];
 
 
 /*
-	Generic query function, take as input all the parameters needed
-	from -> address of the data you are interested in
-	callback -> function that handles the vales
-	iden -> id of the function, in order to recognize what are you working on.
-	*/
+ Generic query function, take as input all the parameters needed
+ from -> address of the data you are interested in
+ callback -> function that handles the vales
+ iden -> id of the function, in order to recognize what are you working on.
+ */
 Database.prototype.genericQuery = function(select, where, order, group, limit, offset, from, callback, iden){
 
-		//var filters = "$select="+select+"&$where="+where+"&$order="+order+"&$group="+group+"&$limit="+limit+"&$offset="+offset;
+	//var filters = "$select="+select+"&$where="+where+"&$order="+order+"&$group="+group+"&$limit="+limit+"&$offset="+offset;
 
-		var filters = "$select="+select+"&$where="+where;
-		//console.log("from" + from);
-		//console.log("normal filter " + iden);
-		//console.log(filters);
+	var filters = "$select="+select+"&$where="+where+"&$limit=5000";
+	//console.log("from" + from);
+	//console.log("normal filter " + iden);
+	//console.log(filters);
 
 
-		// //filters = encodeURI(filters);
-		// console.log("modified filter");
-		// console.log(filters);
-		$.ajax({
-			url: from,
-			data: filters,
-			dataType: "json",
-			success: function(data) {
-				callback(data, iden);
-			}
-		});
-	};
+	// //filters = encodeURI(filters);
+	// console.log("modified filter");
+	// console.log(filters);
+	$.ajax({
+		url: from,
+		data: filters,
+		dataType: "json",
+		success: function(data) {
+			callback(data, iden);
+		}
+	});
+};
 
 Database.prototype.currentDate = function(filter){
 	var today = new Date();
@@ -91,11 +91,11 @@ Database.prototype.currentDate = function(filter){
 
 
 	if(dd<10) {
-	    dd='0'+dd
+		dd='0'+dd
 	}
 
 	if(mm<10) {
-	    mm='0'+mm
+		mm='0'+mm
 	}
 
 	today = yyyy+'-'+mm+'-'+dd+"T00:00:00";
@@ -105,15 +105,15 @@ Database.prototype.currentDate = function(filter){
 };
 
 /*
-weekOrMonth: type 'week' if you want to see data of the last week
-			 type 'month' if you want to see data of the last month
-fromLat : first point of latitude
-fromLong : first point of longitude
-toLat : last point of latitude
-toLong : last point of longitude
+ weekOrMonth: type 'week' if you want to see data of the last week
+ type 'month' if you want to see data of the last month
+ fromLat : first point of latitude
+ fromLong : first point of longitude
+ toLat : last point of latitude
+ toLong : last point of longitude
 
-returns latitude,longitude and status of the operation
-*/
+ returns latitude,longitude and status of the operation
+ */
 Database.prototype.potHoles = function(weekOrMonth,fromLat, fromLong, toLat, toLong, callback,iden){
 
 	var date;
@@ -127,13 +127,18 @@ Database.prototype.potHoles = function(weekOrMonth,fromLat, fromLong, toLat, toL
 			break;
 	}
 
-	this.genericQuery("service_request_number,creation_date, status, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/7as2-ds3y.json", callback,iden );
+	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
+		this.genericQuery("service_request_number,creation_date, status, latitude, longitude", "creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/7as2-ds3y.json", callback,iden );
+	}else{
+		this.genericQuery("service_request_number,creation_date, status, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/7as2-ds3y.json", callback,iden );
+	}
+
 
 };
 
 /*
-same as before, returns the day it has been stolen, the make model & the vechicle color, latitude and longitude
-*/
+ same as before, returns the day it has been stolen, the make model & the vechicle color, latitude and longitude
+ */
 Database.prototype.abandonedVehicle = function(weekOrMonth,fromLat, fromLong, toLat, toLong, callback,iden){
 	var date;
 
@@ -145,29 +150,39 @@ Database.prototype.abandonedVehicle = function(weekOrMonth,fromLat, fromLong, to
 		default: console.log("errore db");
 			break;
 	}
-	this.genericQuery("service_request_number,creation_date,vehicle_make_model,vehicle_color, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/3c9v-pnva.json", callback,iden );
+
+	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
+		this.genericQuery("service_request_number,creation_date,vehicle_make_model,vehicle_color, latitude, longitude", "creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/3c9v-pnva.json", callback,iden );
+	}else{
+		this.genericQuery("service_request_number,creation_date,vehicle_make_model,vehicle_color, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/3c9v-pnva.json", callback,iden );
+	}
 };
 
 /*
-I am only taking the one that has not been completed.
-return latitude and longitude
-*/
+ I am only taking the one that has not been completed.
+ return latitude and longitude
+ */
 Database.prototype.lightOutAllNotCompleted = function(weekOrMonth, fromLat,fromLong, toLat, toLong, callback, iden){
 	var date;
 
 	switch(weekOrMonth){
 		case 'week': date = this.currentDate('oneWeekAgo');
-						break;
+			break;
 		case 'month': date = this.currentDate('oneMonthAgo');
-						break;
+			break;
 		default: console.log("errore db");
-					break;
+			break;
 	}
-	this.genericQuery("service_request_number,latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status ='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
+	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
+		this.genericQuery("service_request_number,latitude, longitude", "creation_date>='"+date+"' AND status ='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
+	}else{
+		this.genericQuery("service_request_number,latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status ='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
+	}
+
 };
 
 /*
-Here I am only taking the completed ones...
+ Here I am only taking the completed ones...
  */
 Database.prototype.lightOutAllCompleted = function(weekOrMonth, fromLat,fromLong, toLat, toLong, callback, iden){
 	var date;
@@ -180,23 +195,29 @@ Database.prototype.lightOutAllCompleted = function(weekOrMonth, fromLat,fromLong
 		default: console.log("errore db");
 			break;
 	}
-	this.genericQuery("service_request_number,latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status !='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
+
+	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
+		this.genericQuery("service_request_number,latitude, longitude", "creation_date>='"+date+"' AND status !='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
+	}else{
+		this.genericQuery("service_request_number,latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status !='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
+	}
+
 };
 
 /*
-taking only the one that has not been completed.
-returns latitude and longitude
-*/
+ taking only the one that has not been completed.
+ returns latitude and longitude
+ */
 Database.prototype.lightOut1NotCompleted = function(weekOrMonth, fromLat,fromLong, toLat, toLong, callback, iden){
 	var date;
 
 	switch(weekOrMonth){
 		case 'week': date = this.currentDate('oneWeekAgo');
-						break;
+			break;
 		case 'month': date = this.currentDate('oneMonthAgo');
-						break;
+			break;
 		default: console.log("errore db");
-					break;
+			break;
 	}
 	//this.genericQuery("latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status !='Completed'","","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
 	var fromLa,fromLo,toLa,toLo;
@@ -220,7 +241,12 @@ Database.prototype.lightOut1NotCompleted = function(weekOrMonth, fromLat,fromLon
 		toLo = fromLong;
 	}
 
-	this.genericQuery("service_request_number,latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status = 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
+	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
+		this.genericQuery("service_request_number,latitude, longitude", "creation_date >= '"+date+"' AND status = 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
+	}else{
+		this.genericQuery("service_request_number,latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status = 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
+	}
+
 };
 
 /*
@@ -260,25 +286,31 @@ Database.prototype.lightOut1Completed = function(weekOrMonth, fromLat,fromLong, 
 		toLo = fromLong;
 	}
 
-	this.genericQuery("service_request_number,latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status != 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
+	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
+		this.genericQuery("service_request_number,latitude, longitude", "creation_date >= '"+date+"' AND status != 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
+	}else{
+		this.genericQuery("service_request_number,latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status != 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
+	}
+
+
 };
 
 
 /*
-for whole chicago, pass latitudes and longitudes = 0
-returns
-	- date
-	- type of crime
-	- description of the crime
-	- latitude
-	- longitude
-*/
+ for whole chicago, pass latitudes and longitudes = 0
+ returns
+ - date
+ - type of crime
+ - description of the crime
+ - latitude
+ - longitude
+ */
 
 /*
-Query without parameter in filtering.
-from -> website where to get the data
-dataType -> type of data that is returning : json, jsonP etc etc
-*/
+ Query without parameter in filtering.
+ from -> website where to get the data
+ dataType -> type of data that is returning : json, jsonP etc etc
+ */
 
 Database.prototype.crimes = function(weekOrMonth, fromLat,fromLong, toLat, toLong, callback, iden){
 	var date;
@@ -319,19 +351,19 @@ Database.prototype.crimesOthers = function(fromLat,fromLong,toLat,toLong,callbac
 }
 
 Database.prototype.queryNoParam = function(from,dataType, callback, iden){
-		$.ajax({
-			url: from,
-			dataType: dataType,
-			success: function(data) {
-				callback(data, iden);
-			}
-		});
-	};
+	$.ajax({
+		url: from,
+		dataType: dataType,
+		success: function(data) {
+			callback(data, iden);
+		}
+	});
+};
 
 /*
-Return the whole object given from the website
-PAY ATTENTION: we have a limited amount of queries per day.
-*/
+ Return the whole object given from the website
+ PAY ATTENTION: we have a limited amount of queries per day.
+ */
 Database.prototype.currentWeather = function(callback,iden){
 	var from = "http://api.wunderground.com/api/726259969c570f02/geolookup/conditions/q/IA/Chicago.json";
 	this.queryNoParam(from,'jsonp',callback,iden);
@@ -340,11 +372,11 @@ Database.prototype.currentWeather = function(callback,iden){
 
 
 /*
-VERY EXPENSIVE
-Given those data, retrieve all the routes, direction, stops and buses filtered by latitude and longitude
-Not used as we are using the second version.
+ VERY EXPENSIVE
+ Given those data, retrieve all the routes, direction, stops and buses filtered by latitude and longitude
+ Not used as we are using the second version.
 
-IF USE -> return both direction, not only one!
+ IF USE -> return both direction, not only one!
  */
 Database.prototype.getCTAData = function (fromLat,fromLong, toLat, toLong, callback,iden){
 	$.ajaxSetup({
@@ -481,16 +513,16 @@ function checkCTAReturn(busData,callback,iden,fromLat,fromLong, toLat, toLong){
 	for(var i = 0; i< busData.stops.length; i++){
 		var data = busData.stops[i];
 		/*
-		console.log(data);
-		console.log("********LATITUDE 1ST -> DATA 2ND FROMLA 3RD TOLA");
-		console.log(data.latitude);
-		console.log(fromLa);
-		console.log(toLa);
-		console.log("********LONGITUDE 1ST -> DATA 2ND FROMLA 3RD TOLA");
-		console.log(data.longitude);
-		console.log(fromLo);
-		console.log(toLo);
-		*/
+		 console.log(data);
+		 console.log("********LATITUDE 1ST -> DATA 2ND FROMLA 3RD TOLA");
+		 console.log(data.latitude);
+		 console.log(fromLa);
+		 console.log(toLa);
+		 console.log("********LONGITUDE 1ST -> DATA 2ND FROMLA 3RD TOLA");
+		 console.log(data.longitude);
+		 console.log(fromLo);
+		 console.log(toLo);
+		 */
 		if(data.latitude >= fromLa && data.latitude <=toLa && data.longitude >= fromLo && data.longitude <= toLo){
 			//TO-DO RITORNA TROPPI!
 			for(var j = 0; j < drawn.length && flag == false; j++){
@@ -514,7 +546,7 @@ function checkCTAReturn(busData,callback,iden,fromLat,fromLong, toLat, toLong){
 }
 
 /*
-Should be called at the beginning of the program, take all the routes and then call getVehicles per each route.
+ Should be called at the beginning of the program, take all the routes and then call getVehicles per each route.
  */
 Database.prototype.getCTAData2 = function (busRoute,fromLat,fromLong, toLat, toLong, callback,iden){
 	drawn = [];
@@ -540,29 +572,28 @@ Database.prototype.getCTAData2 = function (busRoute,fromLat,fromLong, toLat, toL
 			_busRoute.push(route);
 		});
 	});
-	console.log("_busRoute",_busRoute);
 	busRoute = _busRoute;
 };
 
 /*
-Given all the parameters, returns only the vehicle that, in that ROUTE, are inside the boundaries of latitude and longitude.
-The vehicle is an object with :
-	- vehicle id
-	- timestamp
-	- latitude
-	- longitude
-	- head direction -> where is actually pointing the face of the bus (in degrees)
-	- pid : Pattern ID of trip currently being executed.
-	- pdist: distance done on the pattern
-	- route : actual route
-	- destination
+ Given all the parameters, returns only the vehicle that, in that ROUTE, are inside the boundaries of latitude and longitude.
+ The vehicle is an object with :
+ - vehicle id
+ - timestamp
+ - latitude
+ - longitude
+ - head direction -> where is actually pointing the face of the bus (in degrees)
+ - pid : Pattern ID of trip currently being executed.
+ - pdist: distance done on the pattern
+ - route : actual route
+ - destination
  */
 Database.prototype.getVehiclesPublic = function(route, fromLat, fromLong, toLat, toLong, callback, iden){
 	getVehicles(route, fromLat,fromLong, toLat, toLong, callback, iden);
 };
 
 /*
-look the public function
+ look the public function
  */
 function getVehicles (route,fromLat, fromLong, toLat, toLong, callback, iden){
 	//return vehicles only if the lat && long specified...
@@ -622,23 +653,23 @@ function getVehicles (route,fromLat, fromLong, toLat, toLong, callback, iden){
 			}
 		});
 
-	callback(vehicles,iden);
+		callback(vehicles,iden);
 	});
 }
 
 
 /*
-get the prediction of a set of stopids
+ get the prediction of a set of stopids
 
-stopIds is a comma delimited stopids string
+ stopIds is a comma delimited stopids string
 
-returning:
-	-tmstmp : date and time when the prediction was generated
-	-typ :	A = arrival
-			D = departure prediction
-	-stpnm: name of the stop for wich the prediction was generated
-	-stpid: unique id!! of the stop
-	-vid:
+ returning:
+ -tmstmp : date and time when the prediction was generated
+ -typ :	A = arrival
+ D = departure prediction
+ -stpnm: name of the stop for wich the prediction was generated
+ -stpid: unique id!! of the stop
+ -vid:
  */
 
 Database.prototype.getPredictionsFromStopids = function(stopIds, callback, iden){
@@ -746,8 +777,8 @@ Database.prototype.getPredictionsFromStopids = function(stopIds, callback, iden)
 
 
 /*
-Returns all data regarding filtered divvy bikes
-*/
+ Returns all data regarding filtered divvy bikes
+ */
 Database.prototype.divvyBikes = function(fromLat, fromLong, toLat, toLong, callback,iden){
 	var filtered_divvy = [];
 	var fromLo,toLo,fromLa,toLa;
@@ -814,13 +845,13 @@ Database.prototype.divvyBikes = function(fromLat, fromLong, toLat, toLong, callb
  YELP : http://api.yelp.com/v2/search?term=food&location=San+Francisco&oauth_consumer_key=vQDt1XRP96cp8PKpSoTjng&oauth_token=zUTnrBovkPeORRyRWdDcrjY7jS_L2h29&oauth_signature_method=HMAC-SHA1&oauth_signature=A5L5DIi0t6B_AJEi16jcxUUCheE&oauth_timestamp=1415487690&oauth_nonce=1234
  */
 /*
-Function to query on yelp API
-term: the term to search.. Ex. Hamburger, food...
-location: (ONLY IF CLL AND BOUNDS == '') city to query on Ex. Chicago, IL
-sort : how we want the results sorted (maybe useless) 0=Best Matched, 1=Distance, 2=Highest Rated
-radius_filter : radius filter to query on. max 4000(m) (25miles)
-cll : (ONLY IF LOCATION is SET AND BOUNDS == '') latitude and longitude
-bounds : geographical bounding box, format -> sw_latitude,sw_longitude|ne_latitude,ne_longitude
+ Function to query on yelp API
+ term: the term to search.. Ex. Hamburger, food...
+ location: (ONLY IF CLL AND BOUNDS == '') city to query on Ex. Chicago, IL
+ sort : how we want the results sorted (maybe useless) 0=Best Matched, 1=Distance, 2=Highest Rated
+ radius_filter : radius filter to query on. max 4000(m) (25miles)
+ cll : (ONLY IF LOCATION is SET AND BOUNDS == '') latitude and longitude
+ bounds : geographical bounding box, format -> sw_latitude,sw_longitude|ne_latitude,ne_longitude
  */
 Database.prototype.yelp = function(term, location, sort, radius_filter, cllLat,cllLong, sw_lat,sw_long, ne_lat,ne_long, callback, iden){
 	console.log("calling yelp data", callback);
@@ -912,14 +943,14 @@ Database.prototype.uberEstPrice = function(start_latitude,start_longitude, end_l
  */
 
 /*
-paramQuery = must be an ARRAY of elements (keywords) that you want to search.
-			an example could be 'chicaho' or 'redLightDistrict'.
-			if you want to search for an hashtag (#chicago) type %23chicago
-latitude = latitude of the center of the area where to search the tweets
-longitude = longitude of the center of the area where to search the tweets
-radius = radius of the circle
+ paramQuery = must be an ARRAY of elements (keywords) that you want to search.
+ an example could be 'chicaho' or 'redLightDistrict'.
+ if you want to search for an hashtag (#chicago) type %23chicago
+ latitude = latitude of the center of the area where to search the tweets
+ longitude = longitude of the center of the area where to search the tweets
+ radius = radius of the circle
 
-return a json with all the data regarding the tweets
+ return a json with all the data regarding the tweets
  */
 
 Database.prototype.twitter = function(paramQuery,latitude,longitude,radius,callback,iden){
@@ -947,15 +978,15 @@ Database.prototype.twitter = function(paramQuery,latitude,longitude,radius,callb
 
 
 function convertXml2JSon(data,callback,iden) {
-	    	var x2js = new X2JS();
-		    var json = x2js.xml_str2json(data);
-		    //console.log("json...");
-			//console.log(json);
-			callback(json, iden);
-		}
+	var x2js = new X2JS();
+	var json = x2js.xml_str2json(data);
+	//console.log("json...");
+	//console.log(json);
+	callback(json, iden);
+}
 
 function convertJSon2XML() {
-    $("#xmlArea").val(x2js.json2xml_str($.parseJSON($("#jsonArea").val())));
+	$("#xmlArea").val(x2js.json2xml_str($.parseJSON($("#jsonArea").val())));
 }
 
 
@@ -969,7 +1000,7 @@ function xmlToJson(xml) {
 	if (xml.nodeType == 1) { // element
 		// do attributes
 		if (xml.attributes.length > 0) {
-		obj["@attributes"] = {};
+			obj["@attributes"] = {};
 			for (var j = 0; j < xml.attributes.length; j++) {
 				var attribute = xml.attributes.item(j);
 				obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
@@ -998,4 +1029,3 @@ function xmlToJson(xml) {
 	}
 	return obj;
 };
-
