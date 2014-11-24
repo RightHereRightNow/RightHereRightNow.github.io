@@ -47,8 +47,6 @@ function YelpMarker(data, context) {
     var self = this;
     var yelpClick = function(e){
         context.getTwitters(self.string);
-
-
     };
 
 
@@ -66,26 +64,15 @@ function YelpMarker(data, context) {
 
     var latlng = L.latLng(this.latitude, this.longitude);
 
-    var iconOld = L.AwesomeMarkers.icon({
-        //icon: "yelp",
-        icon:this.icon,
-        spin:false,
-        //markerColor: "darkred",
-        markerColor: this.color,
-        iconColor: "white"
-    });
 
     var iconNew = L.AwesomeMarkers.icon({
-        //icon: "yelp",
         icon:this.icon,
         spin:false,
-        //markerColor: "darkred",
         markerColor: this.color,
         iconColor: "white"
     });
 
     this.setIconNew(iconNew);
-    this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
     this.init();
