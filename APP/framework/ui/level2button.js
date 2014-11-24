@@ -76,12 +76,14 @@ level2Button.prototype.onClick = function() {
 }
 
 level2Button.prototype.setActive = function() {
-	for(b in this.ui.buttonSelectionList) {
-		this.ui.buttonSelectionList[b].setInactive();
-	}
-	this.active = true;
-	context.setMode(this.contextSwitchStr,this.markerArray,true);
-	this.yEnd = this.yStart + this.ui.button2height;
+	if (this.contextSwitchStr !== "CLEAR"){
+		for(b in this.ui.buttonSelectionList) {
+			this.ui.buttonSelectionList[b].setInactive();
+		}
+		this.active = true;
+		context.setMode(this.contextSwitchStr,this.markerArray,true);
+		this.yEnd = this.yStart + this.ui.button2height;
+    }
 }
 
 level2Button.prototype.setInactive = function() {
