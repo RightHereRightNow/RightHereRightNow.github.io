@@ -52,7 +52,7 @@ function Controller() {
 		CRIMEGRAPH:	false,
 		ABANDONEDVEHICLESGRAPH: false,
 		STREETLIGHTSOUTGRAPH: false,
-		POTHOLEGRAPH: false,
+		POTHOLEGRAPH: false
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -84,6 +84,7 @@ function Controller() {
 	this.lightsAllArray = {};
 	this.lights1Array = {};
 	this.ctaArray = {};
+	this.uberArray = {};
 
 	this.ctaStopsArray = {};
 	this.ctaStopsData = [];
@@ -146,8 +147,9 @@ Controller.prototype.getBusStopDataFromFile = function(){
 			var temp = features[i].properties.Description.match(reg);
 			if (temp){
 				var ID = (temp[0]).match(numExp)[0];
-				var loc = new L.LatLng(features[i].geometry.coordinates[1],features[i].geometry.coordinates[0]);
-				this.ctaStopsData.push({stopID:ID,latlng:loc});
+				var latitude = features[i].geometry.coordinates[1],
+					longitude = features[i].geometry.coordinates[0];
+				this.ctaStopsData.push({stopID:ID,latitude:latitude, longitude:longitude});
 			}
 
 		}
@@ -155,7 +157,7 @@ Controller.prototype.getBusStopDataFromFile = function(){
 		//console.log(this.ctaStopsData);
 		//console.log(data);
 	}.bind(this));
-}
+};
 
 //var twitterBox = new Twitter();
 var indexTwitter = 0;
@@ -290,6 +292,13 @@ Controller.prototype.getData = function() {
 				}
 			}
 
+			if(!this.ctaStopsDataLoaded)
+				this.getBusStopDataFromFile();
+
+			if(!this.ctaStopsDataDrawn){
+				this.filterByPerimeter(this.ctaStopsData, 'busStop');
+				this.ctaStopsDataDrawn = true;
+			}
 			//this.dataManager.busRoute.forEach(function(route){
 			//	self.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
 			//})
@@ -451,8 +460,29 @@ Controller.prototype.removeRectangle = function(){
 }
 
 Controller.prototype.removeAllMarkers = function(){
-	//TODO remove all markers
-}
+	console.log("removeAllMarkers");
+	var markerContainers = [
+		//this.pointsOfInterestArray,
+		this.potholesArray,
+		this.crimeContainer,  //new CrimeContainer();
+		this.divvyArray,
+		this.carsArray,
+		//this.lightsAllArray,
+		//this.lights1Array = {};
+		this.ctaArray,
+		this.ctaStopsArray,
+		this.yelpContainer
+	];
+
+	var self = this;
+	markerContainers.forEach(function(container){
+		for (key in container){
+			//console.log(container[key]);
+			self.map.removeLayer(container[key]);
+			delete container[key];
+		}
+	})
+};
 
 
 Controller.prototype.normalModeClick = function(e){};
@@ -529,7 +559,7 @@ Controller.prototype.storeChicagoMonthData = function(data, id){
 			this.chicagoData.streetLightsOneMonth = data;
 			break;
 	}
-}
+};
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	console.log("filterByPerimeter", data,identifierStr,data);
@@ -540,8 +570,9 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		for (var d=0;d<data.length;d++){
 			var dist = 100; // Too far away!
 			var dataPoint = data[d];
+			dataPoint.idenType = identifierStr;
 
-			if(dataPoint.hasOwnProperty("location.coordinate")){
+			if(dataPoint.hasOwnProperty("location") && dataPoint.location.hasOwnProperty("coordinate")){
 				dataPoint.latitude = dataPoint.location.coordinate.latitude;
 				dataPoint.longitude = dataPoint.location.coordinate.longitude;
 			}
@@ -586,7 +617,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			this.updateMarkers(data,this.carsArray,'service_request_number',AbandonedVehicleMarker);
 			break;
 		case 'lightOutAll':
-			// TODO: add special marker for 'LightsOutAll' (maybe just with another icon indicating several lights out)
+			(this.queryDuration==="week"? this.selectionData.streetLightsAllWeekeWeek = data : this.selectionData.streetLightsAllMonth = data)
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
 		case 'lightOutOne':
@@ -598,6 +629,9 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			break;
 		case 'cta':
 			this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
+			break;
+		case 'busStop':
+			this.updateMarkers(data,this.ctaStopsArray,'stopID',BusStopMarker);
 			break;
 		default:
 			console.log('Invalid string');
@@ -618,40 +652,37 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 		var iKey = {};
 		data.forEach(
 			function(d){
-				console.log(idstr, d,d[idstr]);
+				//console.log(idstr, d,d[idstr]);
 				iKey[d[idstr]] = d[idstr]
 			}
 		);
 
-		//console.log(iKey.length, iKey);
 
 		for(var i = 0; i< data.length; i++){
-			console.log("doing shit", data[i])
 			var key = data[i][idstr];
 			// A - B: Add new marker
 			if(!markerCollection[key]) {
 				markerCollection[key] = new marker(data[i],context);
 				markerCollection[key].viewNewIcon();
-				console.log("Add new Marker!!", markerCollection[key]);
 				markerCollection[key].addTo(this.map);
 			// B in A: update!
 			} else if(markerCollection[key]){
-				console.log("Marker is in the collection!!", data[i]);
 				if (markerCollection[key] instanceof CTAMarker){
-					console.log(" updateMarkers");//,idstr, data[i][idstr], data[i], key, markerCollection[key] );
 					markerCollection[key].updateMarkerData(data[i]);
 				} //else
 			// Remove B!
 			}
 		}
+		console.log("markerCollection", typeof marker, markerCollection);
 		for ( k in markerCollection){
+			//console.log(k);
 			if (!iKey[k]){
 				if (!marker instanceof CTAMarker) {
 					console.log("Kill the Marker!!");
 					map.removeLayer(markerCollection[k]); // markerCollection.remove(k) acts like pop or slice. It returns the marker, then deletes it from the collection
 					delete markerCollection[k];
 				}
-					console.log(markerCollection[k]);
+					//console.log(markerCollection[k]);
 			}
 		}
 	} else
@@ -708,7 +739,13 @@ Controller.prototype.drawPath = function(points){
     	this.pathLine = L.polyline([],{className:"route"});
     	this.map.addLayer(this.pathLine,false);
     	this.pathLine.bringToFront();
-    }
+
+		// Add the first uberMarker
+		this.uberArray[0] = new UberMarker({latitude:points[0], longitude: points[1]});
+		this.uberArray[0].addTo(this.map);
+
+
+	}
     // console.log(points);
     for(var i=0;i<points.length/2;i++){
     	this.pathLine.addLatLng(new L.LatLng(points[2*i],points[2*i+1]));
@@ -717,7 +754,7 @@ Controller.prototype.drawPath = function(points){
     this.pathLine.redraw();
     // console.log(this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
-
+	this.ctaStopsDataDrawn = false;
     //this.getPerimeterAroundPath(30);
 };
 
@@ -731,11 +768,6 @@ Controller.prototype.init = function(){
 	this.pointsOfInterestArray[2] = new SimpleMarker({latitude: 41.86761, longitude: -87.61365, description: "The Shedd Aquarium"});
 	this.pointsOfInterestArray[3] = new SimpleMarker({latitude: 41.86635, longitude: -87.60659, description: "The Alder Planetarium"});
 
-	//database.yelp('food','London',0,'4000','','','','','','',fringuello, 'yelpdata-city');
-	//database.yelp('food', '', 0, '4000','','', '41.8747107','-87.0','41.8710629','-87.9',fringuello, 'yelp-data-square');
-
-	var data = {destination: "Congress Plaza", headdirect: "87",latitude: 41.8779182434082,longitude: -87.64629666310437,pdist: "37681",pid: "4506",route: "126",timestamp: "20141121 22:48",vehicleid: "1701"};
-	this.ctaArray["1701"] = new CTAMarker(data);
 	//console.log(this.pointsOfInterestArray[5]);
 	for( var key in this.pointsOfInterestArray){
 		this.pointsOfInterestArray[key].addTo(this.map);

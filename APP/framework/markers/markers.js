@@ -15,11 +15,13 @@ extend(PotholeMarker, AbstractMarker);
 extend(CTAMarker, AbstractMarker);
 extend(YelpMarker, AbstractMarker);
 extend(LightsOutMarker, AbstractMarker);
+extend(BusStopMarker, AbstractMarker);
+extend(UberMarker, AbstractMarker);
 
 
 
-//extend(SimpleContainer, AbstractMarkerContainer);
-//extend(CrimeContainer, AbstractMarkerContainer);
+extend(SimpleContainer, AbstractMarkerContainer);
+extend(CrimeContainer, AbstractMarkerContainer);
 
 //extend(DivvyContainer, AbstractMarkerContainer);
 //extend(AbandonedVehicleContainer, AbstractMarkerContainer);

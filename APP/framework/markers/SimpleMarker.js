@@ -23,14 +23,7 @@ var SimpleMarker = function(data) {
         iconColor: "white"
     });
 
-    var iconOld = L.AwesomeMarkers.icon({
-        icon: "circle",
-        spin:false,
-        markerColor: "orange",
-        iconColor: "white"
-    });
     this.setIconNew(iconNew);
-    this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
     this.init();
@@ -39,9 +32,8 @@ var SimpleMarker = function(data) {
 
 
 
-function SimpleContainer() {
+var SimpleContainer = function() {
     this.add = function (key, data) {
-        this.container[key] = new SimpleMarker(data);
         this.container[key] = new SimpleMarker(data);
     }
 };
