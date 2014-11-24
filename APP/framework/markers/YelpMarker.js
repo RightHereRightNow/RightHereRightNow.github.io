@@ -32,14 +32,14 @@ function YelpMarker(data, context) {
                          this.icon = "yelp";
                          break;
         case 'yelpBar': this.string = 'bar';
-                        this.color="darkblue";
-                        this.icon = "fa-coffee";
+                        this.color="lightred";
+                        this.icon = "beer"; // beer
                         break;
         case 'yelpClub':this.string = 'club';
-                        this.color = "darkgreen";
-                        this.icon = "fa-music";
+                        this.color = "pink";
+                        this.icon = "glass";
                         break;
-        default : console.log("error yelp marker");
+        default : console.log(this.yelpType, "error yelp marker");
                   break;
     }
 

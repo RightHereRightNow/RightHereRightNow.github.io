@@ -715,6 +715,24 @@ Controller.prototype.updateUberMarkers  = function(data) {
 };
 
 
+Controller.prototype.updateCTAMarkers = function(data,markerCollection,idstr,marker) {
+	for(var i = 0; i< data.length; i++){
+		var key = data[i][idstr];
+		// A - B: Add new marker
+		if(!markerCollection[key]) {
+			markerCollection[key] = new marker(data[i],context);
+			markerCollection[key].viewNewIcon();
+			markerCollection[key].addTo(this.map);
+			// B in A: update!
+		} else if(markerCollection[key]){
+			if (markerCollection[key] instanceof CTAMarker){
+				markerCollection[key].updateMarkerData(data[i]);
+			}
+			// Remove B!
+		}
+	}
+}
+
 // Generic function to write new data to markers
 // TODO: handle updated icons
 // 'data' is the (filtered) data that needs to be written to markers
@@ -726,11 +744,15 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 	if (data.length > 0) {
 		var iKey = {};
 		data.forEach(
-			function(d){
-				//console.log(idstr, d,d[idstr]);
-				iKey[d[idstr]] = d[idstr]
+			function(datum){
+				iKey[datum[idstr]] = datum[idstr];
+				//console.log("iKey list",idstr, datum,datum[idstr], iKey[datum[idstr]]);
 			}
 		);
+
+		var iKeySize = getSizeOfMarkerContainer(iKey);
+		var markerSize = getSizeOfMarkerContainer(markerCollection);
+
 
 
 		for(var i = 0; i< data.length; i++){
@@ -748,18 +770,24 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 			// Remove B!
 			}
 		}
-		console.log("markerCollection", typeof marker, markerCollection);
+
+		var markerSize2 = getSizeOfMarkerContainer(markerCollection);
+
 		for ( k in markerCollection){
-			//console.log(k);
+			//console.log(k, iKey[k], markerCollection[k], (marker instanceof CTAMarker));
 			if (!iKey[k]){
-				if (!marker instanceof CTAMarker) {
+				if ((markerCollection[key] instanceof CTAMarker) === false) {
 					console.log("Kill the Marker!!");
 					map.removeLayer(markerCollection[k]); // markerCollection.remove(k) acts like pop or slice. It returns the marker, then deletes it from the collection
 					delete markerCollection[k];
+				} else {
+					console.log("Its a CTAmarker", markerCollection[k]);
 				}
-					//console.log(markerCollection[k]);
+
 			}
 		}
+		var markerSize3 = getSizeOfMarkerContainer(markerCollection);
+		console.log("iKey: ", iKeySize, "markerCollection before:", markerSize, "after:", markerSize2, "pruned:", markerSize3);
 	} else
 		console.log("data is zero!")
 
@@ -1089,7 +1117,7 @@ Controller.prototype.addGraph = function(drawTo,idStr) {
 Controller.prototype.removeGraphs = function(){
 	d3.select("#divgraphs1").selectAll(".graphs").remove();
 	d3.select("#divgraphs2").selectAll(".graphs").remove();
-}
+};
 
 function getCrimeTypeCount(data){
 	var groupedData = d3.nest()
@@ -1140,7 +1168,7 @@ function getCrimeTypeCount(data){
 		}
 	}
 	return crimeList;
-}
+};
 
 Controller.prototype.increaseRadius = function() {
 	var newRadius = this.perimeterRadiusInKm + 0.2;
@@ -1148,18 +1176,18 @@ Controller.prototype.increaseRadius = function() {
 		this.perimeterRadiusInKm = newRadius;
 	}
 	console.log(newRadius);
-}
+};
 
 Controller.prototype.decreaseRadius = function() {
 	var newRadius = this.perimeterRadiusInKm - 0.2;
 	if(newRadius >= this.minRadius) {
 		this.perimeterRadiusInKm = newRadius;
 	}
-}
+};
 
 Controller.prototype.getRadiusPercentage = function() {
 	return this.perimeterRadiusInKm/this.maxRadius;
-}
+};
 
 Controller.prototype.updateGraphs = function() {
 	// TODO: implement
@@ -1182,11 +1210,11 @@ Controller.prototype.updateGraphs = function() {
 		this.potHoleGraph = null;
 	}
 	console.log("THIS FUNCTION IS CALLED EVERYTIME A GRAPH FLAG IS CHANGED");
-}
+};
 
 Controller.prototype.updateTwitter = function() {
 
-}
+};
 
 Controller.prototype.setQueryDuration = function(qd) {
 	console.log("Set queryDuration to " + qd);
@@ -1197,4 +1225,13 @@ Controller.prototype.setQueryDuration = function(qd) {
 	} else {
 		console.log("ERROR: invalid query duration " + qd);
 	}
+};
+
+
+function getSizeOfMarkerContainer(markerCollection){
+	var count = 0;
+	for ( el in markerCollection){
+		count++
+	}
+	return count;
 }
