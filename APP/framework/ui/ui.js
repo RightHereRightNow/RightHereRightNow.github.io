@@ -54,8 +54,9 @@ ui.prototype.draw = function() {
 	var emptyCallback = function() {};
 	var emptyArray = {};
 	
-	// MENU
+	
 
+	// MENU
 	var svgmenu = d3.select(this.menutag).append("svg:svg")
 		.attr("id","menu")
 		.attr("class","uisvgelement")
@@ -63,7 +64,7 @@ ui.prototype.draw = function() {
 		.attr("preserveAspectRatio", "xMinYMin meet")
 		.attr("width",this.viewBoxWidth).attr("height",this.viewBoxMenuHeight)
 
-	this.buttonSelection = new level1Button(this,"Selection","distance1",emptyCallback,"SELECTION");
+	this.buttonSelection = new level1Button(this,"Selection","distance1",emptyCallback,"PATHSELECTION");
 	this.buttonSelection.setPreviousButton(null);
 	this.button1List.push(this.buttonSelection);
 
@@ -71,7 +72,7 @@ ui.prototype.draw = function() {
 	this.buttonLayers.setPreviousButton(this.buttonSelection);
 	this.button1List.push(this.buttonLayers);
 	
-	this.buttonYelp = new level1Button(this,"Yelp","yelp",emptyCallback,"YELPLAYER");
+	this.buttonYelp = new level1Button(this,"Yelp","yelp",emptyCallback,"YELP");
 	this.buttonYelp.setPreviousButton(this.buttonLayers);
 	this.button1List.push(this.buttonYelp);
 
@@ -80,7 +81,7 @@ ui.prototype.draw = function() {
 	this.buttonGraphs.setPreviousButton(this.buttonYelp);
 	this.button1List.push(this.buttonGraphs);
 	
-	this.buttonWeather = new level1Button(this,"Weather","cloudy19",emptyCallback,"OTHER");
+	this.buttonWeather = new level1Button(this,"Weather","cloudy19",emptyCallback,"WEATHERLAYER");
 	this.buttonWeather.setPreviousButton(this.buttonGraphs);
 	this.button1List.push(this.buttonWeather);
 
@@ -88,14 +89,11 @@ ui.prototype.draw = function() {
 	this.buttonTwitter.setPreviousButton(this.buttonWeather);
 	this.button1List.push(this.buttonTwitter);
 
-
-
-
 	// SUBMENU SELECTION
 	this.buttonSelection.addChildButton("Path","distance1",emptyCallback,"PATHSELECTION",emptyArray,"#fc6");
 	this.buttonSelection.addChildButton("Bounding Box","stack9",emptyCallback,"BOUNDINGBOXSELECTION",emptyArray,"#fc6");
 	this.buttonSelection.addChildButton("Rectangle","stack9",emptyCallback,"RECTANGLESELECTION",emptyArray,"#fc6");
-	this.buttonSelection.addChildButton("Clear","stack9",emptyCallback,"NOMODE",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Clear","stack9",context.clearAll.bind(context),"CLEAR",emptyArray,"#fc6");
 	
 	// SUBMENU LAYERS
 	this.buttonLayers.addChildButton("Traffic","traffic17",emptyCallback,"TRAFFICLAYER",context.ctaArray,"#fc6");
@@ -108,9 +106,9 @@ ui.prototype.draw = function() {
 	this.buttonLayers.addChildButton("Uber","stack9",emptyCallback,"UBERLAYER",emptyArray,"#fc6");
 
 	// SUBMENU YELP
-	this.buttonYelp.addChildButton("Restaurants","criminal20",emptyCallback,"YELPRESTAURANTLAYER",emptyArray,"#fc6");
-	this.buttonYelp.addChildButton("Bars","crime1",emptyCallback,"YELPBARLAYER",emptyArray,"#fc6");
-	this.buttonYelp.addChildButton("Clubs", "crime1", emptyCallback,"YELPCLUBLAYER", emptyArray, "#fc6");
+	this.buttonYelp.addChildButton("Restaurants","criminal20",emptyCallback,"YELPRESTAURANTLAYER",context.yelpFoodContainer,"#fc6");
+	this.buttonYelp.addChildButton("Bars","crime1",emptyCallback,"YELPBARLAYER",context.yelpBarContainer,"#fc6");
+	this.buttonYelp.addChildButton("Clubs", "crime1", emptyCallback,"YELPCLUBLAYER",context.yelpClubsContainer, "#fc6");
 	
 	// SUBMENU GRAPHS
 	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",context.updateGraphs.bind(context),"ABANDONEDVEHICLESGRAPH",emptyArray,"#fc6");

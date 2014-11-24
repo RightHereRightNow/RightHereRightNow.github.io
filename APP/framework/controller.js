@@ -14,7 +14,7 @@ function Controller() {
 
 
 
-	this.weatherBox = null;
+	weatherBox = null;
 	this.twitterBox = null;
 
 	this.minRadius = 0.2;
@@ -31,6 +31,7 @@ function Controller() {
 		BOUNDINGBOXSELECTION: false,
 		RECTANGLESELECTION: false,
 		LAYERS: false,
+		YELP: false,
 		OTHER: false
 	};
 	this.layersFlags = {
@@ -59,8 +60,6 @@ function Controller() {
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
 	//thisController.activeMode = 0;
 
-	// thisController.map = new map();
-	// thisController.layer = new layer();
 
 	this.locations = [];
 	this.rectangle = {ul:null,lr:null};
@@ -97,7 +96,9 @@ function Controller() {
 	this.ctaStopsArray = {};
 	this.ctaStopsData = [];
 	this.ctaStopsDataLoaded = false;
-	this.yelpContainer = {};
+	this.yelpFoodContainer = {};
+	this.yelpBarContainer = {};
+	this.yelpClubContainer = {};
 	this.getUpdates();
 
 
@@ -173,6 +174,7 @@ var numOfShowTwitter = 1;
 var tweetData = null;
 var twitterBox = null;
 var twitterInterval;
+var weatherBox;
 
 Controller.prototype.getUpdates = function(){
 	var refreshrate = 10000; // Rate at which new data is queried
@@ -200,7 +202,23 @@ Controller.prototype.updateWeather = function(){
 	// if(this.weatherBox != null){
 	// 	this.weatherBox.remove()
 	// }
-	this.dataManager.currentWeather(this.weatherFun,'weather');
+
+	console.log("data weather...");
+	if(this.layersFlags.WEATHERLAYER){
+		if(weatherBox == undefined){
+			console.log("it's on, querying...");
+			this.dataManager.currentWeather(this.weatherFun,'weather');
+
+		}
+	}else{
+		console.log("it's off");
+		if(weatherBox != undefined){
+			console.log("not null, clearing...");
+			weatherBox.clear();
+			weatherBox = undefined;
+		}
+	}
+
 };
 
 Controller.prototype.weatherFun =  function (data, iden){
@@ -209,8 +227,17 @@ Controller.prototype.weatherFun =  function (data, iden){
 	//	this.weatherBox.svg.remove();
 	//	console.log("removed");
 	//}
-	this.weatherBox = new Weather();
-	this.weatherBox.create('#weather', "100%","100%", '0.7', data);
+
+	//if(this.weatherBox != null){
+	//	//SEEK AND DESTROY!
+	//	this.weatherBox.clear();
+	//}else{
+
+	console.log("updating...");
+		weatherBox = new Weather("#weather");
+		weatherBox.create("100%","100%", '0.7', data);
+	//}
+
 };
 
 function getNewPointInLatLng(lat,lng,distance,angle){
@@ -240,6 +267,14 @@ Controller.prototype.getData = function() {
 	console.log("\tCONTROLLER - getData -- WOOT", this.updateCounter++);
 	// console.log("Path line constructed:\t" + this.pathLineConstructed);
 
+	//this is out because we do not want to be able to show weather only if a path is constructed! <3
+	//if(this.layersFlags.WEATHERLAYER) {
+	//	console.log("getting data weather...");
+	//	this.updateWeather();
+	//}
+
+	this.updateWeather();
+
 	if (this.pathLineConstructed || this.rectangleConstructed){
 
 		this.updateCounter+=1;
@@ -265,13 +300,12 @@ Controller.prototype.getData = function() {
 		var east = southEast.lng;
 
 		var dataCallback = this.filterByPerimeter.bind(this);
+		var uberCallback = this.updateUberMarkers.bind(this);
 
 		console.log("fetching data");
 
 		// Sending requests to database
-		if(this.layersFlags.WEATHERLAYER) {
-			// this.updateWeather();
-		}
+
 		if (this.layersFlags.CRIMELAYER) this.dataManager.crimes((this.queryDuration==="week" ? "week2" : this.queryDuration),north,west,south,east,dataCallback, "crimes" );
 
 		if (this.layersFlags.POTHOLELAYER) this.dataManager.potHoles(this.queryDuration,north,west,south,east,dataCallback, "potHoles" );
@@ -312,9 +346,8 @@ Controller.prototype.getData = function() {
 
 		if(this.layersFlags.UBERLAYER) {
 			var points = this.pathLine.getLatLngs();
-			this.dataManager.uberEstTime(points[0].lat, points[0].lng,dataCallback,"uber");
-			this.dataManager.uberEstPrice(points[0].lat,points[0].lng, points[points.length-1].lat, points[points.length-1].lng,dataCallback,"uber");
-
+			this.dataManager.uberEstPrice(points[0].lat,points[0].lng, points[points.length-1].lat, points[points.length-1].lng,uberCallback);
+			this.dataManager.uberEstTime(points[0].lat, points[0].lng,uberCallback);
 		}
 
 	}
@@ -356,9 +389,6 @@ Controller.prototype.twitterCallBack = function(data,iden){
 	switchTweet();
 	twitterInterval = setInterval(switchTweet, 5000);
 
-
-
-
 };
 
 function switchTweet() {
@@ -393,7 +423,8 @@ function switchTweet() {
 		if(twitterBox != null){}
 	}
 
-};
+}
+
 Controller.prototype.makeHashTag = function (string){
 
 	var nameArray = string.split(" ");
@@ -407,7 +438,7 @@ Controller.prototype.makeHashTag = function (string){
 
 Controller.prototype.getTrafficFlow = function(bounds) {
 	var url = "http://www.mapquestapi.com/traffic/v2/flow?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&inFormat=json&json={mapState: { center: { lat:39.739028996383965 , lng:-104.98479299999998}, height:400, width:400, scale:433342}}";
-}
+};
 
 Controller.prototype.onMapClick = function(e){
 	var point = e.latlng;
@@ -491,22 +522,33 @@ Controller.prototype.removePath = function(){
 	this.locations = [];
 	if (this.pathLineConstructed){
 		this.map.map.removeLayer(this.pathLine);
+		this.pathLine = null;
 		this.pathLineConstructed = false;
 		for (var i=0;i<this.perimeterCircles.length;i++){
 			this.map.map.removeLayer(this.perimeterCircles[i]);
 		}
 		this.perimeterCircles = [];
 	}
+
+};
+
+Controller.prototype.clearAll = function(){
+	if (this.mode.PATHSELECTION || this.mode.BOUNDINGBOXSELECTION)
+		this.removePath();
+	if (this.mode.BOUNDINGBOXSELECTION)
+		this.removeBoundingBox();
+	if (this.mode.RECTANGLESELECTION)
+		this.removeRectangle();
 }
+
+
 Controller.prototype.removeRectangle = function(){
 	if (this.rectangleConstructed){
 		this.map.map.removeLayer(this.rectangleLayer);
 		this.rectangleConstructed = false;
 	}
-
 	this.rectangle = {ul:null,lr:null};
-	this.removeAllMarkers();
-}
+};
 
 Controller.prototype.removeAllMarkers = function(){
 	console.log("removeAllMarkers");
@@ -520,7 +562,9 @@ Controller.prototype.removeAllMarkers = function(){
 		//this.lights1Array = {};
 		this.ctaArray,
 		this.ctaStopsArray,
-		this.yelpContainer
+		this.yelpFoodContainer,
+		this.yelpBarContainer,
+		this.yelpClubContainer
 	];
 
 	var self = this;
@@ -611,7 +655,7 @@ Controller.prototype.storeChicagoMonthData = function(data, id){
 };
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
-	console.log("filterByPerimeter", data,identifierStr,data);
+	console.log("filterByPerimeter", data,identifierStr);
 
 	if (this.pathLineConstructed === true && this.mode.BOUNDINGBOXSELECTION === false){
 		var filteredData = [];
@@ -625,13 +669,13 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 				dataPoint.latitude = dataPoint.location.coordinate.latitude;
 				dataPoint.longitude = dataPoint.location.coordinate.longitude;
 			}
-			console.log(dataPoint);
+			//console.log(dataPoint);
 			var dataRange = false;
 			for(var i=0;i<points.length;i++){
 				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude,dataPoint.longitude);
 
 				if (tempDist <= this.perimeterRadiusInKm){
-					console.log(tempDist,this.perimeterRadiusInKm);
+					//console.log(tempDist,this.perimeterRadiusInKm);
 					filteredData.push(dataPoint);
 					break;
 				}
@@ -673,8 +717,16 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			(this.queryDuration==="week"? this.selectionData.streetLightsOneWeek = data : this.selectionData.streetLightsOneMonth = data)
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
-		case 'yelp':
-			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
+
+		case 'yelpFood':
+			this.updateMarkers(data,this.yelpFoodContainer,'id',YelpMarker);
+			break;
+		case 'yelpBar':
+			this.updateMarkers(data,this.yelpBarContainer,'id',YelpMarker);
+			break;
+		case 'yelpClub':
+			this.updateMarkers(data,this.yelpClubContainer,'id',YelpMarker);
+
 			break;
 		case 'cta':
 			this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
@@ -686,6 +738,25 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			console.log('Invalid string');
 			break;
 	}
+};
+
+Controller.prototype.updateUberMarkers  = function(data) {
+	var uberX;
+	if ( data.hasOwnProperty('times'))
+		uberX = data.times[0];
+	else if ( data.hasOwnProperty('prices'))
+		uberX = data.prices[0];
+
+	uberX.latitude = data.latitude;
+	uberX.longitude = data.longitude;
+
+	console.log("updateUberMarkers", uberX, data);
+
+	if(!this.uberArray[0]) {
+		this.uberArray[0] = new UberMarker(uberX);
+		this.uberArray[0].addTo(this.map);
+	} else
+		this.uberArray[0].updateMarkerData(uberX);
 };
 
 
@@ -718,7 +789,7 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 			} else if(markerCollection[key]){
 				if (markerCollection[key] instanceof CTAMarker){
 					markerCollection[key].updateMarkerData(data[i]);
-				} //else
+				}
 			// Remove B!
 			}
 		}
@@ -789,12 +860,16 @@ Controller.prototype.drawPath = function(points){
     	this.map.addLayer(this.pathLine,false);
     	this.pathLine.bringToFront();
 
+
 		// Add the first uberMarker
-		this.uberArray[0] = new UberMarker({latitude:points[0], longitude: points[1]});
-		this.uberArray[0].addTo(this.map);
-		var circle = new L.circle(new L.LatLng(points[0],points[1]), this.perimeterRadiusInKm*1000, {color: "#ff7800", weight: 1});
-		this.map.map.addLayer(circle);
-		this.perimeterCircles.push(circle);
+		//this.uberArray[0] = new UberMarker({latitude:points[0], longitude: points[1]});
+		//this.uberArray[0].addTo(this.map);
+		if (this.mode.BOUNDINGBOXSELECTION === false){
+			var circle = new L.circle(new L.LatLng(points[0],points[1]), this.perimeterRadiusInKm*1000, {color: "#ff7800", weight: 1});
+			this.map.map.addLayer(circle);
+			this.perimeterCircles.push(circle);	
+		}
+		
 	}
     // console.log(points);
     for(var i=0;i<points.length/2;i++){
@@ -802,9 +877,11 @@ Controller.prototype.drawPath = function(points){
     }
     this.pathLineConstructed = true;
     this.pathLine.redraw();
-    var circle = new L.circle(new L.LatLng(points[points.length-2],points[points.length-1]), this.perimeterRadiusInKm*1000, {color: "#ff7800", weight: 1});
-	this.map.map.addLayer(circle);
-	this.perimeterCircles.push(circle);
+    if (this.mode.BOUNDINGBOXSELECTION === false){
+	    var circle = new L.circle(new L.LatLng(points[points.length-2],points[points.length-1]), this.perimeterRadiusInKm*1000, {color: "#ff7800", weight: 1});
+		this.map.map.addLayer(circle);
+		this.perimeterCircles.push(circle);
+	}
     // console.log(this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
     this.drawBoundingBox();
@@ -875,19 +952,19 @@ Controller.prototype.setMode = function(modeName,array,b) {
 	// 'b' is the Boolean value to which the layer is set (true or false)
 
 	///////////////////////////////////////////////////////////////
-	console.log("MODENAME = " + modeName + ":\t" + this.layersFlags[modeName] + " --> " + b);
 	
 	if (modeName in this.mode) {
+		console.log("MODENAME = " + modeName + ":\t" + this.mode[modeName] + " --> " + b);
 		this.mode[modeName] = b;
 		// Only one main mode can be selected at a time
-		/* TODO: will fix
 		for(var key in this.mode) {
 			if(b === true && this.mode[key] != this.mode[modeName]) {
 				this.mode[key] = false;
 			}
 		}
-		*/
+		console.log(this.mode);
 	} else if (modeName in this.layersFlags) {
+		console.log("MODENAME = " + modeName + ":\t" + this.layersFlags[modeName] + " --> " + b);
 		this.layersFlags[modeName] = b;
 		// add or remove layers accordingly	
 		for(var key in array) {
@@ -896,7 +973,16 @@ Controller.prototype.setMode = function(modeName,array,b) {
 				this.map.removeLayer(array[key])
 			)
 		}
+		if (modeName === "TRAFFICLAYER") {
+			for(var key in this.ctaStopsArray) {
+				(b ?
+					this.map.addLayer(this.ctaStopsArray[key]) :
+					this.map.removeLayer(this.ctaStopsArray[key])
+				)
+			}
+		}
 	} else if (modeName in this.graphsFlags) {
+		console.log("MODENAME = " + modeName + ":\t" + this.graphsFlags[modeName] + " --> " + b);
 		this.graphsFlags[modeName] = b;
 	} else {
 		console.log("ERROR: Cannot Set Mode:\t" + modeName + " not defined");
@@ -918,14 +1004,14 @@ Controller.prototype.getMode = function(modeName) {
 		console.log("Mode " + modeName + " not defined");
 		return null;
 	}
-}
+};
 
 Controller.prototype.getLayerFlag = function(layerName) {
 	if (layerName in this.layersFlags) {
 		return this.layersFlags[layerName];
 	}
 	return null;
-}
+};
 
 
 Controller.prototype.makePotholeGraph = function(data){
@@ -957,7 +1043,7 @@ Controller.prototype.makePotholeGraph = function(data){
 		}
 		
 	}
-}
+};
 
 Controller.prototype.makeAbandonedVehicleGraph = function(){
 	if (this.abandonedVehicleGraphSVG){

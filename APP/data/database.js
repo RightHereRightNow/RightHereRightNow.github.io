@@ -896,13 +896,15 @@ Database.prototype.uberProducts= function(lat, long, callback, iden){
  start_latitude	float	Latitude component of start location.
  start_longitude	float	Longitude component of start location.
  */
-Database.prototype.uberEstTime = function(start_latitude,start_longitude,callback,iden){
+Database.prototype.uberEstTime = function(start_latitude,start_longitude,callback){
 	$.ajax({
 		url: 'data/apiUber.php',
 		data:"filter=time&start_latitude="+start_latitude+"&start_longitude="+start_longitude,
 		dataType: "json",
 		success: function(data){
-			callback(data,iden);
+			data.latitude = start_latitude;
+			data.longitude = start_longitude;
+			callback(data);
 		}
 	});
 };
@@ -921,13 +923,15 @@ Database.prototype.uberEstTime = function(start_latitude,start_longitude,callbac
  end_latitude	float	Latitude component of end location.
  end_longitude	float	Longitude component of end location.
  */
-Database.prototype.uberEstPrice = function(start_latitude,start_longitude, end_latitude,end_longitude,callback,iden){
+Database.prototype.uberEstPrice = function(start_latitude,start_longitude, end_latitude,end_longitude,callback){
 	$.ajax({
 		url: 'data/apiUber.php',
 		data:"filter=price&start_latitude="+start_latitude+"&start_longitude="+start_longitude+"&end_latitude="+end_latitude+"&end_longitude="+end_longitude,
 		dataType: "json",
 		success: function(data){
-			callback(data,iden);
+			data.latitude = start_latitude;
+			data.longitude = start_longitude;
+			callback(data);
 		}
 	});
 };

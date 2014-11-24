@@ -127,15 +127,15 @@ div {
 	/*background-color:	black;*/
 }
 
-/*#divgraphs2 {
+.divgraphs2 {
 	position:			absolute;
 	top:				0%;
 	height:				100vw!important;
 	left:				50vh;
 	width:				40vh!important;
 	background-color:	black;
-}*/
-	
+}	
+
 .route{
 	position: absolute;
 	color: rgba(200,50,50,0.8);
