@@ -103,13 +103,14 @@ level1Button.prototype.setPreviousButton = function(prevButton) {
 
 level1Button.prototype.update = function() {
 
+	this.active = context.getMode(this.contextModeStr); // sync with controller
+	
 	if(this.previousButton === null) {
 		this.yStart = 0;
 	} else {
 		this.yStart = this.previousButton.yEnd + this.ui.button1dy;
 	};
 
-	// this.active = context.getMode(this.contextModeStr); TODO: uncomment to sync with controller
 	if(!this.active) {
 		this.yEnd = this.yStart + this.ui.button1height;
 	}
@@ -119,8 +120,6 @@ level1Button.prototype.update = function() {
 	var color = (this.active ? this.colorActive : this.colorInactive);
 	var opac = 1; // (this.active ? 1 : .4);
 	
-	// console.log("ySTART = " + this.yStart + "\tName = " + this.textStr);
-
 	this.g.transition()
 		.duration(this.ui.dt)
 		.attr("transform","translate(0," + this.yStart + ")")
