@@ -26,6 +26,7 @@ function Controller() {
 	// Possible modes of our application
 
 	this.mode = {
+		SELECTION: false,
 		PATHSELECTION: false,
 		BOUNDINGBOXSELECTION: false,
 		RECTANGLESELECTION: false,
