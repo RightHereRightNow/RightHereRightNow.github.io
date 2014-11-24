@@ -1,5 +1,6 @@
 function Twitter() {
-    this.svg = d3.select('#twitterBox');
+    //this.svg = d3.select('#twitterBox');
+    this.svg = context.twitterBox;
     this.flag = 0; //all clean
 }
 
