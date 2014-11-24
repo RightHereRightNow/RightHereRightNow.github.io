@@ -43,6 +43,7 @@ var ui = function(menutag,mapcontroltag,radiuscontroltag,timerangetag) {
 
 ui.prototype.update = function() {
 	for (b in this.button1List) {
+		this.button1List[b].rearrange();
 		this.button1List[b].update();
 	}
 }
