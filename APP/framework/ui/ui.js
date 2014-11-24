@@ -53,7 +53,9 @@ ui.prototype.draw = function() {
 
 	console.log('Draw UI');
 
-	var emptyCallback = function() {};
+	var emptyCallback = function() {
+		// context.getData();	// Uncomment to get updates immediately
+	};
 	var emptyArray = {};
 	
 	
