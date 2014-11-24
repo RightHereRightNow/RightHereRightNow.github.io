@@ -124,16 +124,16 @@ div {
 	height:				100vw!important;
 	right:				0vh;
 	width:				40vh!important;
-	/*background-color:	black;*/
+	background-color:	black;
 }
 
 #divgraphs2 {
 	position:			absolute;
-	top:				0%;
-	height:				100vw!important;
-	right:				50vh;
+	top:				25%;
+	height:				25vw!important;
+	right:				20vh;
 	width:				40vh!important;
-/*	background-color:	black;*/
+	background-color:	black;
 }
 	
 .route{

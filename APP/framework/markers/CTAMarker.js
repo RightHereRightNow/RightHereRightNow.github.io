@@ -28,7 +28,7 @@ var CTAMarker = function(data,context) {
     var direction;
     this.setIconDirection = function() {
         if (this.headdirect > 315 && this.headdirect < 45) {
-            direction = "<img src='../../img/arrow_down.svg'/>"
+            direction = "<img src='../../img/arrow_up.svg'/>"
             this.setIconNew(cta_north);
         }
         else if (this.headdirect > 45 && this.headdirect < 135) {

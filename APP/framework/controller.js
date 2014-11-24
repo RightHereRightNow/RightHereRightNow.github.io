@@ -58,8 +58,6 @@ function Controller() {
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
 	//thisController.activeMode = 0;
 
-	// thisController.map = new map();
-	// thisController.layer = new layer();
 
 	this.locations = [];
 	this.rectangle = {ul:null,lr:null};
@@ -257,6 +255,7 @@ Controller.prototype.getData = function() {
 		var east = southEast.lng;
 
 		var dataCallback = this.filterByPerimeter.bind(this);
+		var uberCallback = this.updateUberMarkers.bind(this);
 
 		console.log("fetching data");
 
@@ -304,9 +303,8 @@ Controller.prototype.getData = function() {
 
 		if(this.layersFlags.UBERLAYER) {
 			var points = this.pathLine.getLatLngs();
-			this.dataManager.uberEstTime(points[0].lat, points[0].lng,dataCallback,"uber");
-			this.dataManager.uberEstPrice(points[0].lat,points[0].lng, points[points.length-1].lat, points[points.length-1].lng,dataCallback,"uber");
-
+			this.dataManager.uberEstPrice(points[0].lat,points[0].lng, points[points.length-1].lat, points[points.length-1].lng,uberCallback);
+			this.dataManager.uberEstTime(points[0].lat, points[0].lng,uberCallback);
 		}
 
 	}
@@ -347,9 +345,6 @@ Controller.prototype.twitterCallBack = function(data,iden){
 
 	switchTweet();
 	twitterInterval = setInterval(switchTweet, 5000);
-
-
-
 
 };
 
@@ -399,7 +394,7 @@ Controller.prototype.makeHashTag = function (string){
 
 Controller.prototype.getTrafficFlow = function(bounds) {
 	var url = "http://www.mapquestapi.com/traffic/v2/flow?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&inFormat=json&json={mapState: { center: { lat:39.739028996383965 , lng:-104.98479299999998}, height:400, width:400, scale:433342}}";
-}
+};
 
 Controller.prototype.onMapClick = function(e){
 	var point = e.latlng;
@@ -462,7 +457,8 @@ Controller.prototype.removePath = function(){
 	}
 
 	this.removeAllMarkers();
-}
+};
+
 Controller.prototype.removeRectangle = function(){
 	if (this.rectangleConstructed){
 		this.map.map.removeLayer(this.rectangleLayer);
@@ -471,7 +467,7 @@ Controller.prototype.removeRectangle = function(){
 
 	this.rectangle = {ul:null,lr:null};
 	this.removeAllMarkers();
-}
+};
 
 Controller.prototype.removeAllMarkers = function(){
 	console.log("removeAllMarkers");
@@ -576,7 +572,7 @@ Controller.prototype.storeChicagoMonthData = function(data, id){
 };
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
-	console.log("filterByPerimeter", data,identifierStr,data);
+	console.log("filterByPerimeter", data,identifierStr);
 
 	if (this.pathLineConstructed === true && this.showDataAlongPathOnly == true){
 		var filteredData = [];
@@ -590,13 +586,13 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 				dataPoint.latitude = dataPoint.location.coordinate.latitude;
 				dataPoint.longitude = dataPoint.location.coordinate.longitude;
 			}
-			console.log(dataPoint);
+			//console.log(dataPoint);
 			var dataRange = false;
 			for(var i=0;i<points.length;i++){
 				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude,dataPoint.longitude);
 
 				if (tempDist <= this.perimeterRadiusInKm){
-					console.log(tempDist,this.perimeterRadiusInKm);
+					//console.log(tempDist,this.perimeterRadiusInKm);
 					filteredData.push(dataPoint);
 					break;
 				}
@@ -653,6 +649,25 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	}
 };
 
+Controller.prototype.updateUberMarkers  = function(data) {
+	var uberX;
+	if ( data.hasOwnProperty('times'))
+		uberX = data.times[0];
+	else if ( data.hasOwnProperty('prices'))
+		uberX = data.prices[0];
+
+	uberX.latitude = data.latitude;
+	uberX.longitude = data.longitude;
+
+	console.log("updateUberMarkers", uberX, data);
+
+	if(!this.uberArray[0]) {
+		this.uberArray[0] = new UberMarker(uberX);
+		this.uberArray[0].addTo(this.map);
+	} else
+		this.uberArray[0].updateMarkerData(uberX);
+};
+
 
 // Generic function to write new data to markers
 // TODO: handle updated icons
@@ -683,7 +698,7 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 			} else if(markerCollection[key]){
 				if (markerCollection[key] instanceof CTAMarker){
 					markerCollection[key].updateMarkerData(data[i]);
-				} //else
+				}
 			// Remove B!
 			}
 		}
@@ -753,11 +768,6 @@ Controller.prototype.drawPath = function(points){
     	this.pathLine = L.polyline([],{className:"route"});
     	this.map.addLayer(this.pathLine,false);
     	this.pathLine.bringToFront();
-
-		// Add the first uberMarker
-		this.uberArray[0] = new UberMarker({latitude:points[0], longitude: points[1]});
-		this.uberArray[0].addTo(this.map);
-
 
 	}
     // console.log(points);
@@ -878,14 +888,14 @@ Controller.prototype.getMode = function(modeName) {
 		console.log("Mode " + modeName + " not defined");
 		return null;
 	}
-}
+};
 
 Controller.prototype.getLayerFlag = function(layerName) {
 	if (layerName in this.layersFlags) {
 		return this.layersFlags[layerName];
 	}
 	return null;
-}
+};
 
 
 Controller.prototype.makePotholeGraph = function(data){
@@ -917,7 +927,7 @@ Controller.prototype.makePotholeGraph = function(data){
 		}
 		
 	}
-}
+};
 
 Controller.prototype.makeAbandonedVehicleGraph = function(){
 	if (this.abandonedVehicleGraphSVG){

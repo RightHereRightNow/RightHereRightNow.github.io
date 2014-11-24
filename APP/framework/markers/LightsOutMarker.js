@@ -13,9 +13,9 @@ var LightsOutMarker = function(data) {
     var latlng = L.latLng(data.latitude, data.longitude);
 
     var popupstr = "<p>Type: " + this.lightType +
-                   "</br>Service #: " + this.service_request_number + "</p>"
+                   "</br>Service #: " + this.service_request_number + "</p>";
 
-    var colorNew, colorOld, iconStr;
+    var colorNew, iconStr;
 
     switch (this.lightType){
         case "lightOutAll":

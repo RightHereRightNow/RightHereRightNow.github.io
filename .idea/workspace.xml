@@ -2,6 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f2fef77e-4aff-4123-8742-00668532cf30" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/APP/framework/markers/CTAMarker.js" afterPath="$PROJECT_DIR$/APP/framework/markers/CTAMarker.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/APP/framework/markers/LightsOutMarker.js" afterPath="$PROJECT_DIR$/APP/framework/markers/LightsOutMarker.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/APP/framework/markers/UberMarker.js" afterPath="$PROJECT_DIR$/APP/framework/markers/UberMarker.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/APP/framework/controller.js" afterPath="$PROJECT_DIR$/APP/framework/controller.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/APP/data/database.js" afterPath="$PROJECT_DIR$/APP/data/database.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/APP/css/style.css" afterPath="$PROJECT_DIR$/APP/css/style.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="RightHereRightNow.github.io.iws" />
@@ -26,11 +32,66 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="controller.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="controller.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/APP/framework/controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.497151" vertical-offset="9866" max-vertical-offset="16860">
-              <caret line="681" column="66" selection-start-line="664" selection-start-column="59" selection-end-line="664" selection-end-column="66" />
+            <state vertical-scroll-proportion="-51.346153" vertical-offset="8640" max-vertical-offset="17280">
+              <caret line="665" column="42" selection-start-line="665" selection-start-column="42" selection-end-line="665" selection-end-column="42" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="database.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/APP/data/database.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="11886" max-vertical-offset="13545">
+              <caret line="874" column="45" selection-start-line="874" selection-start-column="45" selection-end-line="874" selection-end-column="45" />
+              <folding>
+                <element signature="n#!!block;n#checkCTAReturn#0" expanded="false" />
+                <element signature="n#!!block;n#convertXml2JSon#0" expanded="false" />
+                <element signature="n#!!block;n#convertJSon2XML#0" expanded="false" />
+                <element signature="n#!!block;n#xmlToJson#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LightsOutMarker.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/APP/framework/markers/LightsOutMarker.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="33" max-vertical-offset="735">
+              <caret line="15" column="77" selection-start-line="15" selection-start-column="77" selection-end-line="15" selection-end-column="77" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CTAMarker.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/APP/framework/markers/CTAMarker.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="840" max-vertical-offset="1545">
+              <caret line="89" column="8" selection-start-line="89" selection-start-column="8" selection-end-line="89" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UberMarker.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/APP/framework/markers/UberMarker.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.7008547" vertical-offset="423" max-vertical-offset="1200">
+              <caret line="61" column="76" selection-start-line="61" selection-start-column="76" selection-end-line="61" selection-end-column="76" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbstractMarker.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/APP/framework/markers/AbstractMarker.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="111" max-vertical-offset="2565">
+              <caret line="27" column="4" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -55,17 +116,17 @@
         <option value="$PROJECT_DIR$/APP/framework/YelpMarker.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/CrimeMarker.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/AbstractMarker.js" />
-        <option value="$PROJECT_DIR$/APP/framework/markers/UberMarker.js" />
-        <option value="$PROJECT_DIR$/APP/css/style.css" />
         <option value="$PROJECT_DIR$/APP/framework/markers/YelpMarker.js" />
-        <option value="$PROJECT_DIR$/APP/data/database.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/BusStopMarker.js" />
-        <option value="$PROJECT_DIR$/APP/framework/markers/CTAMarker.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/markers.js" />
-        <option value="$PROJECT_DIR$/APP/index.html" />
-        <option value="$PROJECT_DIR$/APP/framework/markers/LightsOutMarker.js" />
         <option value="$PROJECT_DIR$/APP/framework/markers/SimpleMarker.js" />
+        <option value="$PROJECT_DIR$/APP/index.html" />
+        <option value="$PROJECT_DIR$/APP/css/style.css" />
+        <option value="$PROJECT_DIR$/APP/framework/markers/LightsOutMarker.js" />
+        <option value="$PROJECT_DIR$/APP/framework/markers/CTAMarker.js" />
+        <option value="$PROJECT_DIR$/APP/data/database.js" />
         <option value="$PROJECT_DIR$/APP/framework/controller.js" />
+        <option value="$PROJECT_DIR$/APP/framework/markers/UberMarker.js" />
       </list>
     </option>
   </component>
@@ -145,7 +206,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="img" />
+              <option name="myItemId" value="js" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -234,7 +295,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="FullScreen" value="true" />
     <property name="HbShouldOpenHtmlAsHb" value="" />
-    <property name="SearchEverywhereHistoryKey" value="con&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/controller.js&#10;inde&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/index.html&#10;markers.&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/markers.js&#10;ct&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/CTAMarker.js&#10;Ye&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/YelpMarker.js&#10;mar&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/markers.js&#10;awes&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/js/leaflet.awesome-markers.js&#10;Abs&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/AbstractMarker.js&#10;data&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/data/database.js&#10;CTA&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/CTAMarker.js" />
+    <property name="SearchEverywhereHistoryKey" value="cta&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/CTAMarker.js&#10;con&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/controller.js&#10;inde&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/index.html&#10;markers.&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/markers.js&#10;ct&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/CTAMarker.js&#10;Ye&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/YelpMarker.js&#10;mar&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/markers.js&#10;awes&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/js/leaflet.awesome-markers.js&#10;Abs&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/AbstractMarker.js&#10;data&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/data/database.js&#10;CTA&#9;FILE&#9;file:///Users/krbalmryde/Dropbox/Class-projects/cs424/HW3/RightHereRightNow.github.io/APP/framework/markers/CTAMarker.js" />
     <property name="com.intellij.ide.scratch.ScratchpadManager" value="JavaScript" />
     <property name="LayoutCode.rearrangeEntriesHTML" value="false" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="106" />
@@ -279,9 +340,8 @@
             <option name="myCanBeAbsent" value="false" />
             <option name="myId" value="UPDATED" />
             <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/css/style.css</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/BarChart.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/PieChart.js</PATH>
             <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/controller.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/twitter.js</PATH>
             <PATH vcs="Git" revision="">$PROJECT_DIR$/APP/framework/ui/ui.js</PATH>
           </FILE-GROUP>
           <FILE-GROUP>
@@ -682,20 +742,26 @@
       <option name="project" value="LOCAL" />
       <updated>1416804556942</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="pushing stuff">
+      <created>1416804580087</created>
+      <option name="number" value="00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1416804580087</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2494043" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2494043" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23828435" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23828435" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -813,13 +879,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.4852941" vertical-offset="1302" max-vertical-offset="1995">
           <caret line="100" column="36" selection-start-line="100" selection-start-column="36" selection-end-line="100" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/APP/framework/init.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5742726" vertical-offset="0" max-vertical-offset="653">
-          <caret line="25" column="54" selection-start-line="25" selection-start-column="54" selection-end-line="25" selection-end-column="54" />
         </state>
       </provider>
     </entry>
@@ -999,14 +1058,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/APP/framework/markers/AbstractMarker.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.8589743" vertical-offset="0" max-vertical-offset="2565">
-          <caret line="91" column="77" selection-start-line="91" selection-start-column="77" selection-end-line="91" selection-end-column="77" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/APP/framework/markers/CrimeMarker.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.64102566" vertical-offset="75" max-vertical-offset="1245">
@@ -1039,22 +1090,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/APP/img/arrow_down.svg">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="702">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/APP/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.61946905" vertical-offset="390" max-vertical-offset="1530">
-          <caret line="54" column="58" selection-start-line="54" selection-start-column="58" selection-end-line="54" selection-end-column="58" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/APP/framework/markers/YelpMarker.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.64102566" vertical-offset="0" max-vertical-offset="1080">
@@ -1073,55 +1108,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/APP/framework/markers/UberMarker.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600">
-          <caret line="27" column="29" selection-start-line="27" selection-start-column="29" selection-end-line="27" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/APP/data/database.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="141" max-vertical-offset="14070">
-          <caret line="33" column="93" selection-start-line="33" selection-start-column="93" selection-end-line="33" selection-end-column="93" />
-          <folding>
-            <element signature="n#!!block;n#getDirections#0" expanded="false" />
-            <element signature="n#!!block;n#convertXml2JSon#0" expanded="false" />
-            <element signature="n#!!block;n#convertJSon2XML#0" expanded="false" />
-            <element signature="n#!!block;n#xmlToJson#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/APP/img/twitter2.svg">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="702">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/APP/css/style.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.1709402" vertical-offset="1533" max-vertical-offset="3330">
-          <caret line="157" column="21" selection-start-line="157" selection-start-column="21" selection-end-line="157" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/APP/framework/markers/CTAMarker.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.20940171" vertical-offset="843" max-vertical-offset="1545">
-          <caret line="68" column="9" selection-start-line="68" selection-start-column="9" selection-end-line="68" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/APP/framework/markers/LightsOutMarker.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.017094018" vertical-offset="33" max-vertical-offset="735">
-          <caret line="3" column="62" selection-start-line="3" selection-start-column="62" selection-end-line="3" selection-end-column="62" />
           <folding />
         </state>
       </provider>
@@ -1134,10 +1124,89 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/APP/framework/init.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="615">
+          <caret line="15" column="34" selection-start-line="15" selection-start-column="12" selection-end-line="15" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-9.14" vertical-offset="878" max-vertical-offset="1530">
+          <caret line="89" column="47" selection-start-line="89" selection-start-column="47" selection-end-line="89" selection-end-column="47" />
+          <folding>
+            <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/css/style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-7.5" vertical-offset="1710" max-vertical-offset="3330">
+          <caret line="127" column="1" selection-start-line="127" selection-start-column="1" selection-end-line="127" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/framework/markers/LightsOutMarker.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="33" max-vertical-offset="735">
+          <caret line="15" column="77" selection-start-line="15" selection-start-column="77" selection-end-line="15" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/img/arrow_down.svg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="702">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/data/database.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="11886" max-vertical-offset="13545">
+          <caret line="874" column="45" selection-start-line="874" selection-start-column="45" selection-end-line="874" selection-end-column="45" />
+          <folding>
+            <element signature="n#!!block;n#checkCTAReturn#0" expanded="false" />
+            <element signature="n#!!block;n#convertXml2JSon#0" expanded="false" />
+            <element signature="n#!!block;n#convertJSon2XML#0" expanded="false" />
+            <element signature="n#!!block;n#xmlToJson#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/APP/framework/controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.497151" vertical-offset="9866" max-vertical-offset="16860">
-          <caret line="681" column="66" selection-start-line="664" selection-start-column="59" selection-end-line="664" selection-end-column="66" />
+        <state vertical-scroll-proportion="-51.346153" vertical-offset="8640" max-vertical-offset="17280">
+          <caret line="665" column="42" selection-start-line="665" selection-start-column="42" selection-end-line="665" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/framework/markers/AbstractMarker.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="111" max-vertical-offset="2565">
+          <caret line="27" column="4" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/framework/markers/CTAMarker.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="840" max-vertical-offset="1545">
+          <caret line="89" column="8" selection-start-line="89" selection-start-column="8" selection-end-line="89" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APP/framework/markers/UberMarker.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7008547" vertical-offset="423" max-vertical-offset="1200">
+          <caret line="61" column="76" selection-start-line="61" selection-start-column="76" selection-end-line="61" selection-end-column="76" />
           <folding />
         </state>
       </provider>
