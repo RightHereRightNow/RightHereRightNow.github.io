@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f2fef77e-4aff-4123-8742-00668532cf30" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/APP/framework/controller.js" afterPath="$PROJECT_DIR$/APP/framework/controller.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="RightHereRightNow.github.io.iws" />
@@ -673,7 +672,13 @@
       <option name="project" value="LOCAL" />
       <updated>1416803258391</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="pushing stuff">
+      <created>1416804537387</created>
+      <option name="number" value="00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1416804537387</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -737,7 +742,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="Merged with Krishna's changes..updated markers a bit" />
     <MESSAGE value="updated markers" />
     <MESSAGE value="adding functionality to control groups of markers" />
     <MESSAGE value="Added update function to DivvyMarkers. Fixed inconsistencies in functionality" />
@@ -762,7 +766,8 @@
     <MESSAGE value="Uber is in now" />
     <MESSAGE value="Lights out works" />
     <MESSAGE value="adjusted SimpleMarkers colors" />
-    <option name="LAST_COMMIT_MESSAGE" value="adjusted SimpleMarkers colors" />
+    <MESSAGE value="pushing stuff" />
+    <option name="LAST_COMMIT_MESSAGE" value="pushing stuff" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.89032257" />
   </component>
   <component name="XDebuggerManager">
