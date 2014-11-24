@@ -108,9 +108,9 @@ ui.prototype.draw = function() {
 	this.buttonLayers.addChildButton("Uber","stack9",emptyCallback,"UBERLAYER",emptyArray,"#fc6");
 
 	// SUBMENU YELP
-	this.buttonYelp.addChildButton("Restaurants","criminal20",emptyCallback,"YELPRESTAURANTLAYER",emptyArray,"#fc6");
-	this.buttonYelp.addChildButton("Bars","crime1",emptyCallback,"YELPBARLAYER",emptyArray,"#fc6");
-	this.buttonYelp.addChildButton("Clubs", "crime1", emptyCallback,"YELPCLUBLAYER", emptyArray, "#fc6");
+	this.buttonYelp.addChildButton("Restaurants","criminal20",emptyCallback,"YELPRESTAURANTLAYER",context.yelpFoodContainer,"#fc6");
+	this.buttonYelp.addChildButton("Bars","crime1",emptyCallback,"YELPBARLAYER",context.yelpBarContainer,"#fc6");
+	this.buttonYelp.addChildButton("Clubs", "crime1", emptyCallback,"YELPCLUBLAYER",context.yelpClubsContainer, "#fc6");
 	
 	// SUBMENU GRAPHS
 	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",context.updateGraphs.bind(context),"ABANDONEDVEHICLESGRAPH",emptyArray,"#fc6");

@@ -88,7 +88,9 @@ function Controller() {
 	this.ctaStopsArray = {};
 	this.ctaStopsData = [];
 	this.ctaStopsDataLoaded = false;
-	this.yelpContainer = {};
+	this.yelpFoodContainer = {};
+	this.yelpBarContainer = {};
+	this.yelpClubContainer = {};
 	this.getUpdates();
 
 
@@ -517,7 +519,9 @@ Controller.prototype.removeAllMarkers = function(){
 		//this.lights1Array = {};
 		this.ctaArray,
 		this.ctaStopsArray,
-		this.yelpContainer
+		this.yelpFoodContainer,
+		this.yelpBarContainer,
+		this.yelpClubContainer
 	];
 
 	var self = this;
@@ -671,13 +675,13 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
 		case 'yelpFood':
-			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
+			this.updateMarkers(data,this.yelpFoodContainer,'id',YelpMarker);
 			break;
 		case 'yelpBar':
-			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
+			this.updateMarkers(data,this.yelpBarContainer,'id',YelpMarker);
 			break;
 		case 'yelpClub':
-			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
+			this.updateMarkers(data,this.yelpClubContainer,'id',YelpMarker);
 			break;
 		case 'cta':
 			this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
