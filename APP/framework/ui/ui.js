@@ -72,7 +72,7 @@ ui.prototype.draw = function() {
 	this.buttonLayers.setPreviousButton(this.buttonSelection);
 	this.button1List.push(this.buttonLayers);
 	
-	this.buttonYelp = new level1Button(this,"Yelp","yelp",emptyCallback,"YELPLAYER");
+	this.buttonYelp = new level1Button(this,"Yelp","yelp",emptyCallback,"YELP");
 	this.buttonYelp.setPreviousButton(this.buttonLayers);
 	this.button1List.push(this.buttonYelp);
 

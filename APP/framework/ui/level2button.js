@@ -93,17 +93,14 @@ level2Button.prototype.setPreviousButton = function(prevButton) {
 
 level2Button.prototype.update = function() {
 
-	// TODO: add reference to parent button
+	this.active = context.getMode(this.contextSwitchStr);
+	
 	if(!this.parentButton.active) {
-		// console.log(this.textStr + "Parent Button Inactive");
 		this.yStart = this.parentButton.yStart;
 	} else {
-		// console.log("B\tLevel1Button" + this.textStr);
 		this.yStart = this.parentButton.yStart + this.ui.button1dy + this.ui.button1height + this.index*(this.ui.button2height + this.ui.button2dy);
 	};
 
-	this.active = context.getMode(this.contextSwitchStr);
-	
 	var thisButton = this;
 
 	var color = (this.active ? this.colorActive : this.colorInactive);

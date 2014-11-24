@@ -30,6 +30,7 @@ function Controller() {
 		BOUNDINGBOXSELECTION: false,
 		RECTANGLESELECTION: false,
 		LAYERS: false,
+		YELP: false,
 		OTHER: false
 	};
 	this.layersFlags = {
