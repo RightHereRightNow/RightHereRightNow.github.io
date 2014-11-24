@@ -631,7 +631,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			this.updateMarkers(data,this.carsArray,'service_request_number',AbandonedVehicleMarker);
 			break;
 		case 'lightOutAll':
-			(this.queryDuration==="week"? this.selectionData.streetLightsAllWeekeWeek = data : this.selectionData.streetLightsAllMonth = data)
+			(this.queryDuration==="week"? this.selectionData.streetLightsAllWeek = data : this.selectionData.streetLightsAllMonth = data)
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
 		case 'lightOutOne':
@@ -899,13 +899,13 @@ Controller.prototype.makePotholeGraph = function(data){
 			console.log("Creating Pie");
 			if (this.queryDuration==="week"){
 				data = {
-					values: [this.selectionData.potHolesWeek.length,this.chicagoData.potHolesWeek.length],
+					values: [this.selectionData.potHolesWeek.length,this.chicagoData.potHolesWeek.length-this.selectionData.potHolesWeek.length],
 					names: ["Selected Area","Chicago"]
 				};
 			}
 			else{
 				data = {
-					values: [this.selectionData.potHolesMonth.length,this.chicagoData.potHolesMonth.length],
+					values: [this.selectionData.potHolesMonth.length,this.chicagoData.potHolesMonth.length-this.selectionData.potHolesMonth.length],
 					names: ["Selected Area","Chicago"]
 				};
 			}
@@ -930,13 +930,13 @@ Controller.prototype.makeAbandonedVehicleGraph = function(){
 			console.log("Creating Pie");
 			if (this.queryDuration==="week"){
 				data = {
-					values: [this.selectionData.abandonedVehiclesWeek.length,this.chicagoData.abandonedVehiclesWeek.length],
+					values: [this.selectionData.abandonedVehiclesWeek.length,this.chicagoData.abandonedVehiclesWeek.length-this.selectionData.abandonedVehiclesWeek.length],
 					names: ["Selected Area","Chicago"]
 				};
 			}
 			else{
 				data = {
-					values: [this.selectionData.abandonedVehiclesMonth.length,this.chicagoData.abandonedVehiclesMonth.length],
+					values: [this.selectionData.abandonedVehiclesMonth.length,this.chicagoData.abandonedVehiclesMonth.length-this.selectionData.abandonedVehiclesMonth.length],
 					names: ["Selected Area","Chicago"]
 				};
 			}
@@ -953,28 +953,30 @@ Controller.prototype.makeAbandonedVehicleGraph = function(){
 Controller.prototype.makeStreetlightGraph = function(){
 	if (this.streetLightGraphSVG){
 		if (this.streetLightGraph === null){
-			this.streetLightGraph = new PieChart(this.streetLightGraphSVG);
+			this.streetLightGraph = new BarChart(this.streetLightGraphSVG);
 			console.log("Creating Pie");
 		}
 		if (this.layersFlags.STREETLIGHTSOUTLAYER === true && (this.pathLineConstructed || this.rectangleConstructed)){
-			var data ;
+			var data = [{key:"One", value:0},{key:"All", value:0}];
+			var chicagoData =  [{key:"One", value:0},{key:"All", value:0}];
 			console.log("Creating Pie");
 			if (this.queryDuration==="week"){
-				data = {
-					values: [this.selectionData.abandonedVehiclesWeek.length,this.chicagoData.abandonedVehiclesWeek.length],
-					names: ["Selected Area","Chicago"]
-				};
+				chicagoData[0].value = this.chicagoData.streetLightsOneWeek.length;
+				chicagoData[1].value = this.chicagoData.streetLightsAllWeek.length;
+				data[0].value = this.selectionData.streetLightsOneWeek.length;
+				data[1].value = this.selectionData.streetLightsAllWeek.length;
 			}
 			else{
-				data = {
-					values: [this.selectionData.abandonedVehiclesMonth.length,this.chicagoData.abandonedVehiclesMonth.length],
-					names: ["Selected Area","Chicago"]
-				};
+				chicagoData[0].value = this.chicagoData.streetLightsOneMonth.length;
+				chicagoData[1].value = this.chicagoData.streetLightsAllMonth.length;
+				data[0].value = this.selectionData.streetLightsOneMonth.length;
+				data[1].value = this.selectionData.streetLightsAllMonth.length;
 			}
 			
-			this.streetLightGraph.setData(data.values, data.names, "abandonedvehicles", "Area");
-			this.streetLightGraph.setTitle("Abandoned Vehicles");
-			this.streetLightGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.streetLightGraph.setData(chicagoData, data, "streetlight");
+			this.streetLightGraph.setAxes("key","Type","value","# of cases");
+			this.streetLightGraph.setTitle("Street Lights Out");
+			//this.crimeGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
 			this.streetLightGraph.draw();	
 		}
 		
@@ -1032,7 +1034,7 @@ function getCrimeTypeCount(data){
 		.key(function(d) { return d.primary_type; })
 		.rollup(function(leaves) { return leaves.length; })
 		.entries(data);
-	var crimeList = [{key:"Other", value:0},{key:"Assault", value:0},{key:"Burglary", value:0},{key:"Robbery", value:0},{key:"Battery", value:0},{key:"Theft", value:0}];
+	var crimeList = [{key:"Theft", value:0},{key:"Assault", value:0},{key:"Battery", value:0},{key:"Other", value:0},{key:"Burglary", value:0},{key:"Robbery", value:0}];
 
 	for (var i=0;i<groupedData.length;i++){
 		switch(groupedData[i].key){
@@ -1043,7 +1045,7 @@ function getCrimeTypeCount(data){
 			case "PROSTITUTION":			
 			case "SEX OFFENSE":
 			case "NARCOTICS":
-					crimeList[0].value += groupedData[i].values;
+					crimeList[3].value += groupedData[i].values;
 					break;
 			case "ASSAULT":
 			case "WEAPONS VIOLATION":
@@ -1054,24 +1056,24 @@ function getCrimeTypeCount(data){
 					crimeList[1].value += groupedData[i].values;
 					break;
 			case "BURGLARY":
-					crimeList[2].value += groupedData[i].values;
+					crimeList[4].value += groupedData[i].values;
 					break;
 			case "ROBBERY":
-					crimeList[3].value += groupedData[i].values;
+					crimeList[5].value += groupedData[i].values;
 					break;
 			
 			case "BATTERY":
-					crimeList[4].value += groupedData[i].values;
+					crimeList[2].value += groupedData[i].values;
 					break;
 			case "THEFT":
 			case "MOTOR VEHICLE THEFT":
-					crimeList[5].value += groupedData[i].values;
+					crimeList[0].value += groupedData[i].values;
 					break;
 
 			case "HOMICIDE":
 					break;
 			default:
-					crimeList[0].value += groupedData[i].values;
+					crimeList[3].value += groupedData[i].values;
 					break;
 		}
 	}
@@ -1116,6 +1118,13 @@ Controller.prototype.updateGraphs = function() {
 	else{
 		this.potHoleGraphSVG.selectAll("*").remove();
 		this.potHoleGraph = null;
+	}
+
+	if (this.graphsFlags.STREETLIGHTSOUTGRAPH === true)
+		this.makeStreetlightGraph();
+	else{
+		this.streetLightGraphSVG.selectAll("*").remove();
+		this.streetLightGraph = null;
 	}
 	console.log("THIS FUNCTION IS CALLED EVERYTIME A GRAPH FLAG IS CHANGED");
 }
