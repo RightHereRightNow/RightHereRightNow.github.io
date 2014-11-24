@@ -12,12 +12,12 @@ var LightsOutMarker = function(data) {
 
     var latlng = L.latLng(data.latitude, data.longitude);
 
-    var popupstr = "<p>Type: " + type +
+    var popupstr = "<p>Type: " + this.lightType +
                    "</br>Service #: " + this.service_request_number + "</p>"
 
     var colorNew, colorOld, iconStr;
 
-    switch (type){
+    switch (this.lightType){
         case "lightOutAll":
             iconStr = "lightbulb-o";
             colorNew = "darkpurple";
@@ -37,7 +37,6 @@ var LightsOutMarker = function(data) {
     });
 
     this.setIconNew(iconNew);
-    this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
     this.init();

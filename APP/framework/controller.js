@@ -566,6 +566,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		for (var d=0;d<data.length;d++){
 			var dist = 100; // Too far away!
 			var dataPoint = data[d];
+			dataPoint.idenType = identifierStr;
 
 			//console.log("Checking property of dataPoint ", dataPoint.location.coordinate);
 			if(dataPoint.hasOwnProperty('location') && dataPoint.locations.hasOwnProperty("coordinate")){
@@ -613,13 +614,11 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			this.updateMarkers(data,this.carsArray,'service_request_number',AbandonedVehicleMarker);
 			break;
 		case 'lightOutAll':
-			data.idenType ='lightOutAll';
-			// TODO: add special marker for 'LightsOutAll' (maybe just with another icon indicating several lights out)
-			// this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutAllMarker);
+			(this.queryDuration==="week"? this.selectionData.streetLightsAllWeekeWeek = data : this.selectionData.streetLightsAllMonth = data)
+			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
 		case 'lightOutOne':
 			(this.queryDuration==="week"? this.selectionData.streetLightsOneWeek = data : this.selectionData.streetLightsOneMonth = data)
-			data.idenType ='lightOutOne';
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
 		case 'yelp':
