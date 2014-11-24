@@ -28,7 +28,7 @@ Twitter.prototype.showTweets = function(tweets){
 
     this.svg
         .append("text")
-        .text(""+tweets.user.screen_name)
+        .text("User: @"+tweets.user.screen_name)
         .attr("transform", "translate(" + (45) + " , " + 5 + " )")
         .attr("dx", 1)
         .attr("dy", 1)
@@ -38,8 +38,8 @@ Twitter.prototype.showTweets = function(tweets){
 
     this.svg
         .append("text")
-        .text(""+tweets.user.created_at)
-        .attr("transform", "translate(" + (10) + " , " + 15 + " )")
+        .text("Date: "+tweets.user.created_at)
+        .attr("transform", "translate(" + (20) + " , " + 15 + " )")
         .attr("dx", 1)
         .attr("dy", 1)
         .attr("class", "tweet-date")
