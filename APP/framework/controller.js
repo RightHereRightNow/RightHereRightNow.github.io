@@ -980,7 +980,7 @@ Controller.prototype.setMode = function(modeName,array,b) {
 	// 'b' is the Boolean value to which the layer is set (true or false)
 
 	///////////////////////////////////////////////////////////////
-	
+	if (modeName === "CLEAR") return;
 	if (modeName in this.mode) {
 		console.log("MODENAME = " + modeName + ":\t" + this.mode[modeName] + " --> " + b);
 		this.mode[modeName] = b;
