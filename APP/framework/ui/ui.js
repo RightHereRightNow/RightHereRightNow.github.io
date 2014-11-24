@@ -79,9 +79,9 @@ ui.prototype.draw = function() {
 	this.buttonGraphs.setPreviousButton(this.buttonYelp);
 	this.button1List.push(this.buttonGraphs);
 	
-	this.buttonOther = new level1Button(this,"Other","bulb14",emptyCallback,"OTHER");
-	this.buttonOther.setPreviousButton(this.buttonGraphs);
-	this.button1List.push(this.buttonOther);
+	this.buttonWeather = new level1Button(this,"Weather","cloudy19",emptyCallback,"OTHER");
+	this.buttonWeather.setPreviousButton(this.buttonGraphs);
+	this.button1List.push(this.buttonWeather);
 	
 
 	// SUBMENU SELECTION
@@ -92,38 +92,32 @@ ui.prototype.draw = function() {
 	
 	// SUBMENU LAYERS
 	this.buttonLayers.addChildButton("Traffic","traffic17",emptyCallback,"TRAFFICLAYER",context.ctaArray,"#fc6");
-	this.buttonLayers.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",context.crimeContainer,"#fc6");
+	this.buttonLayers.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",context.crimeContainer,"red");
 	this.buttonLayers.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",context.potholesArray,"#fc6");
 	this.buttonLayers.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLESLAYER",context.carsArray,"#fc6");
 	this.buttonLayers.addChildButton("Street Lights Out","street9",emptyCallback,"STREETLIGHTSOUTLAYER",context.lights1Array,"#fc6"); // TODO: add lights all
-	this.buttonLayers.addChildButton("Divvy Bike Stations","regular2",emptyCallback,"DIVVYLAYER",context.divvyArray,"#fc6");
+	this.buttonLayers.addChildButton("Divvy Bike Stations","regular2",emptyCallback,"DIVVYLAYER",context.divvyArray,divvyBlue);
 	this.buttonLayers.addChildButton("Places of Interest","information38",emptyCallback,"PLACESOFINTERESTLAYER",context.pointsOfInterestArray,"#fc6");
+	this.buttonLayers.addChildButton("Uber","stack9",emptyCallback,"UBERLAYER",emptyArray,"#fc6");
 
 	// SUBMENU YELP
-	this.buttonYelp.addChildButton("Yelp 1","criminal20",emptyCallback,"ABANDONEDVEHICLESLAYER",emptyArray,"#fc6");
-	this.buttonYelp.addChildButton("Yelp 2","crime1",emptyCallback,"CRIMELAYER",emptyArray,"#fc6");
-	this.buttonYelp.addChildButton("Yelp 3","road22",emptyCallback,"POTHOLELAYER",emptyArray,"#fc6");
-	this.buttonYelp.addChildButton("Yelp 4","street9",emptyCallback,"TRAFFICLAYER",emptyArray,"#fc6");
+	this.buttonYelp.addChildButton("Restaurants","criminal20",emptyCallback,"YELPRESTAURANTLAYER",emptyArray,"#fc6");
+	this.buttonYelp.addChildButton("Bars","crime1",emptyCallback,"YELPBARLAYER",emptyArray,"#fc6");
 	
 	// SUBMENU GRAPHS
-	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLESLAYER",emptyArray,"#fc6");
-	this.buttonGraphs.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",emptyArray,"#fc6");
-	this.buttonGraphs.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",emptyArray,"#fc6");
-	this.buttonGraphs.addChildButton("Street Lights","street9",emptyCallback,"TRAFFICLAYER",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",context.updateGraphs,"ABANDONEDVEHICLESGRAPH",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Crime","crime1",context.updateGraphs,"CRIMEGRAPH",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Potholes","road22",context.updateGraphs,"POTHOLEGRAPH",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Street Lights","street9",context.updateGraphs,"STREETLIGHTSOUTGRAPH",emptyArray,"#fc6");
 
-	// SUBMENU OTHER
-	this.buttonOther.addChildButton("Weather","stack9",emptyCallback,"WEATHERLAYER",emptyArray,"#fc6");
-	this.buttonOther.addChildButton("Uber","stack9",emptyCallback,"UBERLAYER",emptyArray,"#fc6");
 	
-	
-
 
 	// Drawing Buttons
 	this.buttonSelection.create(svgmenu);
 	this.buttonLayers.create(svgmenu);
 	this.buttonYelp.create(svgmenu);
 	this.buttonGraphs.create(svgmenu);
-	this.buttonOther.create(svgmenu);
+	this.buttonWeather.create(svgmenu);
 	
 
 
@@ -225,14 +219,13 @@ ui.prototype.draw = function() {
 		.attr("preserveAspectRatio", "xMinYMin meet")
 
 	var gWeek = svgtimerange.append("svg:g")
-		.attr("fill","#888")
+		.attr("fill","#aaa")
 		.attr("class","level1button")
 		.attr("transform","translate(0,0)")
-		.on("click", function() { 
-			week = true;
+		.on("click", function() {
+			context.setQueryDuration("week");
 			gWeek/*.transition().duration(this.dt)*/.attr("fill","#aaa");
 			gMonth/*.transition().duration(this.dt)*/.attr("fill","#888");
-			console.log("TODO: Implement week");
 		});
 
 	gWeek.append("rect")
@@ -258,10 +251,9 @@ ui.prototype.draw = function() {
 		.attr("class","level1button")
 		.attr("transform","translate(" + this.button1width/2 + ",0)")
 		.on("click", function() { 
-			week = false;
+			context.setQueryDuration("month");
 			gWeek/*.transition().duration(this.dt)*/.attr("fill","#888");
 			gMonth/*.transition().duration(this.dt)*/.attr("fill","#aaa");
-			console.log("TODO: Implement month");
 		});
 
 	gMonth.append("rect")
@@ -302,8 +294,8 @@ ui.prototype.draw = function() {
 		.attr("transform","translate(" + this.zoomButtonMargin + ",0)")
 		.style("fill","#222")
 		.on("click", function() { 
-			console.log("TODO: increase radius");
-			radiusText.text("UP Blocks");
+			context.increaseRadius();	
+			updateRadiusStatusBar();
 		})
 		.on("mouseover", function() {
 			d3.select(this).style("fill",divvyBlue)
@@ -326,8 +318,8 @@ ui.prototype.draw = function() {
 		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (3.5*this.zoomButtonSize - this.zoomButtonMargin) + ")")
 		.style("fill","#222")
 		.on("click", function() { 
-			console.log("TODO: increase radius");
-			radiusText.text("DOWN Blocks");
+			context.decreaseRadius();	
+			updateRadiusStatusBar();
 		})
 		.on("mouseover", function() {
 			d3.select(this).style("fill",divvyBlue)
@@ -342,7 +334,6 @@ ui.prototype.draw = function() {
 		.attr("stroke",this.buttonStrokeColor)
 		.attr("stroke-width",this.linewidth)
 
-
 	// Radius Status bar	
 	var gRadius = svgmapcontrol.append("svg:g")
 		.attr("transform","translate(" + (this.zoomButtonMargin) + "," + (.5*this.zoomButtonSize + 2*this.zoomButtonMargin) + ")")
@@ -354,16 +345,17 @@ ui.prototype.draw = function() {
 		.attr("rx",.2*this.zoomButtonSize).attr("ry",.2*this.zoomButtonSize)
 		.attr("fill",this.buttonStrokeColor)
 
-	gRadius.append("rect")
+	var totalHeightRadiusBar = (3*this.zoomButtonSize-4*this.linepadding);
+	var linepadding = this.linepadding;
+
+	var radiusStatus = gRadius.append("rect")
 		.attr("x",this.zoomButtonSize/2-.1*this.zoomButtonSize)
 		.attr("y",function() {
-			return 20;
-			// (1- radiusPercentage) * (3*this.zoomButtonSize-4*this.linepadding) + this.linepadding;
+			return (1-context.getRadiusPercentage()) * totalHeightRadiusBar + linepadding;
 		})
 		.attr("width",.2*this.zoomButtonSize)
 		.attr("height",function() {
-			return 500;
-			// radiusPercentage * (3*this.zoomButtonSize-4*this.linepadding);
+			return context.getRadiusPercentage() * (totalHeightRadiusBar-linepadding);
 		})
 		.attr("rx",.2*this.zoomButtonSize).attr("ry",.2*this.zoomButtonSize)
 		.attr("fill",divvyBlue)
@@ -382,11 +374,23 @@ ui.prototype.draw = function() {
 		.attr("fill","#fc6")
 		.attr("class","buttontext")
 		.attr("transform","translate(" + .2*this.zoomButtonSize + "," + (1.4*this.zoomButtonSize - this.zoomButtonMargin) + ")rotate(270)")
-		.text("X Blocks")
 		.attr("font-size", 4*this.font1size)
 		.attr("font-variant", "small-caps")
 		.attr("font-family", "Roboto")
 		.attr("cursor","default");
+
+
+	var updateRadiusStatusBar = function() {
+		radiusStatus.attr("y",function() {
+			return (1-context.getRadiusPercentage()) * totalHeightRadiusBar + linepadding;
+		})
+		.attr("height",function() {
+			return context.getRadiusPercentage() * (totalHeightRadiusBar);
+		})
+		radiusText.text(Math.round(context.perimeterRadiusInKm/0.2) + " Blocks");
+	}
+
+	updateRadiusStatusBar();
 
 
 
