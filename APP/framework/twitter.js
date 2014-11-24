@@ -6,6 +6,16 @@ function Twitter() {
 
 Twitter.prototype.showTweets = function(tweets){
     //var svg = d3.select('#graphTwitter');
+    var height = this.svg.style("height");
+    var width = this.svg.style("width");
+    console.log(width);
+    console.log(height);
+    this.svg
+        .append("rect")
+        .attr("class", "tweet-rect")
+        .attr("width",width)
+        .attr("height", width)
+        .attr("fill", "rgba(68,68,68,0.9)");
 
     this.svg.append("svg:image")
         .attr("xlink:href","./img/twitter.svg")
@@ -55,6 +65,7 @@ Twitter.prototype.deleteText = function(){
     this.svg.select('.tweet-user').remove();
     this.svg.select('.tweet-date').remove();
     this.svg.select('.pidgeon').remove();
+    this.svg.select('.tweet-rect').remove();
     this.flag = 0;
 };
 

@@ -303,10 +303,14 @@ Controller.prototype.getData = function() {
 			//	self.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
 			//})
 		}
-		if (this.layersFlags.TWITTER){
-			//TO-DO
-			console.log("TO_DO: twitter data!");
+
+		if(this.layersFlags.UBERLAYER) {
+			var points = this.pathLine.getLatLngs();
+			this.dataManager.uberEstTime(points[0].lat, points[0].lng,dataCallback,"uber");
+			this.dataManager.uberEstPrice(points[0].lat,points[0].lng, points[points.length-1].lat, points[points.length-1].lng,dataCallback,"uber");
+
 		}
+
 	}
 	this.firstload = false;
 };
@@ -338,39 +342,51 @@ Controller.prototype.getTwitters = function(queryParam){
 
 Controller.prototype.twitterCallBack = function(data,iden){
 	clearInterval(twitterInterval);
-	if(twitterBox != null){
-		twitterBox.deleteText();
-	}
+
 	indexTwitter = 0;
 	numOfShowTwitter = 1;
 	tweetData = data;
-	twitterBox = new Twitter();
+
 	switchTweet();
 	twitterInterval = setInterval(switchTweet, 5000);
+
+
+
+
 };
 
 function switchTweet() {
+	if(twitterBox != null){
+		twitterBox.deleteText();
+	}
+
+	twitterBox = new Twitter();
 	if(tweetData.statuses.length == 0){
 		return;
 	}
-	for(var i =0; i < numOfShowTwitter; i++){
-		console.log(indexTwitter);
-		if(tweetData.statuses.length <= (indexTwitter)){
-			indexTwitter = 0;
+	if(context.layersFlags.TWITTER){
+		for(var i =0; i < numOfShowTwitter; i++){
+			console.log(indexTwitter);
+			if(tweetData.statuses.length <= (indexTwitter)){
+				indexTwitter = 0;
+			}
+			if(twitterBox.flag != 0){
+				console.log("is not zero!");
+				twitterBox.deleteText();
+			}
+
+			twitterBox.showTweets(tweetData.statuses[indexTwitter]);
+			console.log(tweetData.statuses[indexTwitter].user.created_at);
+			console.log(tweetData.statuses[indexTwitter].user.screen_name);
+			console.log(tweetData.statuses[indexTwitter].text);
+
+
+			indexTwitter ++;
 		}
-		if(twitterBox.flag != 0){
-			console.log("is not zero!");
-			twitterBox.deleteText();
-		}
-
-		twitterBox.showTweets(tweetData.statuses[indexTwitter]);
-		console.log(tweetData.statuses[indexTwitter].user.created_at);
-		console.log(tweetData.statuses[indexTwitter].user.screen_name);
-		console.log(tweetData.statuses[indexTwitter].text);
-
-
-		indexTwitter ++;
+	}else{
+		if(twitterBox != null){}
 	}
+
 };
 Controller.prototype.makeHashTag = function (string){
 
@@ -1104,6 +1120,10 @@ Controller.prototype.updateGraphs = function() {
 		this.potHoleGraph = null;
 	}
 	console.log("THIS FUNCTION IS CALLED EVERYTIME A GRAPH FLAG IS CHANGED");
+}
+
+Controller.prototype.updateTwitter = function() {
+
 }
 
 Controller.prototype.setQueryDuration = function(qd) {
