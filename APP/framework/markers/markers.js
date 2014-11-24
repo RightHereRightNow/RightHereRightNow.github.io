@@ -16,6 +16,7 @@ extend(CTAMarker, AbstractMarker);
 extend(YelpMarker, AbstractMarker);
 extend(LightsOutMarker, AbstractMarker);
 extend(BusStopMarker, AbstractMarker);
+extend(UberMarker, AbstractMarker);
 
 
 

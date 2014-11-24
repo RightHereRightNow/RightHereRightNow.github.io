@@ -5,9 +5,9 @@
 //           Pothole Marker object
 //////////////////////////////////////////////////////////////
 
-var LightsOutMarker = function(data, type) {
+var LightsOutMarker = function(data) {
 
-    this.lightType = type;
+    this.lightType = data.idenType;
     this.service_request_number = data.service_request_number;
 
     var latlng = L.latLng(data.latitude, data.longitude);

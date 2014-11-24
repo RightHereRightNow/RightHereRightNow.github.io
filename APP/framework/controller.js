@@ -49,7 +49,7 @@ function Controller() {
 		CRIMEGRAPH:	false,
 		ABANDONEDVEHICLESGRAPH: false,
 		STREETLIGHTSOUTGRAPH: false,
-		POTHOLEGRAPH: false,
+		POTHOLEGRAPH: false
 	};
 
 	window.map = this.map;  // I do not understand why this has to be initiated in order for th map markers to work
@@ -81,6 +81,7 @@ function Controller() {
 	this.lightsAllArray = {};
 	this.lights1Array = {};
 	this.ctaArray = {};
+	this.uberArray = {};
 
 	this.ctaStopsArray = {};
 	this.ctaStopsData = [];
@@ -612,11 +613,13 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			this.updateMarkers(data,this.carsArray,'service_request_number',AbandonedVehicleMarker);
 			break;
 		case 'lightOutAll':
+			data.idenType ='lightOutAll';
 			// TODO: add special marker for 'LightsOutAll' (maybe just with another icon indicating several lights out)
 			// this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutAllMarker);
 			break;
 		case 'lightOutOne':
 			(this.queryDuration==="week"? this.selectionData.streetLightsOneWeek = data : this.selectionData.streetLightsOneMonth = data)
+			data.idenType ='lightOutOne';
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
 		case 'yelp':
@@ -738,7 +741,13 @@ Controller.prototype.drawPath = function(points){
     	this.pathLine = L.polyline([],{className:"route"});
     	this.map.addLayer(this.pathLine,false);
     	this.pathLine.bringToFront();
-    }
+
+		// Add the first uberMarker
+		this.uberArray[0] = new UberMarker({latitude:points[0], longitude: points[1]});
+		this.uberArray[0].addTo(this.map);
+
+
+	}
     // console.log(points);
     for(var i=0;i<points.length/2;i++){
     	this.pathLine.addLatLng(new L.LatLng(points[2*i],points[2*i+1]));
