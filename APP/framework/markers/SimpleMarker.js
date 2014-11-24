@@ -19,18 +19,11 @@ var SimpleMarker = function(data) {
     var iconNew = L.AwesomeMarkers.icon({
         icon: "circle",
         spin:false,
-        markerColor: "black",
+        markerColor: "orange",
         iconColor: "white"
     });
 
-    var iconOld = L.AwesomeMarkers.icon({
-        icon: "circle",
-        spin:false,
-        markerColor: "white",
-        iconColor: "black"
-    });
     this.setIconNew(iconNew);
-    this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
     this.init();
