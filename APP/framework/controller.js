@@ -42,6 +42,7 @@ function Controller() {
 		POTHOLELAYER: false,
 		YELPRESTAURANTLAYER: false,
 		YELPBARLAYER: false,
+		YELPCLUBLAYER: false,
 		WEATHERLAYER: false,
 		GRAPHSLAYER: false,
 		UBERLAYER: false,
@@ -276,7 +277,9 @@ Controller.prototype.getData = function() {
 		}
 		if (this.layersFlags.DIVVYLAYER) this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 
-		if (this.layersFlags.YELPLAYER) this.dataManager.yelp('food', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelp');
+		if (this.layersFlags.YELPRESTAURANTLAYER) this.dataManager.yelp('food', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelpFood');
+		if (this.layersFlags.YELPBARLAYER) this.dataManager.yelp('bar', '', 0, '4000','','',north,west,south,east,dataCallback,'yelpBar');
+		if (this.layersFlags.YELPCLUBLAYER) this.dataManager.yelp('club', '',0,'4000','','',north,west,south,east,dataCallback,'yelpClub');
 
 		var self = this;
 		if (this.layersFlags.TRAFFICLAYER) {
@@ -638,7 +641,13 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			(this.queryDuration==="week"? this.selectionData.streetLightsOneWeek = data : this.selectionData.streetLightsOneMonth = data)
 			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
-		case 'yelp':
+		case 'yelpFood':
+			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
+			break;
+		case 'yelpBar':
+			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
+			break;
+		case 'yelpClub':
 			this.updateMarkers(data,this.yelpContainer,'id',YelpMarker);
 			break;
 		case 'cta':
