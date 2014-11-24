@@ -905,12 +905,12 @@ Controller.prototype.makeAbandonedVehicleGraph = function(){
 }
 
 Controller.prototype.makeStreetlightGraph = function(){
-	if (this.abandonedVehicleGraphSVG){
-		if (this.abandonedVehicleGraph === null){
-			this.abandonedVehicleGraph = new PieChart(this.abandonedVehicleGraphSVG);
+	if (this.streetLightGraphSVG){
+		if (this.streetLightGraph === null){
+			this.streetLightGraph = new PieChart(this.streetLightGraphSVG);
 			console.log("Creating Pie");
 		}
-		if (this.layersFlags.ABANDONEDVEHICLESLAYER === true && (this.pathLineConstructed || this.rectangleConstructed)){
+		if (this.layersFlags.STREETLIGHTSOUTLAYER === true && (this.pathLineConstructed || this.rectangleConstructed)){
 			var data ;
 			console.log("Creating Pie");
 			if (this.queryDuration==="week"){
@@ -926,10 +926,10 @@ Controller.prototype.makeStreetlightGraph = function(){
 				};
 			}
 			
-			this.abandonedVehicleGraph.setData(data.values, data.names, "abandonedvehicles", "Area");
-			this.abandonedVehicleGraph.setTitle("Abandoned Vehicles");
-			this.abandonedVehicleGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
-			this.abandonedVehicleGraph.draw();	
+			this.streetLightGraph.setData(data.values, data.names, "abandonedvehicles", "Area");
+			this.streetLightGraph.setTitle("Abandoned Vehicles");
+			this.streetLightGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.streetLightGraph.draw();	
 		}
 		
 	}
