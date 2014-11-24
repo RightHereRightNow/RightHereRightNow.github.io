@@ -10,10 +10,10 @@ function PieChart (svg){
 	this.title = null;
 	this.data = null;
 	this.border = {
-		left: 0, 
-		right: 160, 
-		top: 10, 
-		bottom: 90 
+		left: 20, 
+		right: 150, 
+		top: 15, 
+		bottom: 80 
 	};
 	this.svg.attr("viewBox","0 0 160 90");
 }

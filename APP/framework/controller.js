@@ -571,7 +571,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			break;
 		case 'lightOutAll':
 			// TODO: add special marker for 'LightsOutAll' (maybe just with another icon indicating several lights out)
-			// this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutAllMarker);
+			this.updateMarkers(data,this.lights1Array,'service_request_number',LightsOutMarker);
 			break;
 		case 'lightOutOne':
 			(this.queryDuration==="week"? this.selectionData.streetLightsOneWeek = data : this.selectionData.streetLightsOneMonth = data)
@@ -912,20 +912,21 @@ Controller.prototype.makeCrimeGraph = function(){
 			var dataChicago;
 			console.log("Creating Pie");
 			if (this.queryDuration==="week"){
-				data = this.selectionData.abandonedVehiclesWeek;
-				chicagoData = this.chicagoData.abandonedVehiclesWeek;
+				data = this.selectionData.crimesWeek;
+				chicagoData = this.chicagoData.crimesWeek;
 			}
 			else{
-				data = this.selectionData.abandonedVehiclesMonth;
-				chicagoData = this.chicagoData.abandonedVehiclesMonth;
+				data = this.selectionData.crimesMonth;
+				chicagoData = this.chicagoData.crimesMonth;
 			}
 			data = getCrimeTypeCount(data);
 			chicagoData = getCrimeTypeCount(chicagoData);
 			console.log(data);
-			/*this.crimeGraph.setData(chicagoData, data, "crime");
+			this.crimeGraph.setData(chicagoData, data, "crime");
+			this.crimeGraph.setAxes("key","Type","value","# of crimes");
 			this.crimeGraph.setTitle("Crimes");
-			this.crimeGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
-			this.crimeGraph.draw();	*/
+			//this.crimeGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.crimeGraph.draw();
 		}
 		
 	}
@@ -948,9 +949,52 @@ Controller.prototype.removeGraphs = function(){
 }
 
 function getCrimeTypeCount(data){
-	var nested_data = d3.nest()
+	var groupedData = d3.nest()
 		.key(function(d) { return d.primary_type; })
 		.rollup(function(leaves) { return leaves.length; })
 		.entries(data);
-	return nested_data;
+	var crimeList = [{key:"Other", value:0},{key:"Assault", value:0},{key:"Burglary", value:0},{key:"Robbery", value:0},{key:"Battery", value:0},{key:"Theft", value:0}];
+
+	for (var i=0;i<groupedData.length;i++){
+		switch(groupedData[i].key){
+			case "PUBLIC PEACE VIOLATION":
+			case "DECEPTIVE PRACTICE":
+			case "OTHER OFFENSE":
+			case "STALKING":
+			case "PROSTITUTION":			
+			case "SEX OFFENSE":
+			case "NARCOTICS":
+					crimeList[0].value += groupedData[i].values;
+					break;
+			case "ASSAULT":
+			case "WEAPONS VIOLATION":
+			case "CRIMINAL DAMAGE":
+			case "CRIMINAL TRESPASS":
+			case "CRIM SEXUAL ASSAULT":
+			case "OFFENSE INVOLVING CHILDREN":
+					crimeList[1].value += groupedData[i].values;
+					break;
+			case "BURGLARY":
+					crimeList[2].value += groupedData[i].values;
+					break;
+			case "ROBBERY":
+					crimeList[3].value += groupedData[i].values;
+					break;
+			
+			case "BATTERY":
+					crimeList[4].value += groupedData[i].values;
+					break;
+			case "THEFT":
+			case "MOTOR VEHICLE THEFT":
+					crimeList[5].value += groupedData[i].values;
+					break;
+
+			case "HOMICIDE":
+					break;
+			default:
+					crimeList[0].value += groupedData[i].values;
+					break;
+		}
+	}
+	return crimeList;
 }
