@@ -5,37 +5,29 @@
 //           Pothole Marker object
 //////////////////////////////////////////////////////////////
 
-var LightsOutMarker = function(data, type) {
+var LightsOutMarker = function(data) {
 
-    this.lightType = type;
+    this.lightType = data.idenType;
     this.service_request_number = data.service_request_number;
 
     var latlng = L.latLng(data.latitude, data.longitude);
 
-    var popupstr = "<p>Type: " + type +
+    var popupstr = "<p>Type: " + this.lightType +
                    "</br>Service #: " + this.service_request_number + "</p>"
 
     var colorNew, colorOld, iconStr;
 
-    switch (type){
+    switch (this.lightType){
         case "lightOutAll":
-            iconStr = "bolt";
-            colorOld = "darkpurple";
-            colorNew = "purple";
+            iconStr = "lightbulb-o";
+            colorNew = "darkpurple";
             break;
         case "lightOutOne":
             iconStr = "lightbulb-o";
-            colorOld = "beige";
-            colorNew = "orange";
+            colorNew = "purple";
             break;
     }
 
-    var iconOld = L.AwesomeMarkers.icon({
-        icon: iconStr,
-        spin:false,
-        markerColor: colorOld,
-        iconColor: "white"
-    });
 
     var iconNew = L.AwesomeMarkers.icon({
         icon: iconStr,
@@ -45,7 +37,6 @@ var LightsOutMarker = function(data, type) {
     });
 
     this.setIconNew(iconNew);
-    this.setIconOld(iconOld);
     this.setLatLng(latlng);
     this.setPopupString(popupstr);
     this.init();

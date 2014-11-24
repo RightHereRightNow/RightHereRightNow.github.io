@@ -19,7 +19,7 @@ function Database(){
 
 var keyCTA1 = 'nBy7EWCMF5qH2bJ3x5NyXpL6N';
 var keyCTA2 = 'jgfD8euazQYDTiGeQhP6NKPYj';
-var key = keyCTA1;
+var key = keyCTA2	;
 var CtaData;
 var drawn = [];
 var _busRoute = [];
@@ -35,7 +35,7 @@ Database.prototype.genericQuery = function(select, where, order, group, limit, o
 
 		//var filters = "$select="+select+"&$where="+where+"&$order="+order+"&$group="+group+"&$limit="+limit+"&$offset="+offset;
 
-		var filters = "$select="+select+"&$where="+where+"&$limit=5000";
+		var filters = "$select="+select+"&$where="+where;
 		//console.log("from" + from);
 		//console.log("normal filter " + iden);
 		//console.log(filters);
@@ -127,12 +127,7 @@ Database.prototype.potHoles = function(weekOrMonth,fromLat, fromLong, toLat, toL
 			break;
 	}
 
-	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
-		this.genericQuery("service_request_number,creation_date, status, latitude, longitude", "creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/7as2-ds3y.json", callback,iden );
-	}else{
-		this.genericQuery("service_request_number,creation_date, status, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/7as2-ds3y.json", callback,iden );
-	}
-
+	this.genericQuery("service_request_number,creation_date, status, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/7as2-ds3y.json", callback,iden );
 
 };
 
@@ -150,12 +145,7 @@ Database.prototype.abandonedVehicle = function(weekOrMonth,fromLat, fromLong, to
 		default: console.log("errore db");
 			break;
 	}
-
-	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
-		this.genericQuery("service_request_number,creation_date,vehicle_make_model,vehicle_color, latitude, longitude", "creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/3c9v-pnva.json", callback,iden );
-	}else{
-		this.genericQuery("service_request_number,creation_date,vehicle_make_model,vehicle_color, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/3c9v-pnva.json", callback,iden );
-	}
+	this.genericQuery("service_request_number,creation_date,vehicle_make_model,vehicle_color, latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"'","","","","","http://data.cityofchicago.org/resource/3c9v-pnva.json", callback,iden );
 };
 
 /*
@@ -173,12 +163,7 @@ Database.prototype.lightOutAllNotCompleted = function(weekOrMonth, fromLat,fromL
 		default: console.log("errore db");
 					break;
 	}
-	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
-		this.genericQuery("service_request_number,latitude, longitude", "creation_date>='"+date+"' AND status ='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
-	}else{
-		this.genericQuery("service_request_number,latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status ='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
-	}
-
+	this.genericQuery("service_request_number,latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status ='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
 };
 
 /*
@@ -195,13 +180,7 @@ Database.prototype.lightOutAllCompleted = function(weekOrMonth, fromLat,fromLong
 		default: console.log("errore db");
 			break;
 	}
-
-	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
-		this.genericQuery("service_request_number,latitude, longitude", "creation_date>='"+date+"' AND status !='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
-	}else{
-		this.genericQuery("service_request_number,latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status !='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
-	}
-
+	this.genericQuery("service_request_number,latitude, longitude", "within_box(location,"+fromLat+" , "+fromLong+", "+toLat+", "+toLong+") AND creation_date>='"+date+"' AND status !='Open'","","","","","http://data.cityofchicago.org/resource/zuxi-7xem.json", callback,iden );
 };
 
 /*
@@ -241,12 +220,7 @@ Database.prototype.lightOut1NotCompleted = function(weekOrMonth, fromLat,fromLon
 		toLo = fromLong;
 	}
 
-	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
-		this.genericQuery("service_request_number,latitude, longitude", "creation_date >= '"+date+"' AND status = 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
-	}else{
-		this.genericQuery("service_request_number,latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status = 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
-	}
-
+	this.genericQuery("service_request_number,latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status = 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
 };
 
 /*
@@ -286,13 +260,7 @@ Database.prototype.lightOut1Completed = function(weekOrMonth, fromLat,fromLong, 
 		toLo = fromLong;
 	}
 
-	if(fromLat == 0 && fromLong == 0 && toLat == 0 && toLong == 0){
-		this.genericQuery("service_request_number,latitude, longitude", "creation_date >= '"+date+"' AND status != 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
-	}else{
-		this.genericQuery("service_request_number,latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status != 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
-	}
-
-
+	this.genericQuery("service_request_number,latitude, longitude", "latitude >= "+fromLa+" AND latitude <= "+toLa+" AND longitude >= "+fromLo+" AND longitude <= "+toLo+" AND creation_date >= '"+date+"' AND status != 'Open'", "","","","","http://data.cityofchicago.org/resource/3aav-uy2v.json", callback,iden );
 };
 
 
@@ -572,6 +540,7 @@ Database.prototype.getCTAData2 = function (busRoute,fromLat,fromLong, toLat, toL
 			_busRoute.push(route);
 		});
 	});
+	console.log("_busRoute",_busRoute);
 	busRoute = _busRoute;
 };
 

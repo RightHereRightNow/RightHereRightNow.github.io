@@ -35,6 +35,13 @@ function CrimeMarker(data,context) {
         iconColor: "white"
     });
 
+    //var iconNew = L.MakiMarkers.icon({
+    //    icon: "rocket",
+    //    color: "#FF66CC",
+    //    size: "l"
+    //});
+
+
     var iconNew = L.AwesomeMarkers.icon({
         icon: "frown-o",
         spin:false,

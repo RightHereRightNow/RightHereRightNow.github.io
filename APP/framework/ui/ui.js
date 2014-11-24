@@ -112,10 +112,10 @@ ui.prototype.draw = function() {
 	this.buttonYelp.addChildButton("Bars","crime1",emptyCallback,"YELPBARLAYER",emptyArray,"#fc6");
 	
 	// SUBMENU GRAPHS
-	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",context.updateGraphs,"ABANDONEDVEHICLESGRAPH",emptyArray,"#fc6");
-	this.buttonGraphs.addChildButton("Crime","crime1",context.updateGraphs,"CRIMEGRAPH",emptyArray,"#fc6");
-	this.buttonGraphs.addChildButton("Potholes","road22",context.updateGraphs,"POTHOLEGRAPH",emptyArray,"#fc6");
-	this.buttonGraphs.addChildButton("Street Lights","street9",context.updateGraphs,"STREETLIGHTSOUTGRAPH",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",context.updateGraphs.bind(context),"ABANDONEDVEHICLESGRAPH",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Crime","crime1",context.updateGraphs.bind(context),"CRIMEGRAPH",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Potholes","road22",context.updateGraphs.bind(context),"POTHOLEGRAPH",emptyArray,"#fc6");
+	this.buttonGraphs.addChildButton("Street Lights","street9",context.updateGraphs.bind(context),"STREETLIGHTSOUTGRAPH",emptyArray,"#fc6");
 
 	
 

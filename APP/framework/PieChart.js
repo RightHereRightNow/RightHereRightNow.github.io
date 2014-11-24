@@ -16,6 +16,14 @@ function PieChart (svg){
 		bottom: 80 
 	};
 	this.svg.attr("viewBox","0 0 160 90");
+	var width = parseFloat(svg.style("width")) ;
+	var height = parseFloat(svg.style("height")) ;
+	this.svg.append("rect")
+		.attr("x", 0)
+	    .attr("y", 0)
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "rgba(68,68,68,0.9)");
 }
 
 
