@@ -559,7 +559,7 @@ Controller.prototype.storeChicagoMonthData = function(data, id){
 			this.chicagoData.streetLightsOneMonth = data;
 			break;
 	}
-}
+};
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	console.log("filterByPerimeter", data,identifierStr,data);
@@ -572,7 +572,7 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			var dataPoint = data[d];
 			dataPoint.idenType = identifierStr;
 
-			if(dataPoint.hasOwnProperty("location.coordinate")){
+			if(dataPoint.hasOwnProperty("location") && dataPoint.location.hasOwnProperty("coordinate")){
 				dataPoint.latitude = dataPoint.location.coordinate.latitude;
 				dataPoint.longitude = dataPoint.location.coordinate.longitude;
 			}
@@ -652,40 +652,37 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 		var iKey = {};
 		data.forEach(
 			function(d){
-				console.log(idstr, d,d[idstr]);
+				//console.log(idstr, d,d[idstr]);
 				iKey[d[idstr]] = d[idstr]
 			}
 		);
 
-		//console.log(iKey.length, iKey);
 
 		for(var i = 0; i< data.length; i++){
-			console.log("doing shit", data[i]);
 			var key = data[i][idstr];
 			// A - B: Add new marker
 			if(!markerCollection[key]) {
 				markerCollection[key] = new marker(data[i],context);
 				markerCollection[key].viewNewIcon();
-				console.log("Add new Marker!!", markerCollection[key]);
 				markerCollection[key].addTo(this.map);
 			// B in A: update!
 			} else if(markerCollection[key]){
-				console.log("Marker is in the collection!!", data[i]);
 				if (markerCollection[key] instanceof CTAMarker){
-					console.log(" updateMarkers");//,idstr, data[i][idstr], data[i], key, markerCollection[key] );
 					markerCollection[key].updateMarkerData(data[i]);
 				} //else
 			// Remove B!
 			}
 		}
+		console.log("markerCollection", typeof marker, markerCollection);
 		for ( k in markerCollection){
+			//console.log(k);
 			if (!iKey[k]){
 				if (!marker instanceof CTAMarker) {
 					console.log("Kill the Marker!!");
 					map.removeLayer(markerCollection[k]); // markerCollection.remove(k) acts like pop or slice. It returns the marker, then deletes it from the collection
 					delete markerCollection[k];
 				}
-					console.log(markerCollection[k]);
+					//console.log(markerCollection[k]);
 			}
 		}
 	} else
