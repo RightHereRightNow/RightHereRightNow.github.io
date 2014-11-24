@@ -380,7 +380,8 @@ function switchTweet() {
 		if(twitterBox != null){}
 	}
 
-};
+}
+
 Controller.prototype.makeHashTag = function (string){
 
 	var nameArray = string.split(" ");
@@ -865,6 +866,14 @@ Controller.prototype.setMode = function(modeName,array,b) {
 				this.map.addLayer(array[key]) :
 				this.map.removeLayer(array[key])
 			)
+		}
+		if (modeName === "TRAFFICLAYER") {
+			for(var key in this.ctaStopsArray) {
+				(b ?
+					this.map.addLayer(this.ctaStopsArray[key]) :
+					this.map.removeLayer(this.ctaStopsArray[key])
+				)
+			}
 		}
 	} else if (modeName in this.graphsFlags) {
 		this.graphsFlags[modeName] = b;
