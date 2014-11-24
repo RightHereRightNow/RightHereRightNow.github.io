@@ -19,6 +19,31 @@ var CTAMarker = function(data,context) {
         context.getTwitters('cta');
     };
 
+
+    /*
+     Child element of the vehicle element. Heading of vehicle as a 360º value,
+     where 0º is North, 90º is East, 180º is South and 270º is West.
+
+     */
+    var direction;
+    this.setIconDirection = function() {
+        if (this.headdirect > 315 && this.headdirect < 45) {
+            direction = "<img src=img/arrow_up.svg/>"
+            this.setIconNew(cta_north);
+        }
+        else if (this.headdirect > 45 && this.headdirect < 135) {
+            this.setIconNew(cta_east);
+        }
+        else if (this.headdirect > 135 && this.headdirect < 225) {
+
+            this.setIconNew(cta_south);
+        }
+        else if (this.headdirect > 225 && this.headdirect < 315){
+
+            this.setIconNew(cta_west);
+        }
+    };
+
     var popupstr = "<p><b>Destination:</b> " + this.destination +
         "</br><b>Route #:</b> "+ this.route +
         "</br><b>Head Direction:</b> "+ this.headdirect +

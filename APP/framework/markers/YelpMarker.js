@@ -27,7 +27,6 @@ function YelpMarker(data, context) {
     var self = this;
     var yelpClick = function(e){
         context.getTwitters('food');
-
     };
 
 

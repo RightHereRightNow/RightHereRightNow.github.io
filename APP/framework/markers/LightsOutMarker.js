@@ -19,23 +19,15 @@ var LightsOutMarker = function(data, type) {
 
     switch (type){
         case "lightOutAll":
-            iconStr = "bolt";
-            colorOld = "darkpurple";
-            colorNew = "purple";
+            iconStr = "lightbulb-o";
+            colorNew = "darkpurple";
             break;
         case "lightOutOne":
             iconStr = "lightbulb-o";
-            colorOld = "beige";
-            colorNew = "orange";
+            colorNew = "purple";
             break;
     }
 
-    var iconOld = L.AwesomeMarkers.icon({
-        icon: iconStr,
-        spin:false,
-        markerColor: colorOld,
-        iconColor: "white"
-    });
 
     var iconNew = L.AwesomeMarkers.icon({
         icon: iconStr,

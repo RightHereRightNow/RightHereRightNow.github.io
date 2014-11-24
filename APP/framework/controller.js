@@ -74,7 +74,9 @@ function Controller() {
 
 	this.ctaStopsArray = {};
 	this.ctaStopsData = [];
-	this.ctaStopsDataLoaded = false;
+	this.ctaStopsDataDrawn= false;
+
+
 	this.yelpContainer = {};
 	this.getUpdates();
 
@@ -133,8 +135,9 @@ Controller.prototype.getBusStopDataFromFile = function(){
 			var temp = features[i].properties.Description.match(reg);
 			if (temp){
 				var ID = (temp[0]).match(numExp)[0];
-				var loc = new L.LatLng(features[i].geometry.coordinates[1],features[i].geometry.coordinates[0]);
-				this.ctaStopsData.push({stopID:ID,latlng:loc});
+				var latitude = features[i].geometry.coordinates[1],
+					longitude = features[i].geometry.coordinates[0];
+				this.ctaStopsData.push({stopID:ID,latitude:latitude, longitude:longitude});
 			}
 
 		}
@@ -142,7 +145,7 @@ Controller.prototype.getBusStopDataFromFile = function(){
 		//console.log(this.ctaStopsData);
 		//console.log(data);
 	}.bind(this));
-}
+};
 
 //var twitterBox = new Twitter();
 var indexTwitter = 0;
@@ -277,6 +280,13 @@ Controller.prototype.getData = function() {
 				}
 			}
 
+			if(!this.ctaStopsDataLoaded)
+				this.getBusStopDataFromFile();
+
+			if(!this.ctaStopsDataDrawn){
+				this.filterByPerimeter(this.ctaStopsData, 'busStop');
+				this.ctaStopsDataDrawn = true;
+			}
 			//this.dataManager.busRoute.forEach(function(route){
 			//	self.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
 			//})
@@ -359,7 +369,7 @@ Controller.prototype.makeHashTag = function (string){
 
 Controller.prototype.getTrafficFlow = function(bounds) {
 	var url = "http://www.mapquestapi.com/traffic/v2/flow?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&inFormat=json&json={mapState: { center: { lat:39.739028996383965 , lng:-104.98479299999998}, height:400, width:400, scale:433342}}";
-}
+};
 
 Controller.prototype.onMapClick = function(e){
 	var point = e.latlng;
@@ -422,7 +432,8 @@ Controller.prototype.removePath = function(){
 	}
 
 	this.removeAllMarkers();
-}
+};
+
 Controller.prototype.removeRectangle = function(){
 	if (this.rectangleConstructed){
 		this.map.map.removeLayer(this.rectangleLayer);
@@ -431,7 +442,7 @@ Controller.prototype.removeRectangle = function(){
 
 	this.rectangle = {ul:null,lr:null};
 	this.removeAllMarkers();
-}
+};
 
 Controller.prototype.removeAllMarkers = function(){
 	console.log("removeAllMarkers");
@@ -443,7 +454,8 @@ Controller.prototype.removeAllMarkers = function(){
 		this.carsArray,
 		//this.lightsAllArray,
 		//this.lights1Array = {};
-		//this.ctaArray,
+		this.ctaArray,
+		this.ctaStopsArray,
 		this.yelpContainer
 	];
 
@@ -476,7 +488,7 @@ function distance (lat1,lng1,lat2,lng2) {
 	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
 	return R * c;
-}
+};
 
 Controller.prototype.getChicagoData = function(){ // One time pull of the city wide data
 	var dataCallback1 = this.storeChicagoWeekData.bind(this);
@@ -492,7 +504,7 @@ Controller.prototype.getChicagoData = function(){ // One time pull of the city w
 	this.dataManager.lightOutAllNotCompleted("month",0,0,0,0,dataCallback2, "lightOutAll" );
 	this.dataManager.lightOut1NotCompleted("month",0,0,0,0,dataCallback2, "lightOutOne" );
 
-}
+};
 
 Controller.prototype.storeChicagoWeekData = function(data, id){
 	switch(id){
@@ -512,7 +524,7 @@ Controller.prototype.storeChicagoWeekData = function(data, id){
 			this.chicagoData.streetLightsOneWeek = data;
 			break;
 	}
-}
+};
 
 Controller.prototype.storeChicagoMonthData = function(data, id){
 	switch(id){
@@ -532,7 +544,7 @@ Controller.prototype.storeChicagoMonthData = function(data, id){
 			this.chicagoData.streetLightsOneMonth = data;
 			break;
 	}
-}
+};
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	console.log("filterByPerimeter", data,identifierStr,data);
@@ -544,17 +556,18 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			var dist = 100; // Too far away!
 			var dataPoint = data[d];
 
-			if(dataPoint.hasOwnProperty("location.coordinate")){
+			//console.log("Checking property of dataPoint ", dataPoint.location.coordinate);
+			if(dataPoint.hasOwnProperty('location') && dataPoint.locations.hasOwnProperty("coordinate")){
 				dataPoint.latitude = dataPoint.location.coordinate.latitude;
 				dataPoint.longitude = dataPoint.location.coordinate.longitude;
 			}
-			console.log(dataPoint);
+			//console.log("dataPoint has property, ", dataPoint.latitude, dataPoint.longitude);
 			var dataRange = false;
 			for(var i=0;i<points.length;i++){
 				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude,dataPoint.longitude);
 
 				if (tempDist <= this.perimeterRadiusInKm){
-					console.log(tempDist,this.perimeterRadiusInKm);
+					//console.log(tempDist,this.perimeterRadiusInKm);
 					filteredData.push(dataPoint);
 					break;
 				}
@@ -602,6 +615,9 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 		case 'cta':
 			this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
 			break;
+		case 'busStop':
+			this.updateMarkers(data,this.ctaStopsArray,'stopID',BusStopMarker);
+			break;
 		default:
 			console.log('Invalid string');
 			break;
@@ -629,7 +645,7 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 		//console.log(iKey.length, iKey);
 
 		for(var i = 0; i< data.length; i++){
-			console.log("doing shit", data[i])
+			console.log("doing shit", data[i]);
 			var key = data[i][idstr];
 			// A - B: Add new marker
 			if(!markerCollection[key]) {
@@ -707,6 +723,7 @@ Controller.prototype.httpGet = function (sURL, fCallback)
 Controller.prototype.drawPath = function(points){
 
 	if (!points) return;
+
     if (this.pathLine === null){
     	this.pathLine = L.polyline([],{className:"route"});
     	this.map.addLayer(this.pathLine,false);
@@ -720,7 +737,7 @@ Controller.prototype.drawPath = function(points){
     this.pathLine.redraw();
     // console.log(this.pathLine.getBounds());
     this.map.fitBounds(this.pathLine.getBounds());
-
+	this.ctaStopsDataDrawn = false;
     //this.getPerimeterAroundPath(30);
 };
 
@@ -734,11 +751,6 @@ Controller.prototype.init = function(){
 	this.pointsOfInterestArray[2] = new SimpleMarker({latitude: 41.86761, longitude: -87.61365, description: "The Shedd Aquarium"});
 	this.pointsOfInterestArray[3] = new SimpleMarker({latitude: 41.86635, longitude: -87.60659, description: "The Alder Planetarium"});
 
-	//database.yelp('food','London',0,'4000','','','','','','',fringuello, 'yelpdata-city');
-	//database.yelp('food', '', 0, '4000','','', '41.8747107','-87.0','41.8710629','-87.9',fringuello, 'yelp-data-square');
-
-	var data = {destination: "Congress Plaza", headdirect: "87",latitude: 41.8779182434082,longitude: -87.64629666310437,pdist: "37681",pid: "4506",route: "126",timestamp: "20141121 22:48",vehicleid: "1701"};
-	this.ctaArray["1701"] = new CTAMarker(data);
 	//console.log(this.pointsOfInterestArray[5]);
 	for( var key in this.pointsOfInterestArray){
 		this.pointsOfInterestArray[key].addTo(this.map);
