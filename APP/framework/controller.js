@@ -12,6 +12,8 @@ function Controller() {
 
 	this.busRoutes = [];
 
+
+
 	this.weatherBox = null;
 	this.twitterBox = null;
 
@@ -42,7 +44,8 @@ function Controller() {
 		YELPBARLAYER: false,
 		WEATHERLAYER: false,
 		GRAPHSLAYER: false,
-		UBERLAYER: false
+		UBERLAYER: false,
+		TWITTER: false
 	};
 
 	this.graphsFlags = {
@@ -85,9 +88,7 @@ function Controller() {
 
 	this.ctaStopsArray = {};
 	this.ctaStopsData = [];
-	this.ctaStopsDataDrawn= false;
-
-
+	this.ctaStopsDataLoaded = false;
 	this.yelpContainer = {};
 	this.getUpdates();
 
@@ -302,6 +303,10 @@ Controller.prototype.getData = function() {
 			//	self.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
 			//})
 		}
+		if (this.layersFlags.TWITTER){
+			//TO-DO
+			console.log("TO_DO: twitter data!");
+		}
 	}
 	this.firstload = false;
 };
@@ -380,7 +385,7 @@ Controller.prototype.makeHashTag = function (string){
 
 Controller.prototype.getTrafficFlow = function(bounds) {
 	var url = "http://www.mapquestapi.com/traffic/v2/flow?key=Fmjtd%7Cluurn962n0%2Cr0%3Do5-9w85da&inFormat=json&json={mapState: { center: { lat:39.739028996383965 , lng:-104.98479299999998}, height:400, width:400, scale:433342}}";
-};
+}
 
 Controller.prototype.onMapClick = function(e){
 	var point = e.latlng;
@@ -443,8 +448,7 @@ Controller.prototype.removePath = function(){
 	}
 
 	this.removeAllMarkers();
-};
-
+}
 Controller.prototype.removeRectangle = function(){
 	if (this.rectangleConstructed){
 		this.map.map.removeLayer(this.rectangleLayer);
@@ -453,7 +457,7 @@ Controller.prototype.removeRectangle = function(){
 
 	this.rectangle = {ul:null,lr:null};
 	this.removeAllMarkers();
-};
+}
 
 Controller.prototype.removeAllMarkers = function(){
 	console.log("removeAllMarkers");
@@ -499,7 +503,7 @@ function distance (lat1,lng1,lat2,lng2) {
 	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
 	return R * c;
-};
+}
 
 Controller.prototype.getChicagoData = function(){ // One time pull of the city wide data
 	var dataCallback1 = this.storeChicagoWeekData.bind(this);
@@ -515,7 +519,7 @@ Controller.prototype.getChicagoData = function(){ // One time pull of the city w
 	this.dataManager.lightOutAllNotCompleted("month",0,0,0,0,dataCallback2, "lightOutAll" );
 	this.dataManager.lightOut1NotCompleted("month",0,0,0,0,dataCallback2, "lightOutOne" );
 
-};
+}
 
 Controller.prototype.storeChicagoWeekData = function(data, id){
 	switch(id){
@@ -535,7 +539,7 @@ Controller.prototype.storeChicagoWeekData = function(data, id){
 			this.chicagoData.streetLightsOneWeek = data;
 			break;
 	}
-};
+}
 
 Controller.prototype.storeChicagoMonthData = function(data, id){
 	switch(id){
@@ -555,7 +559,7 @@ Controller.prototype.storeChicagoMonthData = function(data, id){
 			this.chicagoData.streetLightsOneMonth = data;
 			break;
 	}
-};
+}
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	console.log("filterByPerimeter", data,identifierStr,data);
@@ -568,18 +572,17 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			var dataPoint = data[d];
 			dataPoint.idenType = identifierStr;
 
-			//console.log("Checking property of dataPoint ", dataPoint.location.coordinate);
-			if(dataPoint.hasOwnProperty('location') && dataPoint.locations.hasOwnProperty("coordinate")){
+			if(dataPoint.hasOwnProperty("location.coordinate")){
 				dataPoint.latitude = dataPoint.location.coordinate.latitude;
 				dataPoint.longitude = dataPoint.location.coordinate.longitude;
 			}
-			//console.log("dataPoint has property, ", dataPoint.latitude, dataPoint.longitude);
+			console.log(dataPoint);
 			var dataRange = false;
 			for(var i=0;i<points.length;i++){
 				var tempDist = distance(points[i].lat,points[i].lng,dataPoint.latitude,dataPoint.longitude);
 
 				if (tempDist <= this.perimeterRadiusInKm){
-					//console.log(tempDist,this.perimeterRadiusInKm);
+					console.log(tempDist,this.perimeterRadiusInKm);
 					filteredData.push(dataPoint);
 					break;
 				}
@@ -735,7 +738,6 @@ Controller.prototype.httpGet = function (sURL, fCallback)
 Controller.prototype.drawPath = function(points){
 
 	if (!points) return;
-
     if (this.pathLine === null){
     	this.pathLine = L.polyline([],{className:"route"});
     	this.map.addLayer(this.pathLine,false);
@@ -979,20 +981,21 @@ Controller.prototype.makeCrimeGraph = function(){
 			var dataChicago;
 			console.log("Creating Pie");
 			if (this.queryDuration==="week"){
-				data = this.selectionData.abandonedVehiclesWeek;
-				chicagoData = this.chicagoData.abandonedVehiclesWeek;
+				data = this.selectionData.crimesWeek;
+				chicagoData = this.chicagoData.crimesWeek;
 			}
 			else{
-				data = this.selectionData.abandonedVehiclesMonth;
-				chicagoData = this.chicagoData.abandonedVehiclesMonth;
+				data = this.selectionData.crimesMonth;
+				chicagoData = this.chicagoData.crimesMonth;
 			}
 			data = getCrimeTypeCount(data);
 			chicagoData = getCrimeTypeCount(chicagoData);
 			console.log(data);
-			/*this.crimeGraph.setData(chicagoData, data, "crime");
+			this.crimeGraph.setData(chicagoData, data, "crime");
+			this.crimeGraph.setAxes("key","Type","value","# of crimes");
 			this.crimeGraph.setTitle("Crimes");
-			this.crimeGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
-			this.crimeGraph.draw();	*/
+			//this.crimeGraph.setColor(["rgba(150,150,150,0.8)","rgba(150,150,100,0.8)"])
+			this.crimeGraph.draw();
 		}
 		
 	}
@@ -1015,11 +1018,54 @@ Controller.prototype.removeGraphs = function(){
 }
 
 function getCrimeTypeCount(data){
-	var nested_data = d3.nest()
+	var groupedData = d3.nest()
 		.key(function(d) { return d.primary_type; })
 		.rollup(function(leaves) { return leaves.length; })
 		.entries(data);
-	return nested_data;
+	var crimeList = [{key:"Other", value:0},{key:"Assault", value:0},{key:"Burglary", value:0},{key:"Robbery", value:0},{key:"Battery", value:0},{key:"Theft", value:0}];
+
+	for (var i=0;i<groupedData.length;i++){
+		switch(groupedData[i].key){
+			case "PUBLIC PEACE VIOLATION":
+			case "DECEPTIVE PRACTICE":
+			case "OTHER OFFENSE":
+			case "STALKING":
+			case "PROSTITUTION":			
+			case "SEX OFFENSE":
+			case "NARCOTICS":
+					crimeList[0].value += groupedData[i].values;
+					break;
+			case "ASSAULT":
+			case "WEAPONS VIOLATION":
+			case "CRIMINAL DAMAGE":
+			case "CRIMINAL TRESPASS":
+			case "CRIM SEXUAL ASSAULT":
+			case "OFFENSE INVOLVING CHILDREN":
+					crimeList[1].value += groupedData[i].values;
+					break;
+			case "BURGLARY":
+					crimeList[2].value += groupedData[i].values;
+					break;
+			case "ROBBERY":
+					crimeList[3].value += groupedData[i].values;
+					break;
+			
+			case "BATTERY":
+					crimeList[4].value += groupedData[i].values;
+					break;
+			case "THEFT":
+			case "MOTOR VEHICLE THEFT":
+					crimeList[5].value += groupedData[i].values;
+					break;
+
+			case "HOMICIDE":
+					break;
+			default:
+					crimeList[0].value += groupedData[i].values;
+					break;
+		}
+	}
+	return crimeList;
 }
 
 Controller.prototype.increaseRadius = function() {
