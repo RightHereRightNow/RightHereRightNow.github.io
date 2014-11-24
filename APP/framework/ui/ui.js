@@ -74,7 +74,8 @@ ui.prototype.draw = function() {
 	this.buttonYelp = new level1Button(this,"Yelp","yelp",emptyCallback,"YELPLAYER");
 	this.buttonYelp.setPreviousButton(this.buttonLayers);
 	this.button1List.push(this.buttonYelp);
-	
+
+
 	this.buttonGraphs = new level1Button(this,"Graphs","inconsistent",emptyCallback,"GRAPHSLAYER");
 	this.buttonGraphs.setPreviousButton(this.buttonYelp);
 	this.button1List.push(this.buttonGraphs);
@@ -82,7 +83,12 @@ ui.prototype.draw = function() {
 	this.buttonWeather = new level1Button(this,"Weather","cloudy19",emptyCallback,"OTHER");
 	this.buttonWeather.setPreviousButton(this.buttonGraphs);
 	this.button1List.push(this.buttonWeather);
-	
+
+	this.buttonTwitter = new level1Button(this,"Twitter", "twitter2", emptyCallback, "TWITTER");
+	this.buttonTwitter.setPreviousButton(this.buttonWeather);
+	this.button1List.push(this.buttonTwitter);
+
+
 
 	// SUBMENU SELECTION
 	this.buttonSelection.addChildButton("Path","distance1",emptyCallback,"PATHSELECTION",emptyArray,"#fc6");
@@ -118,6 +124,7 @@ ui.prototype.draw = function() {
 	this.buttonYelp.create(svgmenu);
 	this.buttonGraphs.create(svgmenu);
 	this.buttonWeather.create(svgmenu);
+	this.buttonTwitter.create(svgmenu);
 	
 
 

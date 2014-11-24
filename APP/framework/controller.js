@@ -44,7 +44,8 @@ function Controller() {
 		YELPBARLAYER: false,
 		WEATHERLAYER: false,
 		GRAPHSLAYER: false,
-		UBERLAYER: false
+		UBERLAYER: false,
+		TWITTER: false
 	};
 
 	this.graphsFlags = {
@@ -292,6 +293,10 @@ Controller.prototype.getData = function() {
 			//this.dataManager.busRoute.forEach(function(route){
 			//	self.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
 			//})
+		}
+		if (this.layersFlags.TWITTER){
+			//TO-DO
+			console.log("TO_DO: twitter data!");
 		}
 	}
 	this.firstload = false;
