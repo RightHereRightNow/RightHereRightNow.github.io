@@ -14,7 +14,7 @@ function Controller() {
 
 
 
-	this.weatherBox = null;
+	weatherBox = null;
 	this.twitterBox = null;
 
 	this.minRadius = 0.2;
@@ -166,6 +166,7 @@ var numOfShowTwitter = 1;
 var tweetData = null;
 var twitterBox = null;
 var twitterInterval;
+var weatherBox;
 
 Controller.prototype.getUpdates = function(){
 	var refreshrate = 10000; // Rate at which new data is queried
@@ -193,7 +194,23 @@ Controller.prototype.updateWeather = function(){
 	// if(this.weatherBox != null){
 	// 	this.weatherBox.remove()
 	// }
-	this.dataManager.currentWeather(this.weatherFun,'weather');
+
+	console.log("data weather...");
+	if(this.layersFlags.WEATHERLAYER){
+		if(weatherBox == undefined){
+			console.log("it's on, querying...");
+			this.dataManager.currentWeather(this.weatherFun,'weather');
+
+		}
+	}else{
+		console.log("it's off");
+		if(weatherBox != undefined){
+			console.log("not null, clearing...");
+			weatherBox.clear();
+			weatherBox = undefined;
+		}
+	}
+
 };
 
 Controller.prototype.weatherFun =  function (data, iden){
@@ -202,8 +219,17 @@ Controller.prototype.weatherFun =  function (data, iden){
 	//	this.weatherBox.svg.remove();
 	//	console.log("removed");
 	//}
-	this.weatherBox = new Weather();
-	this.weatherBox.create('#weather', "100%","100%", '0.7', data);
+
+	//if(this.weatherBox != null){
+	//	//SEEK AND DESTROY!
+	//	this.weatherBox.clear();
+	//}else{
+
+	console.log("updating...");
+		weatherBox = new Weather("#weather");
+		weatherBox.create("100%","100%", '0.7', data);
+	//}
+
 };
 
 function getNewPointInLatLng(lat,lng,distance,angle){
@@ -232,6 +258,14 @@ Controller.prototype.getData = function() {
 
 	console.log("\tCONTROLLER - getData -- WOOT", this.updateCounter++);
 	// console.log("Path line constructed:\t" + this.pathLineConstructed);
+
+	//this is out because we do not want to be able to show weather only if a path is constructed! <3
+	//if(this.layersFlags.WEATHERLAYER) {
+	//	console.log("getting data weather...");
+	//	this.updateWeather();
+	//}
+
+	this.updateWeather();
 
 	if (this.pathLineConstructed || this.rectangleConstructed){
 
@@ -262,9 +296,7 @@ Controller.prototype.getData = function() {
 		console.log("fetching data");
 
 		// Sending requests to database
-		if(this.layersFlags.WEATHERLAYER) {
-			// this.updateWeather();
-		}
+
 		if (this.layersFlags.CRIMELAYER) this.dataManager.crimes((this.queryDuration==="week" ? "week2" : this.queryDuration),north,west,south,east,dataCallback, "crimes" );
 
 		if (this.layersFlags.POTHOLELAYER) this.dataManager.potHoles(this.queryDuration,north,west,south,east,dataCallback, "potHoles" );

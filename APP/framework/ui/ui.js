@@ -80,7 +80,7 @@ ui.prototype.draw = function() {
 	this.buttonGraphs.setPreviousButton(this.buttonYelp);
 	this.button1List.push(this.buttonGraphs);
 	
-	this.buttonWeather = new level1Button(this,"Weather","cloudy19",emptyCallback,"OTHER");
+	this.buttonWeather = new level1Button(this,"Weather","cloudy19",emptyCallback,"WEATHERLAYER");
 	this.buttonWeather.setPreviousButton(this.buttonGraphs);
 	this.button1List.push(this.buttonWeather);
 
