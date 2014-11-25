@@ -6,6 +6,7 @@ function Twitter() {
 
 Twitter.prototype.showTweets = function(tweets){
     //var svg = d3.select('#graphTwitter');
+    this.svg.style("display", "block");
     var height = this.svg.style("height");
     var width = this.svg.style("width");
     console.log(width);
@@ -67,6 +68,7 @@ Twitter.prototype.deleteText = function(){
     this.svg.select('.tweet-date').remove();
     this.svg.select('.pidgeon').remove();
     this.svg.select('.tweet-rect').remove();
+    this.svg.style("display", "none");
     this.flag = 0;
 };
 

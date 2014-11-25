@@ -9,6 +9,7 @@ Weather.prototype.create = function (dimx, dimy,opacity,weatherData){
     var w = 200;
     
     var svg = d3.select(this.location)
+                .style("display", "block")
                 .append("svg:svg")
                 .attr("id", "menu")
                 .attr("viewBox", "0 0 " + w + " " + h)
