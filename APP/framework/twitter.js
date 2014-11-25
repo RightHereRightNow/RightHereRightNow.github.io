@@ -1,6 +1,6 @@
 function Twitter() {
     //this.svg = d3.select('#twitterBox');
-    this.svg = context.twitterBox;
+    this.svg = d3.select('#twitterBox');
     this.flag = 0; //all clean
 }
 
@@ -16,6 +16,7 @@ Twitter.prototype.showTweets = function(tweets){
         .attr("width",width)
         .attr("height", width)
         .attr("fill", "rgba(68,68,68,0.9)");
+    
 
     this.svg.append("svg:image")
         .attr("xlink:href","./img/twitter.svg")

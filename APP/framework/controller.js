@@ -672,8 +672,9 @@ Controller.prototype.storeChicagoMonthData = function(data, id){
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	console.log("filterByPerimeter", data,identifierStr);
-
+	var byPassFilter = true;
 	if (this.pathLineConstructed === true && this.mode.BOUNDINGBOXSELECTION === false){
+		byPassFilter = false;
 		var filteredData = [];
 		var points = this.pathLine.getLatLngs();
 		for (var d=0;d<data.length;d++){
@@ -748,6 +749,8 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			this.updateMarkers(data,this.ctaArray,'vehicleid',CTAMarker);
 			break;
 		case 'busStop':
+			if (byPassFilter===true)
+				data = this.filterByBounds(data);
 			this.updateMarkers(data,this.ctaStopsArray,'stopID',BusStopMarker);
 			break;
 		default:
@@ -755,6 +758,28 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			break;
 	}
 };
+
+Controller.prototype.filterByBounds = function(data){
+	if (this.mode.BOUNDINGBOXSELECTION === true || this.mode.RECTANGLESELECTION===true){
+		var bounds = null;
+		var filteredData = [];
+		if (this.rectangleConstructed===true){
+			bounds = this.rectangleLayer.getBounds();
+		}
+		else if (this.boundingBoxConstructed===true){
+			bounds = this.boundingBoxLayer.getBounds();
+		}
+		if (bounds!== null){
+			for(var i=0;i<data.length;i++){
+				if (bounds.contains(L.latLng(data[i].latitude,data[i].longitude))===true){
+					filteredData.push(data[i]);
+				}
+			}
+			data = filteredData;
+		}
+	}
+	return data;
+}
 
 Controller.prototype.updateUberMarkers  = function(data) {
 	var uberX;
@@ -1183,8 +1208,8 @@ Controller.prototype.makeCrimeGraph = function(){
 
 Controller.prototype.addGraph = function(drawTo,idStr) {
 
-	var svg = d3.select(drawTo).append("svg:svg")
-		.attr("viewBox", "0 0 160 90")
+	var svg = d3.select(drawTo).append("svg")
+		.attr("viewBox", "0 0 200 80")
 		.attr("preserveAspectRatio", "xMinYMin meet");
 	return svg;
 }
