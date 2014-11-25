@@ -108,14 +108,14 @@ ui.prototype.draw = function() {
 	
 
 	// SUBMENU LAYERS
-	this.buttonLayers.addChildButton("Traffic","traffic17",emptyCallback,"TRAFFICLAYER",context.ctaArray,"#fc6");
-	this.buttonLayers.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",context.crimeContainer,"red");
-	this.buttonLayers.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",context.potholesArray,"#fc6");
-	this.buttonLayers.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLESLAYER",context.carsArray,"#fc6");
-	this.buttonLayers.addChildButton("Street Lights Out","street9",emptyCallback,"STREETLIGHTSOUTLAYER",context.lights1Array,"#fc6"); // TODO: add lights all
-	this.buttonLayers.addChildButton("Divvy Bike Stations","regular2",emptyCallback,"DIVVYLAYER",context.divvyArray,divvyBlue);
+	this.buttonLayers.addChildButton("Traffic","traffic17",emptyCallback,"TRAFFICLAYER",context.ctaArray,"#0842FF");
+	this.buttonLayers.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",context.crimeContainer,"darkred");
+	this.buttonLayers.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",context.potholesArray,"green");
+	this.buttonLayers.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLESLAYER",context.carsArray,"gray");
+	this.buttonLayers.addChildButton("Street Lights Out","street9",emptyCallback,"STREETLIGHTSOUTLAYER",context.lights1Array,"purple");
+	this.buttonLayers.addChildButton("Divvy Bike Stations","regular2",emptyCallback,"DIVVYLAYER",context.divvyArray,"cadetblue");
 	this.buttonLayers.addChildButton("Places of Interest","information38",emptyCallback,"PLACESOFINTERESTLAYER",context.pointsOfInterestArray,"#fc6");
-	this.buttonLayers.addChildButton("Uber","stack9",emptyCallback,"UBERLAYER",emptyArray,"#fc6");
+	this.buttonLayers.addChildButton("Uber","stack9",emptyCallback,"UBERLAYER",emptyArray,"#444");
 
 	// SUBMENU YELP
 	this.buttonYelp.addChildButton("Restaurants","criminal20",emptyCallback,"YELPRESTAURANTLAYER",context.yelpFoodContainer,"#fc6");

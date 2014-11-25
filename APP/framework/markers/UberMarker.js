@@ -30,7 +30,7 @@ var UberMarker = function(data) {
     var iconNew = L.AwesomeMarkers.icon({
         icon: "circle",
         spin:false,
-        markerColor: "black",
+        markerColor: "#444",
         iconColor: "white"
     });
 
