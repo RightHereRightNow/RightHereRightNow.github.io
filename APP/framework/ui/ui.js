@@ -87,7 +87,6 @@ ui.prototype.draw = function() {
 	this.buttonYelp.setPreviousButton(this.buttonLayers);
 	this.button1List.push(this.buttonYelp);
 
-
 	this.buttonGraphs = new level1Button(this,"Graphs","inconsistent",emptyCallback,"GRAPHSLAYER");
 	this.buttonGraphs.setPreviousButton(this.buttonYelp);
 	this.button1List.push(this.buttonGraphs);

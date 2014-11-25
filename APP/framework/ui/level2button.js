@@ -77,8 +77,10 @@ level2Button.prototype.onClick = function() {
 
 level2Button.prototype.setActive = function() {
 	if (this.contextSwitchStr !== "CLEAR"){
-		for(b in this.ui.buttonSelectionList) {
-			this.ui.buttonSelectionList[b].setInactive();
+		if(this.contextSwitchStr === 'PATHSELECTION' || this.contextSwitchStr === 'BOUNDINGBOXSELECTION' || this.contextSwitchStr === 'RECTANGLESELECTION') {
+			for(b in this.ui.buttonSelectionList) {
+				this.ui.buttonSelectionList[b].setInactive();
+			}
 		}
 		this.active = true;
 		context.setMode(this.contextSwitchStr,this.markerArray,true);

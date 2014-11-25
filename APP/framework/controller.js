@@ -27,10 +27,12 @@ function Controller() {
 	// Possible modes of our application
 
 	this.mode = {
-		SELECTION: false,
 		PATHSELECTION: false,
 		BOUNDINGBOXSELECTION: false,
-		RECTANGLESELECTION: false,
+		RECTANGLESELECTION: false
+	};
+	this.levelOne = {
+		SELECTION: false,
 		LAYERS: false,
 		YELP: false,
 		OTHER: false
@@ -1007,6 +1009,14 @@ Controller.prototype.setMode = function(modeName,array,b) {
 			}
 		}
 		console.log(this.mode);
+	} else if (modeName in this.levelOne) {
+		console.log("MODENAME = " + modeName + ":\t" + this.levelOne[modeName] + " --> " + b);
+		this.levelOne[modeName] = b;
+		for(var key in this.levelOne) {
+			if(b === true && this.levelOne[key] != this.levelOne[modeName]) {
+				this.levelOne[key] = false;
+			}
+		}
 	} else if (modeName in this.layersFlags) {
 		console.log("MODENAME = " + modeName + ":\t" + this.layersFlags[modeName] + " --> " + b);
 		this.layersFlags[modeName] = b;
@@ -1042,6 +1052,8 @@ Controller.prototype.getMode = function(modeName) {
 		return this.mode[modeName];
 	} else if (modeName in this.layersFlags) {
 		return this.layersFlags[modeName];
+	} else if (modeName in this.levelOne) {
+		return this.levelOne[modeName];
 	} else if (modeName in this.graphsFlags) {
 		return this.graphsFlags[modeName];
 	} else {
