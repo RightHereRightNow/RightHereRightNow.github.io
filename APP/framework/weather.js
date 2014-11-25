@@ -5,9 +5,9 @@ function Weather(location){
 Weather.prototype.create = function (dimx, dimy,opacity,weatherData){
     //console.log(weatherData.current_observation.dewpoint_string);
     //console.log(weatherData.current_observation);
-    var h = 400;
-    var w = 400;
-    var step = 70;
+    var h = 100;
+    var w = 200;
+    
     var svg = d3.select(this.location)
                 .append("svg:svg")
                 .attr("id", "menu")
@@ -17,47 +17,42 @@ Weather.prototype.create = function (dimx, dimy,opacity,weatherData){
                 .attr("height", dimy)
                 .attr("fill", "rgba(68,68,68,"+opacity+")");
                 //.attr("fill-opacity", opacity);
-
-    d3.select("#weather").
-        style("opacity","0.7").
-        style("background","black");
-
+    var width = parseFloat(svg.style("width")) ;
+    var height = parseFloat(svg.style("height")) ;
+    var step = h / 4.0;
+    svg.append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "rgba(68,68,68,0.9)");
+     
     svg.append("svg:image")
         .attr("xlink:href", weatherData.current_observation.icon_url)
-        .attr("x",w/2)
+        .attr("x",w*0.75)
         .attr("y",0)
-        .attr("width", 100)
-        .attr("height", 100);
+        .attr("width", 50)
+        .attr("height", 50);
 
     svg
         .append("text")
         .text("Current Temperature:"+weatherData.current_observation.dewpoint_string)
-        .attr("transform", "translate(" + (h/2) + " , " + 2*step + " )")
+        .attr("transform", "translate(" + 10 + " , " + 2*step + " )")
         .attr("class", "curr-temp")
         .attr("fill", "white")
-        .attr("font-size", "200%");
+        .attr("font-size", "0.8em");
 
     svg
         .append("text")
         .text("Feels Like:"+weatherData.current_observation.feelslike_string)
-        .attr("transform", "translate(" + (h/2) + " , " + (3.5*step) + " )")
+        .attr("transform", "translate(" + 10 + " , " + (3*step) + " )")
         .attr("class", "curr-feelslike")
         .attr("fill", "white")
-        .attr("font-size", "200%");
-
-
-
-
-
-
-
+        .attr("font-size", "0.8em");
 
 };
 
 Weather.prototype.clear = function(){
     d3.select(this.location).selectAll('*').remove();
-    d3.select("#weather").
-        style("opacity","0.0");
-        //style("background","black");
-
+    d3.select("#weather").style("display", "none");
 }
