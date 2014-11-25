@@ -124,18 +124,18 @@ div {
 	height:				100vw!important;
 	right:				0vh;
 	width:				40vh!important;
-	background-color:	black;
+	/*background-color:	black;*/
 }
 
-#divgraphs2 {
+.divgraphs2 {
 	position:			absolute;
-	top:				25%;
-	height:				25vw!important;
-	right:				20vh;
+	top:				0%;
+	height:				100vw!important;
+	left:				50vh;
 	width:				40vh!important;
 	background-color:	black;
-}
-	
+}	
+
 .route{
 	position: absolute;
 	color: rgba(200,50,50,0.8);
@@ -155,32 +155,16 @@ div {
 .potholes,
 .abandonedvehicles{
 	font-family: sans-serif;
-	font-size: 0.8em;
+	font-size: 0.6em;
 	fill: rgba(255,255,255,1.0);
-	}
-
-
-div.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
-	background: #333333;
-	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
 }
-
-div.leaflet-popup-tip {
-	background-color: #333333;
-	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
-}
-.leaflet-popup-content{
-	background-color: #333333;
-	color: #CCCCC7;
-	font-size: 150%;
-}
+.streetlight,
 .crime{
 	font-family: sans-serif;
 	font-size: 0.8em;
-	fill: rgba(246,243,239,1.0);
 }
 
+.streetlightsmall,
 .crimesmall{
 	font-family: sans-serif;
 	font-size: 0.8em;
@@ -203,14 +187,14 @@ div.leaflet-popup-tip {
 #legendLabel,
 .legend text{
 	font-family: sans-serif;
-	font-size: 0.4rem;
+	font-size: 0.6rem;
 	dy:-.2em;
 	fill:rgba(230,230,230,1.0);
 
 }
 .title{
 	font-family: sans-serif;
-	font-size: 0.7rem;
+	font-size: 0.8rem;
 	font-weight: 600;
 	fill:rgba(230,230,230,1.0);
 }

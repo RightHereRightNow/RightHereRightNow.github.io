@@ -43,6 +43,7 @@ var ui = function(menutag,mapcontroltag,radiuscontroltag,timerangetag) {
 
 ui.prototype.update = function() {
 	for (b in this.button1List) {
+		this.button1List[b].rearrange();
 		this.button1List[b].update();
 	}
 }
@@ -52,10 +53,12 @@ ui.prototype.draw = function() {
 
 	console.log('Draw UI');
 
-	var emptyCallback = function() {};
+	var emptyCallback = function() {
+		// context.getData();	// Uncomment to get updates immediately
+	};
 	var emptyArray = {};
 	
-	var removePathCallback = function() { context.removePath();	}
+	
 
 	// MENU
 	var svgmenu = d3.select(this.menutag).append("svg:svg")
@@ -98,10 +101,11 @@ ui.prototype.draw = function() {
 	this.button1List.push(this.buttonTwitter);
 
 	// SUBMENU SELECTION
-	this.buttonSelection.addChildButton("Path","distance1",emptyCallback,"PATHSELECTION",emptyArray,"#fc6");
-	this.buttonSelection.addChildButton("Bounding Box","stack9",emptyCallback,"BOUNDINGBOXSELECTION",emptyArray,"#fc6");
-	this.buttonSelection.addChildButton("Rectangle","stack9",emptyCallback,"RECTANGLESELECTION",emptyArray,"#fc6");
-	this.buttonSelection.addChildButton("Clear","stack9",removePathCallback,"CLEAR",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Path","distance1",context.clearAll.bind(context),"PATHSELECTION",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Bounding Box","stack9",context.clearAll.bind(context),"BOUNDINGBOXSELECTION",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Rectangle","stack9",context.clearAll.bind(context),"RECTANGLESELECTION",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Clear","stack9",context.clearAll.bind(context),"CLEAR",emptyArray,"#fc6");
+	
 
 	// SUBMENU LAYERS
 	this.buttonLayers.addChildButton("Traffic","traffic17",emptyCallback,"TRAFFICLAYER",context.ctaArray,"#fc6");

@@ -10,9 +10,10 @@ function BarChart (svg){
 	this.newName = null;
 	this.newName2 = null;
 	this.title = null;
+	this.color = null;
 	this.border = {
 		left: 25, 
-		right: 150, 
+		right: 155, 
 		top: 10, 
 		bottom: 70 
 	};
@@ -28,11 +29,16 @@ function BarChart (svg){
 	
 }
 
+BarChart.prototype.setColor = function(colorLst){
+	this.color = colorLst;
+}
+
+
 BarChart.prototype.setTitle = function(title){
 	this.title = title;
 }
 
-BarChart.prototype.setData = function(json, json2, className) {
+BarChart.prototype.setData = function(json, json2, className, nameLst, legendLabel) {
 	this.data = json;
 	this.data2 = json2;
 
@@ -46,7 +52,8 @@ BarChart.prototype.setData = function(json, json2, className) {
 		this.newName =className;
 		this.newName2 = className + "small";
 	}
-
+	this.legendNames = nameLst;
+	this.legendLabel = legendLabel;
 }
 
 BarChart.prototype.setAxes = function(propertyX, labelX, propertyY, labelY){
@@ -73,6 +80,7 @@ BarChart.prototype.setAxes = function(propertyX, labelX, propertyY, labelY){
 BarChart.prototype.draw = function(){
 	
 	var _this = this;
+	this.removeLegend();
 	bars = this.svg.selectAll("." + this.chartName)
 		.data(this.data);
 
@@ -84,6 +92,7 @@ BarChart.prototype.draw = function(){
 			return _this.yScale(d[_this.axisY]);
 		})
 		.attr("width", _this.xScale.rangeBand())
+		.style("fill", _this.color[1])
 		.attr("height", function(d){
 			return _this.border.bottom - _this.yScale(d[_this.axisY]);
 		});
@@ -98,6 +107,7 @@ BarChart.prototype.draw = function(){
 			return _this.yScale(d[_this.axisY]);
 		})
 		.attr("width", _this.xScale.rangeBand())
+		.style("fill", _this.color[1])
 		.attr("height", function(d){
 			return _this.border.bottom - _this.yScale(d[_this.axisY]);
 		})
@@ -114,6 +124,7 @@ BarChart.prototype.draw = function(){
 			return _this.yScale(d[_this.axisY]);
 		})
 		.attr("width", _this.xScale.rangeBand())
+		.style("fill", _this.color[0])
 		.attr("height", function(d){
 			return _this.border.bottom - _this.yScale(d[_this.axisY]);
 		});
@@ -128,6 +139,7 @@ BarChart.prototype.draw = function(){
 			return _this.yScale(d[_this.axisY]);
 		})
 		.attr("width", _this.xScale.rangeBand())
+		.style("fill", _this.color[0])
 		.attr("height", function(d){
 			return _this.border.bottom - _this.yScale(d[_this.axisY]);
 		})
@@ -136,14 +148,24 @@ BarChart.prototype.draw = function(){
 	this.svg.selectAll(".axis").remove();
 
 	// create X axis
-	this.svg.append("g")
+	var xaxis = this.svg.append("g")
 	    .attr("class", "axis")
 	    .attr("transform", "translate(" + 0 +","+ (this.border.bottom) + ")")
-	    .call(this.xAxis)
-	    .append("text")
-	    	.attr("x", this.border.right-5 )
-	    	.attr("y", -this.border.top/2.0)
-	    	.style("text-anchor", "middle")
+	    .call(this.xAxis);
+	if (this.data.length > 4){
+		xaxis.selectAll("text")  
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", function(d) {
+            return "rotate(-15)" 
+        });
+	}
+	
+	xaxis.append("text")
+    	.attr("x", this.border.right-5 )
+    	.attr("y", -this.border.top/2.0)
+    	.style("text-anchor", "middle")
 	    	.text(this.labelX);
 	this.svg.append("g")
 	    .attr("class", "axis")
@@ -165,9 +187,69 @@ BarChart.prototype.draw = function(){
 		    .text(_this.title);
 	}
 
+	this.addLegend();
 	if (this.newName!==null){
 		this.chartName = this.newName; 
 		this.chartName2 = this.newName2; 
 
 	}
 }
+
+BarChart.prototype.addLegend  =  function(){
+	var _this = this;
+	
+	
+	var legendSize = (this.border.bottom - this.border.top)/8.0;
+	//svgHandle.selectAll(".legend").remove();
+	legend = this.svg.selectAll(".legend")
+  		.data(this.legendNames);
+
+  	
+  	legendGrp = legend.enter().append("g")
+  		.attr("class", "legend")
+  		.attr("transform", function(d, i) { 
+      		return "translate(" + (_this.border.right*0.85) + "," + (_this.border.top + i*legendSize) + ")"; 
+    	});
+
+	legendGrp.append("rect")
+		.attr("x", 5)
+	    .attr("width", legendSize)
+	    .attr("height", legendSize)
+	    .attr("y", legendSize)
+	    //.style("stroke", "black")
+	    .style("fill", function(d,i){
+	    	return _this.color[i]; 
+	    });
+
+	legendGrp.append("text")
+	    .attr("y", legendSize*2)
+	    .attr("dy", "-.25em")
+	    .style("text-anchor","end")
+	    .text(function(d){return d;});
+
+	this.svg.select("#legendLabel").remove();
+	this.svg.append("text")
+		.attr("id", "legendLabel")
+		.attr("transform", "translate(" + (_this.border.right*0.85) + "," + (_this.border.top) + ")")
+		.attr("x", 5+legendSize)
+		.attr("y", legendSize-2)
+	    .style("text-anchor","end")
+	    .text(_this.legendLabel);
+
+}
+
+BarChart.prototype.removeLegend = function(){
+	this.svg.select("#legendLabel").remove();
+	this.svg.selectAll(".legend").remove();
+}
+
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr, len;
+  if (this.length == 0) return hash;
+  for (i = 0, len = this.length; i < len; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
