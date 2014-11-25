@@ -22,8 +22,8 @@ var ui = function(menutag,mapcontroltag,radiuscontroltag,timerangetag) {
 	this.linewidth = 42;
 	this.linepadding = 150;
 
-	this.button1height = 120;
-	this.button1width = 900;
+	this.button1height = 100;
+	this.button1width = 950;
 	this.button1dx = 50;
 	this.button1dy = 20;
 
