@@ -56,12 +56,13 @@ level1Button.prototype.create = function(svg) {
 		.attr("font-family", "Roboto")
 		.attr("cursor","default");
 
+
 	this.g.append("svg:image")
 		.attr("xlink:href", "img/" + this.iconStr + ".svg")
 		.attr("x",this.ui.button1dx+.1*this.ui.button1height)
 		.attr("y",this.ui.button1dy+.1*this.ui.button1height)
 		.attr("width", .8*this.ui.button1height)
-		.attr("height", .8*this.ui.button1height)
+		.attr("height", .8*this.ui.button1height);
 
 	this.update();
 

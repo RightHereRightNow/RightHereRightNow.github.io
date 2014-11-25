@@ -19,7 +19,7 @@ function Database(){
 
 var keyCTA1 = 'nBy7EWCMF5qH2bJ3x5NyXpL6N';
 var keyCTA2 = 'jgfD8euazQYDTiGeQhP6NKPYj';
-var key = keyCTA1;
+var key = keyCTA2;
 var CtaData;
 var drawn = [];
 var _busRoute = [];
@@ -672,11 +672,14 @@ function getVehicles (route,fromLat, fromLong, toLat, toLong, callback, iden){
  -vid:
  */
 
-Database.prototype.getPredictionsFromStopids = function(stopIds, callback, iden){
+Database.prototype.getPredictionsFromStopids = function(stopIds, callback){
 	var idString = []
 	for (k in stopIds){
+		console.log("Database.getPredictionsFromStopids: stopID", k);
 		idString.push(k)
 	}
+
+	console.log(idString.join());
 
 	var predictions = [];
 
@@ -685,7 +688,7 @@ Database.prototype.getPredictionsFromStopids = function(stopIds, callback, iden)
 
 	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + routes + '"') + '&format=xml&callback=?';
 	$.getJSON(yql, function(data){
-
+		console.log(data)
 		var xml = data.results[0];
 		$(xml).find('prd').each(function(){
 			var tmstmp = $(this).find('tmstmp').text();
@@ -705,7 +708,7 @@ Database.prototype.getPredictionsFromStopids = function(stopIds, callback, iden)
 				tmstmp: tmstmp,
 				typ : typ,
 				stpnm : stpnm,
-				stpid :stpid,
+				stopID :stpid,
 				vid: vid,
 				dstp: dstp,
 				rt: rt,
@@ -717,11 +720,9 @@ Database.prototype.getPredictionsFromStopids = function(stopIds, callback, iden)
 			};
 
 			predictions.push(prediction);
-
-
 		});
 
-		callback(predictions, iden);
+		callback(predictions);
 	});
 };
 

@@ -56,7 +56,8 @@ function DivvyMarker(data, context) {
             "</br><b>Available Bikes:</b> " + this.availableBikes + "</p>";
 
         this.setPopupString(popupstr);
-        this.viewOldIcon();
+        this.update();
+        this.pulse()
     };
 
     this.setIconNew(iconNew);

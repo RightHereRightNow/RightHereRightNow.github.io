@@ -295,6 +295,7 @@ Controller.prototype.getData = function() {
 
 		var dataCallback = this.filterByPerimeter.bind(this);
 		var uberCallback = this.updateUberMarkers.bind(this);
+		var ctaStopsCallback = this.updateCTAStations.bind(this);
 
 		console.log("fetching data");
 
@@ -335,9 +336,12 @@ Controller.prototype.getData = function() {
 				this.filterByPerimeter(this.ctaStopsData, 'busStop');
 				this.ctaStopsDataDrawn = true;
 			}
+
+			this.dataManager.getPredictionsFromStopids(this.ctaStopsArray, ctaStopsCallback);
 			//this.dataManager.busRoute.forEach(function(route){
 			//	self.dataManager.getVehiclesPublic(route,north,west,south,east,dataCallback, "cta" );
 			//})
+			"sub-button"
 		}
 
 		if(this.layersFlags.UBERLAYER) {
@@ -350,9 +354,29 @@ Controller.prototype.getData = function() {
 	this.firstload = false;
 };
 
-
-Controller.prototype.getDataCTA = function() {
-
+Controller.prototype.updateCTAStations = function(data) {
+	console.log("In updateCTAStations", data)
+	for (var k in data){
+		console.log(data[k], k)
+	}
+	//for(var i = 0; i< data.length; i++){
+	//	var key = data[i][idstr];
+	//	console.log(data[i], key, this.ctaStopsArray[key] )
+    //
+    //
+	//	// A - B: Add new marker
+	//	if(!markerCollection[key]) {
+	//		markerCollection[key] = new marker(data[i],context);
+	//		markerCollection[key].viewNewIcon();
+	//		markerCollection[key].addTo(this.map);
+	//		// B in A: update!
+	//	} else if(markerCollection[key]){
+	//		if (markerCollection[key] instanceof CTAMarker){
+	//			markerCollection[key].updateMarkerData(data[i]);
+	//		}
+	//		// Remove B!
+	//	}
+	//}
 };
 
 Controller.prototype.getTwitters = function(queryParam){
@@ -613,7 +637,7 @@ Controller.prototype.storeChicagoMonthData = function(data, id){
 };
 
 Controller.prototype.filterByPerimeter = function(data,identifierStr){
-	console.log("filterByPerimeter", data,identifierStr);
+	//console.log("filterByPerimeter", data,identifierStr);
 
 	if (this.pathLineConstructed === true && this.showDataAlongPathOnly == true){
 		var filteredData = [];
@@ -647,8 +671,8 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 	}
 
 
-	console.log(identifierStr,data);
-	console.log(filteredData);
+	//console.log(identifierStr,data);
+	//console.log(filteredData);
 
 
 	switch(identifierStr) {
@@ -716,24 +740,6 @@ Controller.prototype.updateUberMarkers  = function(data) {
 };
 
 
-Controller.prototype.updateCTAStations = function(data) {
-	for(var i = 0; i< data.length; i++){
-		var key = data[i][idstr];
-		// A - B: Add new marker
-		if(!markerCollection[key]) {
-			markerCollection[key] = new marker(data[i],context);
-			markerCollection[key].viewNewIcon();
-			markerCollection[key].addTo(this.map);
-			// B in A: update!
-		} else if(markerCollection[key]){
-			if (markerCollection[key] instanceof CTAMarker){
-				markerCollection[key].updateMarkerData(data[i]);
-			}
-			// Remove B!
-		}
-	}
-}
-
 // Generic function to write new data to markers
 // TODO: handle updated icons
 // 'data' is the (filtered) data that needs to be written to markers
@@ -741,7 +747,7 @@ Controller.prototype.updateCTAStations = function(data) {
 // 'idstr' is the name of the field of the object that is used to uniquely identify the marker as a string
 // 'marker' is the class name of the marker object to be created, e.g. PotholeMarker, ect.
 Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker) {
-	console.log("update markers, data length is ",data.length);
+	//console.log("update markers, data length is ",data.length);
 	if (data.length > 0) {
 		var iKey = {};
 		data.forEach(
@@ -778,19 +784,20 @@ Controller.prototype.updateMarkers = function(data,markerCollection,idstr,marker
 			//console.log(k, iKey[k], markerCollection[k], (marker instanceof CTAMarker));
 			if (!iKey[k]){
 				if ((markerCollection[key] instanceof CTAMarker) === false) {
-					console.log("Kill the Marker!!");
+					//console.log("Kill the Marker!!");
 					map.removeLayer(markerCollection[k]); // markerCollection.remove(k) acts like pop or slice. It returns the marker, then deletes it from the collection
 					delete markerCollection[k];
 				} else {
-					console.log("Its a CTAmarker", markerCollection[k]);
+					//console.log("Its a CTAmarker", markerCollection[k]);
 				}
 
 			}
 		}
 		var markerSize3 = getSizeOfMarkerContainer(markerCollection);
-		console.log("iKey: ", iKeySize, "markerCollection before:", markerSize, "after:", markerSize2, "pruned:", markerSize3);
-	} else
-		console.log("data is zero!")
+		//console.log("iKey: ", iKeySize, "markerCollection before:", markerSize, "after:", markerSize2, "pruned:", markerSize3);
+	}
+	//else
+	//	console.log("data is zero!")
 
 };
 
@@ -868,11 +875,9 @@ Controller.prototype.init = function(){
 	this.pointsOfInterestArray[3] = new SimpleMarker({latitude: 41.86635, longitude: -87.60659, description: "The Alder Planetarium"});
 
 	//console.log(this.pointsOfInterestArray[5]);
-	for( var key in this.pointsOfInterestArray){
+	for( var key in this.pointsOfInterestArray) {
 		this.pointsOfInterestArray[key].addTo(this.map);
 	}
-
-	console.log("animating marker!");
 };
 
 Controller.prototype.getPerimeterAroundPath = function(radius){

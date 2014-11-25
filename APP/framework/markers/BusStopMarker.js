@@ -10,25 +10,36 @@ var BusStopMarker = function(data) {
     this.latitude = data.latitude;
     this.latitude = data.longitude;
 
-
-
-
     var popupstr = "<p><b>Stop ID: " + this.stopID + " </b></p>"
 
     var latlng = L.latLng(data.latitude, data.longitude);
 
-    //var iconNew = L.AwesomeMarkers.icon({
-    //    icon: "wifi",
-    //    spin:false,
-    //    markerColor: "purple",
-    //    iconColor: "white"
-    //});
 
     var iconNew = L.MakiMarkers.icon({
         icon: "embassy",
         color: "#0842FF",
         size: "s"
     });
+
+
+    this.updateMarkerData = function(data){
+        var popupstr = "<p><b>Stop ID: " + this.stopID + " </b></p>";
+        //tmstmp: tmstmp,
+        //    typ : typ,
+        //    stpnm : stpnm,
+        //    stopID :stpid,
+        //    vid: vid,
+        //    dstp: dstp,
+        //    rt: rt,
+        //    rtdir: rtdir,
+        //    des: des,
+        //    prdtm: prdtm,
+        //    tablockid: tablockid,
+        //    tatripid: tatripid
+
+        this.setPopupString(popupstr);
+        this.update();
+    };
 
     this.setIconNew(iconNew);
     this.setLatLng(latlng);

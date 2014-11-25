@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////
 
 var CTAMarker = function(data,context) {
-    console.log("In CTA init, ", data);
+    //console.log("In CTA init, ", data);
     this.timestamp = data.timestamp; // "20141121 19:46"
     this.route = data.route; // "76"
     this.vehicleid = data.vehicleid; // "6665"
