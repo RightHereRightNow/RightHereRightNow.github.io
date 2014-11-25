@@ -730,6 +730,10 @@ Controller.prototype.filterByPerimeter = function(data,identifierStr){
 			}
 		}
 		data = filteredData;
+	}else{
+		for (var d=0;d<data.length;d++){
+			data[d].idenType = identifierStr;
+		}
 	}
 
 
