@@ -101,25 +101,25 @@ ui.prototype.draw = function() {
 
 	// SUBMENU SELECTION
 	this.buttonSelection.addChildButton("Path","distance1",context.clearAll.bind(context),"PATHSELECTION",emptyArray,"#fc6");
-	this.buttonSelection.addChildButton("Bounding Box","stack9",context.clearAll.bind(context),"BOUNDINGBOXSELECTION",emptyArray,"#fc6");
-	this.buttonSelection.addChildButton("Rectangle","stack9",context.clearAll.bind(context),"RECTANGLESELECTION",emptyArray,"#fc6");
-	this.buttonSelection.addChildButton("Clear","stack9",context.clearAll.bind(context),"CLEAR",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Bounding Box","draw13",context.clearAll.bind(context),"BOUNDINGBOXSELECTION",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Rectangle","rectangle",context.clearAll.bind(context),"RECTANGLESELECTION",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Clear","ray5",context.clearAll.bind(context),"CLEAR",emptyArray,"#fc6");
 	
 
 	// SUBMENU LAYERS
-	this.buttonLayers.addChildButton("Traffic","traffic17",emptyCallback,"TRAFFICLAYER",context.ctaArray,"#0842FF");
-	this.buttonLayers.addChildButton("Crime","crime1",emptyCallback,"CRIMELAYER",context.crimeContainer,"darkred");
-	this.buttonLayers.addChildButton("Potholes","road22",emptyCallback,"POTHOLELAYER",context.potholesArray,"green");
-	this.buttonLayers.addChildButton("Abandoned Vehicles","criminal20",emptyCallback,"ABANDONEDVEHICLESLAYER",context.carsArray,"gray");
+	this.buttonLayers.addChildButton("Traffic","front1",emptyCallback,"TRAFFICLAYER",context.ctaArray,"#0842FF");
+	this.buttonLayers.addChildButton("Crime","sad39",emptyCallback,"CRIMELAYER",context.crimeContainer,"darkred");
+	this.buttonLayers.addChildButton("Potholes","error6",emptyCallback,"POTHOLELAYER",context.potholesArray,"green");
+	this.buttonLayers.addChildButton("Abandoned Vehicles","car168",emptyCallback,"ABANDONEDVEHICLESLAYER",context.carsArray,"gray");
 	this.buttonLayers.addChildButton("Street Lights Out","street9",emptyCallback,"STREETLIGHTSOUTLAYER",context.lights1Array,"purple");
-	this.buttonLayers.addChildButton("Divvy Bike Stations","regular2",emptyCallback,"DIVVYLAYER",context.divvyArray,"cadetblue");
+	this.buttonLayers.addChildButton("Divvy Bike Stations","bike15",emptyCallback,"DIVVYLAYER",context.divvyArray,"cadetblue");
 	this.buttonLayers.addChildButton("Places of Interest","information38",emptyCallback,"PLACESOFINTERESTLAYER",context.pointsOfInterestArray,"#fc6");
-	this.buttonLayers.addChildButton("Uber","stack9",emptyCallback,"UBERLAYER",emptyArray,"#444");
+	this.buttonLayers.addChildButton("Uber","facebook30",emptyCallback,"UBERLAYER",emptyArray,"#444");
 
 	// SUBMENU YELP
-	this.buttonYelp.addChildButton("Restaurants","criminal20",emptyCallback,"YELPRESTAURANTLAYER",context.yelpFoodContainer,"#fc6");
-	this.buttonYelp.addChildButton("Bars","crime1",emptyCallback,"YELPBARLAYER",context.yelpBarContainer,"#fc6");
-	this.buttonYelp.addChildButton("Clubs", "crime1", emptyCallback,"YELPCLUBLAYER",context.yelpClubsContainer, "#fc6");
+	this.buttonYelp.addChildButton("Restaurants","yelp",emptyCallback,"YELPRESTAURANTLAYER",context.yelpFoodContainer,"#fc6");
+	this.buttonYelp.addChildButton("Bars","beer9",emptyCallback,"YELPBARLAYER",context.yelpBarContainer,"#fc6");
+	this.buttonYelp.addChildButton("Clubs", "cocktail33", emptyCallback,"YELPCLUBLAYER",context.yelpClubsContainer, "#fc6");
 	
 	// SUBMENU GRAPHS
 	this.buttonGraphs.addChildButton("Abandoned Vehicles","criminal20",context.updateGraphs.bind(context),"ABANDONEDVEHICLESGRAPH",emptyArray,"#fc6");
