@@ -45,6 +45,7 @@ function Controller() {
 		POTHOLELAYER: false,
 		YELPRESTAURANTLAYER: false,
 		YELPBARLAYER: false,
+		YELPCLUBLAYER: false,
 		WEATHERLAYER: false,
 		GRAPHSLAYER: false,
 		UBERLAYER: false,
@@ -63,7 +64,7 @@ function Controller() {
 
 
 	this.locations = [];
-	this.rectangle = {ul:null,lr:null};
+	this.rectangle = [];
 	this.rectangleLayer = null;
 	this.rectangleConstructed = false;
 
@@ -319,7 +320,9 @@ Controller.prototype.getData = function() {
 		}
 		if (this.layersFlags.DIVVYLAYER) this.dataManager.divvyBikes(north,west,south,east,dataCallback, "divvyStations" );
 
-		if (this.layersFlags.YELPLAYER) this.dataManager.yelp('food', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelp');
+		if (this.layersFlags.YELPRESTAURANTLAYER) this.dataManager.yelp('food', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelpFood');
+		if (this.layersFlags.YELPBARLAYER) this.dataManager.yelp('bar', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelpBar');
+		if (this.layersFlags.YELPCLUBLAYER) this.dataManager.yelp('club', '', 0, '4000','','', north,west,south,east,dataCallback, 'yelpClub');
 
 		var self = this;
 		if (this.layersFlags.TRAFFICLAYER) {
@@ -442,7 +445,9 @@ Controller.prototype.getTrafficFlow = function(bounds) {
 };
 
 Controller.prototype.onMapClick = function(e){
+	
 	var point = e.latlng;
+
 	if (this.mode.PATHSELECTION === true ||	this.mode.BOUNDINGBOXSELECTION === true){
 		//if (this.rectangleConstructed===true){
 		//	this.removeRectangle();
@@ -456,41 +461,51 @@ Controller.prototype.onMapClick = function(e){
 		this.getRoute(locObj);
 	}
 	else if (this.mode.RECTANGLESELECTION === true) {
-
-	}
-	/*else if (this.mode.RECTANGLE === true){
-
-		this.removePath();
-		if (this.rectangleConstructed === true){
-
+		var minLat;
+		var maxLat;
+		var minLng;
+		var maxLng;
+		if (this.rectangleConstructed===true){
 			this.removeRectangle();
 		}
-		this.locations = [];
-		if (this.rectangle.ul===null)
-			this.rectangle.ul = point;
-		else if (this.rectangle.ul.lat < point.lat || this.rectangle.ul.lng > point.lng)
-			this.rectangle.ul = null;
-		else
-			this.rectangle.lr = point;
 
-		if (this.rectangle.ul !== null && this.rectangle.lr !== null)
-			this.rectangleConstructed = true;
-		else
-			this.rectangleConstructed = false;
-		//Do stuff like clicking on marker and popups
-		if (this.rectangleConstructed === true){
-			var bounds = this.rectangle;
-			console.log(bounds);
-			northWest = getNewPointInLatLng(bounds.ul.lat,bounds.ul.lng,this.perimeterRadiusInKm,-45); //Increase the bounding box by radius
-			southEast = getNewPointInLatLng(bounds.lr.lat,bounds.lr.lng,this.perimeterRadiusInKm,135);
+		console.log("rect!!");
+		if (this.rectangle.length < 2)
+			this.rectangle.push(point);
+		
+		if (this.rectangle.length === 2){
+			
+			if (this.rectangle[0].lat > this.rectangle[1].lat){
+				minLat = this.rectangle[1].lat;
+				maxLat = this.rectangle[0].lat; 
+			}
+			else{
+				minLat = this.rectangle[0].lat;
+				maxLat = this.rectangle[1].lat; 
+			}
+			if (this.rectangle[0].lng > this.rectangle[1].lng){
+				minLng = this.rectangle[1].lng;
+				maxLng = this.rectangle[0].lng; 
+			}
+			else{
+				minLng = this.rectangle[0].lng;
+				maxLng = this.rectangle[1].lng;
+			}
+						
+			northWest = getNewPointInLatLng(maxLat,minLng,this.perimeterRadiusInKm,-45); //Increase the bounding box by radius
+			southEast = getNewPointInLatLng(minLat,maxLng,this.perimeterRadiusInKm,135);
 			var rectBounds = [[southEast.lat, northWest.lng], [northWest.lat, southEast.lng]];
-			console.log(rectBounds);
 			// create an orange rectangle
+			this.rectangleConstructed = true;
 			this.rectangleLayer = new L.rectangle(rectBounds, {color: "#ff7800", weight: 1});
 			this.map.map.addLayer(this.rectangleLayer);
+			
 		}
 
-	}*/
+	
+		
+	}
+	
 };
 
 Controller.prototype.drawBoundingBox = function(){
@@ -534,21 +549,22 @@ Controller.prototype.removePath = function(){
 };
 
 Controller.prototype.clearAll = function(){
-	if (this.mode.PATHSELECTION || this.mode.BOUNDINGBOXSELECTION)
-		this.removePath();
-	if (this.mode.BOUNDINGBOXSELECTION)
-		this.removeBoundingBox();
-	if (this.mode.RECTANGLESELECTION)
-		this.removeRectangle();
+	console.log("clearing");
+	this.removePath();
+	this.removeBoundingBox();
+	this.removeRectangle();
+	this.removeAllMarkers();
 }
 
 
 Controller.prototype.removeRectangle = function(){
-	if (this.rectangleConstructed){
+	if (this.rectangleConstructed === true){
+		console.log("removing rectangle");
 		this.map.map.removeLayer(this.rectangleLayer);
 		this.rectangleConstructed = false;
+		this.rectangle = [];
 	}
-	this.rectangle = {ul:null,lr:null};
+	
 };
 
 Controller.prototype.removeAllMarkers = function(){
@@ -887,11 +903,6 @@ Controller.prototype.drawPath = function(points){
     	this.pathLine = L.polyline([],{className:"route"});
     	this.map.addLayer(this.pathLine,false);
     	this.pathLine.bringToFront();
-
-
-		// Add the first uberMarker
-		//this.uberArray[0] = new UberMarker({latitude:points[0], longitude: points[1]});
-		//this.uberArray[0].addTo(this.map);
 		if (this.mode.BOUNDINGBOXSELECTION === false){
 			var circle = new L.circle(new L.LatLng(points[0],points[1]), this.perimeterRadiusInKm*1000, {color: "#ff7800", weight: 1});
 			this.map.map.addLayer(circle);

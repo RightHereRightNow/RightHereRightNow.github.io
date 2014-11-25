@@ -98,9 +98,9 @@ ui.prototype.draw = function() {
 	this.button1List.push(this.buttonTwitter);
 
 	// SUBMENU SELECTION
-	this.buttonSelection.addChildButton("Path","distance1",emptyCallback,"PATHSELECTION",emptyArray,"#fc6");
-	this.buttonSelection.addChildButton("Bounding Box","stack9",emptyCallback,"BOUNDINGBOXSELECTION",emptyArray,"#fc6");
-	this.buttonSelection.addChildButton("Rectangle","stack9",emptyCallback,"RECTANGLESELECTION",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Path","distance1",context.clearAll.bind(context),"PATHSELECTION",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Bounding Box","stack9",context.clearAll.bind(context),"BOUNDINGBOXSELECTION",emptyArray,"#fc6");
+	this.buttonSelection.addChildButton("Rectangle","stack9",context.clearAll.bind(context),"RECTANGLESELECTION",emptyArray,"#fc6");
 	this.buttonSelection.addChildButton("Clear","stack9",context.clearAll.bind(context),"CLEAR",emptyArray,"#fc6");
 	
 
