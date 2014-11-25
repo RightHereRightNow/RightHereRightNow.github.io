@@ -1253,7 +1253,6 @@ Controller.prototype.increaseRadius = function() {
     		this.perimeterCircles[i].setRadius(this.perimeterRadiusInKm*1000);
     	}
 	}
-	console.log(newRadius);
 };
 
 Controller.prototype.decreaseRadius = function() {

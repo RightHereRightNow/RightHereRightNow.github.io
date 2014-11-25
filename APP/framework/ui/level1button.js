@@ -80,27 +80,15 @@ level1Button.prototype.setActive = function() {
 	}
 	this.active = true;
 	context.setMode(this.contextModeStr,this.markerArray,true);
-	this.yEnd = this.yStart + this.ui.button1height + this.childButtons.length*(this.ui.button2height+this.ui.button2dy);
-	for (c in this.childButtons) {
-		this.childButtons[c].yStart = this.ui.button1height + this.ui.button1dy + c*(this.ui.button2height + this.ui.button2dy);
-	}
-
 }
 
 level1Button.prototype.setInactive = function() {
 	this.active = false;
 	context.setMode(this.contextModeStr,this.markerArray,false);
-	this.yEnd = this.yStart + this.ui.button1height;
 }
 
 level1Button.prototype.setPreviousButton = function(prevButton) {
 	this.previousButton = prevButton;
-	if(this.previousButton !== null) {
-		this.yStart = this.previousButton.yEnd + this.ui.button1dy;
-	} else {
-		this.yStart = 0;
-	}
-	this.yEnd = this.yStart + this.ui.button1height;
 }
 
 level1Button.prototype.update = function() {
@@ -139,4 +127,24 @@ level1Button.prototype.addChildButton = function(text,iconname,onClick,s,markers
 	var c = new level2Button(this,index,text,iconname,onClick,s,markers,col);
 	this.childButtons.push(c);
 	c.setPreviousButton(this.childButtons[this.childButtons.length-2]);
+}
+
+level1Button.prototype.rearrange = function() {
+
+	if(this.previousButton !== null) {
+		this.yStart = this.previousButton.yEnd + this.ui.button1dy;
+	} else {
+		this.yStart = 0;
+	}
+
+	this.yEnd = this.yStart + this.ui.button1height;
+	if(this.active) {
+		this.yEnd = this.yStart + this.ui.button1height + this.childButtons.length*(this.ui.button2height+this.ui.button2dy);
+		for (c in this.childButtons) {
+			this.childButtons[c].yStart = this.ui.button1height + this.ui.button1dy + c*(this.ui.button2height + this.ui.button2dy);
+		}
+	} else {
+		this.yEnd = this.yStart + this.ui.button1height;
+	}
+
 }

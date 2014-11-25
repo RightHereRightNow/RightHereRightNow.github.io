@@ -43,6 +43,7 @@ var ui = function(menutag,mapcontroltag,radiuscontroltag,timerangetag) {
 
 ui.prototype.update = function() {
 	for (b in this.button1List) {
+		this.button1List[b].rearrange();
 		this.button1List[b].update();
 	}
 }
@@ -52,7 +53,9 @@ ui.prototype.draw = function() {
 
 	console.log('Draw UI');
 
-	var emptyCallback = function() {};
+	var emptyCallback = function() {
+		// context.getData();	// Uncomment to get updates immediately
+	};
 	var emptyArray = {};
 	
 	
